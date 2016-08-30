@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+
+{% block title %}SOC Plot Prototypes{% endblock %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Study Number</th>
+                    <th>Study Title</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for study in studies %}
+                    <tr>
+                        <td><a href="{{ url_for('study_html', study_number=study.study_number) }}">{{ study.study_number }}</a></td>
+                        <td>{{ study.study_title }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

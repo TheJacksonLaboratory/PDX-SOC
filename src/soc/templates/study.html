@@ -1,0 +1,237 @@
+{% extends "layout.html" %}
+
+
+{% block title %}Study {{ study.study_number }}{% endblock %}
+
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+    <div id="waterfall-plot" style="width: 1000px; height: 600px"></div>
+    <div id="treatment-group-plot" style="width: 1000px; height: 600px"></div>
+    <div id="spider-plot" style="width: 1000px; height: 600px"></div>
+
+    <script>
+    var study = {{ study|tojson }};
+    var treatments = {{ treatments|tojson }};
+    var measurements = {{ measurements|tojson }};
+    var animals = {{ animals|tojson }};
+
+    var treatmentCompounds = [];
+    var groupMap = {};
+    var groups = [];
+    var animalMap = {};
+    animals.forEach(function(animal) {
+        animal.measurements = [];
+        animal.treatments = [];
+
+        var grpName = animal['group_name'];
+        var animalName = animal['animal_name'];
+        if(typeof(groupMap[grpName]) === 'undefined') {
+            var group = {
+                treatmentCompound: null,
+                uniqTreatDays: [],
+                uniqMeasureDays: [],
+                animals: [],
+                groupName: grpName
+            };
+            groupMap[grpName] = group;
+            groups.push(group);
+        }
+
+        groupMap[grpName].animals.push(animal);
+        animalMap[animalName] = animal;
+    });
+    groups.sort(function(g1, g2) {
+        return g1.groupName.localeCompare(g2.groupName);
+    });
+    groups.forEach(function(group, i) {
+        group.index = i;
+    });
+
+    measurements.forEach(function(measurement) {
+        var grpName = measurement['group_name'];
+        var animalName = measurement['animal_name'];
+        var grp = groupMap[grpName];
+        insertUnique(grp.uniqMeasureDays, measurement['measurement_day']);
+        animalMap[animalName].measurements.push(measurement);
+    });
+    treatments.forEach(function(treatment) {
+        var grpName = treatment['group_name'];
+        var animalName = treatment['animal_name'];
+        var grp = groupMap[grpName];
+        insertUnique(grp.uniqTreatDays, treatment['treatment_day']);
+        animalMap[animalName].treatments.push(treatment);
+    });
+
+    // we want to capture the measurements nearest the start/stop of treatment
+    function findNearestMeasureDayIdx(uniqMeasurementDays, treatmentDay) {
+        var idx = binarySearch(uniqMeasurementDays, treatmentDay);
+        if(idx < 0) {
+            idx = -idx - 1;
+            if(idx > 0) {
+                if(idx === uniqMeasurementDays.length) {
+                    idx--;
+                } else {
+                    // see which of the neighboring days is closer
+                    var currDiff = uniqMeasurementDays[idx] - treatmentDay;
+                    var prevDiff = treatmentDay - uniqMeasurementDays[idx - 1];
+                    if(prevDiff < currDiff) {
+                        idx--;
+                    }
+                }
+            }
+        }
+
+        return idx;
+    }
+    $.each(groupMap, function(grpName, group) {
+        var treatmentStartDay = group.uniqTreatDays[0];
+        var treatmentEndDay = group.uniqTreatDays[group.uniqTreatDays.length - 1];
+        group.nearStartMeasIdx = findNearestMeasureDayIdx(group.uniqMeasureDays, treatmentStartDay);
+        group.nearEndMeasIdx = findNearestMeasureDayIdx(group.uniqMeasureDays, treatmentEndDay);
+        group.nearStartMeasDay = group.uniqMeasureDays[group.nearStartMeasIdx];
+        group.nearEndMeasDay = group.uniqMeasureDays[group.nearEndMeasIdx];
+    });
+    console.log('groups');
+    console.log(groupMap);
+
+    animals.forEach(function(animal) {
+        var grpName = animal['group_name'];
+        var grp = groupMap[grpName];
+
+        var measStart = null;
+        var measEnd = null;
+        animal.measurements.forEach(function(measurement) {
+            if(measurement.measurement_day === grp.nearStartMeasDay) {
+                measStart = measurement.measurement_value;
+            }
+            if(measurement.measurement_day === grp.nearEndMeasDay) {
+                measEnd = measurement.measurement_value;
+            }
+        });
+
+        if(measEnd === null && animal.measurements.length) {
+            var lastMeas = animal.measurements[animal.measurements.length - 1];
+            if(lastMeas.measurement_day < grp.nearEndMeasDay) {
+                // indicates that the animal died early
+                // TODO add some visual indication for these animals
+                measEnd = lastMeas.measurement_value;
+            }
+        }
+
+        if(measStart === null || measEnd === null) {
+            console.error('bad measurement for animal: ' + animal.animal_name);
+        }
+        animal.measurement_diff = measEnd - measStart;
+    });
+    animals.sort(function(animal1, animal2) {
+        return animal2.measurement_diff - animal1.measurement_diff;
+    });
+    animals.forEach(function(animal, i) {
+        animal.index = i;
+    });
+    console.log('animals');
+    console.log(animals);
+    var traces = groups.map(function(group) {
+        return {
+            name: group.groupName + ' (days ' + group.nearStartMeasDay + '-' + group.nearEndMeasDay + ')',
+            x: group.animals.map(function(animal) {return animal.index}),
+            y: group.animals.map(function(animal) {return animal.measurement_diff}),
+            type: 'bar',
+            showlegend: true,
+            marker: {
+                color: colors[group.index % colors.length]
+            }
+        };
+    });
+
+    var layout = {
+        title: study.study_title,
+        yaxis: {
+            title: "Change in Tumor Volume (mm^3)"
+        },
+        xaxis: {
+            title: "Samples",
+            tickmode: 'array',
+            tickvals: animals.map(function(animal) {return animal.index}),
+            ticktext: animals.map(function(animal) {return animal.animal_name})
+        },
+        bargap: 0.0
+    };
+    Plotly.newPlot('waterfall-plot', traces, layout);
+
+    var treatmentGrpTraces = groups.map(function(group) {
+        var measGrpByDay = group.uniqMeasureDays.map(function() {return []});
+        group.animals.forEach(function(animal) {
+            animal.measurements.forEach(function(measurement) {
+                var dayIndex = binarySearch(group.uniqMeasureDays, measurement.measurement_day);
+                if(dayIndex >= 0) {
+                    measGrpByDay[dayIndex].push(measurement.measurement_value);
+                }
+            });
+        });
+
+        var means = [];
+        var stddevs = [];
+        measGrpByDay.forEach(function(measDayGrp) {
+            var meanStdVal = meanStddev(measDayGrp);
+            means.push(meanStdVal.mean);
+            stddevs.push(meanStdVal.stdDev);
+        });
+
+        return {
+            name: group.groupName,
+            x: group.uniqMeasureDays,
+            y: means,
+            error_y: {
+                type: 'data',
+                array: stddevs,
+                visible: true,
+                color: colors[group.index % colors.length]
+            },
+            type: 'scatter',
+            marker: {
+                color: colors[group.index % colors.length]
+            }
+        }
+    });
+    var treatmentGrpLayout = {
+        title: study.study_title,
+        yaxis: {
+            title: "Tumor Volume (mm^3)"
+        },
+        xaxis: {
+            title: "Day"
+        }
+    };
+    Plotly.newPlot('treatment-group-plot', treatmentGrpTraces, treatmentGrpLayout);
+
+    var spiderTraces = animals.map(function(animal) {
+        var group = groupMap[animal.group_name];
+        return {
+            name: animal.animal_name,
+            x: animal.measurements.map(function(meas) {return meas.measurement_day}),
+            y: animal.measurements.map(function(meas) {return meas.measurement_value}),
+            //type: 'scatter',
+            mode: 'lines',
+            showlegend: false,
+            marker: {
+                color: colors[group.index % colors.length]
+            }
+        }
+    });
+    console.log(spiderTraces);
+    var spiderLayout = {
+        title: study.study_title,
+        yaxis: {
+            title: "Tumor Volume (mm^3)"
+        },
+        xaxis: {
+            title: "Day"
+        }
+    };
+    Plotly.newPlot('spider-plot', spiderTraces, spiderLayout);
+    </script>
+{% endblock %}
