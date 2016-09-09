@@ -11,6 +11,7 @@
     <div id="waterfall-plot" style="width: 1000px; height: 600px"></div>
     <div id="treatment-group-plot" style="width: 1000px; height: 600px"></div>
     <div id="spider-plot" style="width: 1000px; height: 600px"></div>
+    <div id="tgi-plot" style="width: 1000px; height: 600px"></div>
 
     <script>
     var study = {{ study|tojson }};
@@ -124,6 +125,7 @@
         if(measStart === null || measEnd === null) {
             console.error('bad measurement for animal: ' + animal.animal_name);
         }
+        animal.end_day_measurement = measEnd;
         animal.measurement_diff = measEnd - measStart;
     });
     animals.sort(function(animal1, animal2) {
@@ -174,11 +176,11 @@
         });
 
         var means = [];
-        var stddevs = [];
+        var errorVals = [];
         measGrpByDay.forEach(function(measDayGrp) {
-            var meanStdVal = meanStddev(measDayGrp);
+            var meanStdVal = meanStderrStddev(measDayGrp);
             means.push(meanStdVal.mean);
-            stddevs.push(meanStdVal.stdDev);
+            errorVals.push(meanStdVal.stdErr);
         });
 
         return {
@@ -187,7 +189,7 @@
             y: means,
             error_y: {
                 type: 'data',
-                array: stddevs,
+                array: errorVals,
                 visible: true,
                 color: colors[group.index % colors.length]
             },
@@ -233,5 +235,33 @@
         }
     };
     Plotly.newPlot('spider-plot', spiderTraces, spiderLayout);
+
+    // TODO what is the right way to get a handle on the vehicle group. It seems we can't rely on "vehicle" being
+    // in the name.
+    function groupEndDayMean(group) {
+        var meanStddevResult = meanStddev(group.animals.map(function(animal) {return animal.end_day_measurement}));
+        return meanStddevResult.mean;
+    }
+    var vehicleGroup = groups[0];
+    groups.forEach(function(group) {
+
+    });
+
+    var vehicleFinalMean = groupEndDayMean(vehicleGroup);
+    var tgiTraces = groups.map(function(group) {
+        return {
+            name: group.groupName,
+            x: [group.groupName],
+            y: [100 * (groupEndDayMean(group) / vehicleFinalMean)],
+            type: 'bar'
+        };
+    });
+    var tgiLayout = {
+        title: study.study_title,
+        yaxis: {
+            title: 'Percentage (%)'
+        }
+    };
+    Plotly.newPlot('tgi-plot', tgiTraces, tgiLayout);
     </script>
 {% endblock %}
