@@ -19,7 +19,6 @@
     var measurements = {{ measurements|tojson }};
     var animals = {{ animals|tojson }};
 
-    var treatmentCompounds = [];
     var groupMap = {};
     var groups = [];
     var animalMap = {};
@@ -31,11 +30,14 @@
         var animalName = animal['animal_name'];
         if(typeof(groupMap[grpName]) === 'undefined') {
             var group = {
-                treatmentCompound: null,
+                doseActivities: [],
+                doseUnits: [],
+                doseAmounts: [],
                 uniqTreatDays: [],
                 uniqMeasureDays: [],
                 animals: [],
-                groupName: grpName
+                groupName: grpName,
+                groupLabel: null
             };
             groupMap[grpName] = group;
             groups.push(group);
@@ -51,19 +53,40 @@
         group.index = i;
     });
 
+    var minDay = null;
+    var maxDay = null;
     measurements.forEach(function(measurement) {
         var grpName = measurement['group_name'];
         var animalName = measurement['animal_name'];
         var grp = groupMap[grpName];
-        insertUnique(grp.uniqMeasureDays, measurement['measurement_day']);
+        var day = measurement['measurement_day'];
+        insertUnique(grp.uniqMeasureDays, day);
         animalMap[animalName].measurements.push(measurement);
+
+        if(minDay === null || day < minDay) {
+            minDay = day;
+        }
+        if(maxDay === null || day > maxDay) {
+            maxDay = day;
+        }
     });
     treatments.forEach(function(treatment) {
         var grpName = treatment['group_name'];
         var animalName = treatment['animal_name'];
         var grp = groupMap[grpName];
-        insertUnique(grp.uniqTreatDays, treatment['treatment_day']);
+        var day = treatment['treatment_day'];
+        insertUnique(grp.uniqTreatDays, day);
+        insertUnique(grp.doseActivities, treatment['dose_activity']);
+        insertUnique(grp.doseUnits, treatment['administration_route_units']);
+        insertUnique(grp.doseAmounts, treatment['test_material_amount']);
         animalMap[animalName].treatments.push(treatment);
+
+        if(minDay === null || day < minDay) {
+            minDay = day;
+        }
+        if(maxDay === null || day > maxDay) {
+            maxDay = day;
+        }
     });
 
     // we want to capture the measurements nearest the start/stop of treatment
@@ -94,9 +117,10 @@
         group.nearEndMeasIdx = findNearestMeasureDayIdx(group.uniqMeasureDays, treatmentEndDay);
         group.nearStartMeasDay = group.uniqMeasureDays[group.nearStartMeasIdx];
         group.nearEndMeasDay = group.uniqMeasureDays[group.nearEndMeasIdx];
+        group.groupLabel =
+                group.doseActivities.join(', ') +
+                ' (' + group.doseAmounts.join(', ') + ' ' + group.doseUnits.join(', ') + ')';
     });
-    console.log('groups');
-    console.log(groupMap);
 
     animals.forEach(function(animal) {
         var grpName = animal['group_name'];
@@ -134,11 +158,12 @@
     animals.forEach(function(animal, i) {
         animal.index = i;
     });
-    console.log('animals');
-    console.log(animals);
     var traces = groups.map(function(group) {
+        var grpLbl =
+                group.groupLabel + ' [days ' +
+                group.nearStartMeasDay + '-' + group.nearEndMeasDay + ']';
         return {
-            name: group.groupName + ' (days ' + group.nearStartMeasDay + '-' + group.nearEndMeasDay + ')',
+            name: grpLbl,
             x: group.animals.map(function(animal) {return animal.index}),
             y: group.animals.map(function(animal) {return animal.measurement_diff}),
             type: 'bar',
@@ -152,10 +177,10 @@
     var layout = {
         title: study.study_title,
         yaxis: {
-            title: "Change in Tumor Volume (mm^3)"
+            title: 'Change in Tumor Volume (mm^3)'
         },
         xaxis: {
-            title: "Samples",
+            title: 'Samples',
             tickmode: 'array',
             tickvals: animals.map(function(animal) {return animal.index}),
             ticktext: animals.map(function(animal) {return animal.animal_name})
@@ -184,7 +209,7 @@
         });
 
         return {
-            name: group.groupName,
+            name: group.groupLabel,
             x: group.uniqMeasureDays,
             y: means,
             error_y: {
@@ -199,16 +224,45 @@
             }
         }
     });
+    treatmentGrpTraces2 = groups.map(function(group) {
+        return {
+            name: group.groupLabel + ' treatments',
+            x: group.uniqTreatDays,
+            y: group.uniqTreatDays.map(function() {return group.groupLabel}),
+            xaxis: 'x2',
+            yaxis: 'y2',
+            type: 'scatter',
+            showlegend: false,
+            mode: 'lines+markers',
+            marker: {
+                color: colors[group.index % colors.length]
+            }
+        };
+    });
+    treatmentGrpTraces2.reverse();
+
     var treatmentGrpLayout = {
         title: study.study_title,
-        yaxis: {
-            title: "Tumor Volume (mm^3)"
-        },
         xaxis: {
-            title: "Day"
+            range: [minDay, maxDay]
+        },
+        yaxis: {
+            title: 'Tumor Volume (mm^3)',
+            domain: [0.3, 1.0]
+        },
+        xaxis2: {
+            title: 'Day',
+            anchor: 'y2',
+            range: [minDay, maxDay]
+        },
+        yaxis2: {
+            title: 'Treatments',
+            domain: [0.0, 0.3],
+            tickmode: 'array',
+            tickvals: groups.map(function(group) {return group.doseActivities.join(', ')})
         }
     };
-    Plotly.newPlot('treatment-group-plot', treatmentGrpTraces, treatmentGrpLayout);
+    Plotly.newPlot('treatment-group-plot', treatmentGrpTraces.concat(treatmentGrpTraces2), treatmentGrpLayout);
 
     var spiderTraces = animals.map(function(animal) {
         var group = groupMap[animal.group_name];
@@ -224,15 +278,15 @@
             }
         }
     });
-    console.log(spiderTraces);
     var spiderLayout = {
         title: study.study_title,
         yaxis: {
-            title: "Tumor Volume (mm^3)"
+            title: 'Tumor Volume (mm^3)'
         },
         xaxis: {
-            title: "Day"
-        }
+            title: 'Day'
+        },
+        hovermode: 'closest'
     };
     Plotly.newPlot('spider-plot', spiderTraces, spiderLayout);
 
@@ -250,10 +304,13 @@
     var vehicleFinalMean = groupEndDayMean(vehicleGroup);
     var tgiTraces = groups.map(function(group) {
         return {
-            name: group.groupName,
-            x: [group.groupName],
+            name: group.groupLabel,
+            x: [group.groupLabel],
             y: [100 * (groupEndDayMean(group) / vehicleFinalMean)],
-            type: 'bar'
+            type: 'bar',
+            marker: {
+                color: colors[group.index % colors.length]
+            }
         };
     });
     var tgiLayout = {
