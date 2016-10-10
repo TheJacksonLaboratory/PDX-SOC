@@ -222,6 +222,9 @@ function TreatmentGroupPlot(graphDiv) {
                 name: group.groupLabel,
                 x: group.uniqMeasureDays,
                 y: means,
+                text: measGrpByDay.map(function(dayGrp) {
+                    return 'Sample Size: ' + dayGrp.length;
+                }),
                 error_y: {
                     type: 'data',
                     array: errorVals,
