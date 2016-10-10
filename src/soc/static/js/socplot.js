@@ -133,3 +133,234 @@ var colors = [
     "#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f",
     "#ff7f00", "#cab2d6", "#6a3d9a"
 ];
+
+// we want to capture the measurements nearest the start/stop of treatment
+function findNearestMeasureDayIdx(uniqMeasurementDays, treatmentDay) {
+    var idx = binarySearch(uniqMeasurementDays, treatmentDay);
+    if(idx < 0) {
+        idx = -idx - 1;
+        if(idx > 0) {
+            if(idx === uniqMeasurementDays.length) {
+                idx--;
+            } else {
+                // see which of the neighboring days is closer
+                var currDiff = uniqMeasurementDays[idx] - treatmentDay;
+                var prevDiff = treatmentDay - uniqMeasurementDays[idx - 1];
+                if(prevDiff < currDiff) {
+                    idx--;
+                }
+            }
+        }
+    }
+
+    return idx;
+}
+
+
+function WaterfallPlot(graphDiv) {
+    this.graphDiv = graphDiv;
+
+    this.renderPlot = function(animals, groups, study) {
+        var traces = groups.map(function(group) {
+            var grpLbl =
+                    group.groupLabel + ' [days ' +
+                    group.nearStartMeasDay + '-' + group.nearEndMeasDay + ']';
+            return {
+                name: grpLbl,
+                x: group.animals.map(function(animal) {return animal.index}),
+                y: group.animals.map(function(animal) {return animal.measurement_diff}),
+                type: 'bar',
+                showlegend: true,
+                marker: {
+                    color: colors[group.index % colors.length]
+                }
+            };
+        });
+
+        var layout = {
+            title: study.study_title,
+            yaxis: {
+                title: 'Change in Tumor Volume (mm^3)'
+            },
+            xaxis: {
+                title: 'Samples',
+                tickmode: 'array',
+                tickvals: animals.map(function(animal) {return animal.index}),
+                ticktext: animals.map(function(animal) {return animal.animal_name})
+            },
+            bargap: 0.0
+        };
+        Plotly.newPlot(graphDiv, traces, layout);
+    }
+}
+
+
+function TreatmentGroupPlot(graphDiv) {
+    this.graphDiv = graphDiv;
+
+    this.renderPlot = function(measurements, treatments, groups, study) {
+        var treatmentGrpTraces = groups.map(function(group) {
+            var measGrpByDay = group.uniqMeasureDays.map(function() {return []});
+            group.animals.forEach(function(animal) {
+                animal.measurements.forEach(function(measurement) {
+                    var dayIndex = binarySearch(group.uniqMeasureDays, measurement.measurement_day);
+                    if(dayIndex >= 0) {
+                        measGrpByDay[dayIndex].push(measurement.measurement_value);
+                    }
+                });
+            });
+
+            var means = [];
+            var errorVals = [];
+            measGrpByDay.forEach(function(measDayGrp) {
+                var meanStdVal = meanStderrStddev(measDayGrp);
+                means.push(meanStdVal.mean);
+                errorVals.push(meanStdVal.stdErr);
+            });
+
+            return {
+                name: group.groupLabel,
+                x: group.uniqMeasureDays,
+                y: means,
+                error_y: {
+                    type: 'data',
+                    array: errorVals,
+                    visible: true,
+                    color: colors[group.index % colors.length]
+                },
+                type: 'scatter',
+                marker: {
+                    color: colors[group.index % colors.length]
+                }
+            }
+        });
+        var treatmentGrpTraces2 = groups.map(function(group) {
+            return {
+                name: group.groupLabel + ' treatments',
+                x: group.uniqTreatDays,
+                y: group.uniqTreatDays.map(function() {return group.groupLabel}),
+                xaxis: 'x2',
+                yaxis: 'y2',
+                type: 'scatter',
+                showlegend: false,
+                mode: 'lines+markers',
+                marker: {
+                    color: colors[group.index % colors.length]
+                }
+            };
+        });
+        treatmentGrpTraces2.reverse();
+
+        var minDay = null;
+        var maxDay = null;
+        measurements.forEach(function(measurement) {
+            var day = measurement['measurement_day'];
+            if(minDay === null || day < minDay) {
+                minDay = day;
+            }
+            if(maxDay === null || day > maxDay) {
+                maxDay = day;
+            }
+        });
+        treatments.forEach(function(treatment) {
+            var day = treatment['treatment_day'];
+            if(minDay === null || day < minDay) {
+                minDay = day;
+            }
+            if(maxDay === null || day > maxDay) {
+                maxDay = day;
+            }
+        });
+        var treatmentGrpLayout = {
+            title: study.study_title,
+            xaxis: {
+                range: [minDay, maxDay]
+            },
+            yaxis: {
+                title: 'Tumor Volume (mm^3)',
+                domain: [0.3, 1.0]
+            },
+            xaxis2: {
+                title: 'Day',
+                anchor: 'y2',
+                range: [minDay, maxDay]
+            },
+            yaxis2: {
+                title: 'Treatments',
+                domain: [0.0, 0.3],
+                tickmode: 'array',
+                tickvals: groups.map(function(group) {return group.doseActivities.join(', ')})
+            }
+        };
+        Plotly.newPlot(graphDiv, treatmentGrpTraces.concat(treatmentGrpTraces2), treatmentGrpLayout);
+    };
+}
+
+
+function SpiderPlot(graphDiv) {
+    this.graphDiv = graphDiv;
+
+    this.renderPlot = function(animals, groupMap, study) {
+        var spiderTraces = animals.map(function(animal) {
+            var group = groupMap[animal.group_name];
+            return {
+                name: animal.animal_name,
+                x: animal.measurements.map(function(meas) {return meas.measurement_day}),
+                y: animal.measurements.map(function(meas) {return meas.measurement_value}),
+                //type: 'scatter',
+                mode: 'lines',
+                showlegend: false,
+                marker: {
+                    color: colors[group.index % colors.length]
+                }
+            }
+        });
+        var spiderLayout = {
+            title: study.study_title,
+            yaxis: {
+                title: 'Tumor Volume (mm^3)'
+            },
+            xaxis: {
+                title: 'Day'
+            },
+            hovermode: 'closest'
+        };
+        Plotly.newPlot(graphDiv, spiderTraces, spiderLayout);
+    };
+}
+
+
+function TGIPlot(graphDiv) {
+    this.graphDiv = graphDiv;
+
+    function groupEndDayMean(group) {
+        var meanStddevResult = meanStddev(group.animals.map(function(animal) {return animal.end_day_measurement}));
+        return meanStddevResult.mean;
+    }
+
+    this.renderPlot = function(groups, study) {
+        // TODO what is the right way to get a handle on the vehicle group. It seems we can't rely on "vehicle" being
+        // in the name.
+        var vehicleGroup = groups[0];
+
+        var vehicleFinalMean = groupEndDayMean(vehicleGroup);
+        var tgiTraces = groups.map(function(group) {
+            return {
+                name: group.groupLabel,
+                x: [group.groupLabel],
+                y: [100 * (groupEndDayMean(group) / vehicleFinalMean)],
+                type: 'bar',
+                marker: {
+                    color: colors[group.index % colors.length]
+                }
+            };
+        });
+        var tgiLayout = {
+            title: study.study_title,
+            yaxis: {
+                title: 'Percentage (%)'
+            }
+        };
+        Plotly.newPlot(graphDiv, tgiTraces, tgiLayout);
+    };
+}
