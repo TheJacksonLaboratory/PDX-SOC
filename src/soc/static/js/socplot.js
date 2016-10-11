@@ -222,6 +222,7 @@ function TreatmentGroupPlot(graphDiv) {
     this.graphDiv = graphDiv;
 
     this.renderPlot = function(yAxisType, measurements, treatments, groups, study) {
+        // build up per-group traces for measurements
         var treatmentGrpTraces = groups.map(function(group) {
             var measGrpByDay = group.uniqMeasureDays.map(function() {return []});
             group.animals.forEach(function(animal) {
@@ -267,11 +268,31 @@ function TreatmentGroupPlot(graphDiv) {
                 }
             }
         });
+
+        // build up per-group traces for treatments
         var treatmentGrpTraces2 = groups.map(function(group) {
+            // group treatments by day for plot
+            var treatTextByDay = group.uniqTreatDays.map(function() {return []});
+            group.animals.forEach(function(animal) {
+                animal.treatments.forEach(function(treatment) {
+                    var dayIndex = binarySearch(group.uniqTreatDays, treatment.treatment_day);
+                    if(dayIndex >= 0) {
+                        var treatmentText =
+                            treatment.dose_activity + ' (' +
+                            treatment.test_material_amount + ' ' +
+                            treatment.administration_route_units + ')';
+                        insertUnique(treatTextByDay[dayIndex], treatmentText, compareBasic);
+                    }
+                });
+            });
+
             return {
                 name: group.groupLabel + ' treatments',
                 x: group.uniqTreatDays,
                 y: group.uniqTreatDays.map(function() {return group.groupLabel}),
+                text: treatTextByDay.map(function(treatmentTextArray) {
+                    return treatmentTextArray.join(', ');
+                }),
                 xaxis: 'x2',
                 yaxis: 'y2',
                 type: 'scatter',
@@ -279,7 +300,8 @@ function TreatmentGroupPlot(graphDiv) {
                 mode: 'lines+markers',
                 marker: {
                     color: colors[group.index % colors.length]
-                }
+                },
+                hoverinfo: 'text+x'
             };
         });
         treatmentGrpTraces2.reverse();
@@ -315,7 +337,8 @@ function TreatmentGroupPlot(graphDiv) {
         var treatmentGrpLayout = {
             title: study.study_title,
             xaxis: {
-                range: [minDay, maxDay]
+                range: [minDay, maxDay],
+                showticklabels: false
             },
             yaxis: {
                 title: yAxisTitle,
@@ -330,7 +353,8 @@ function TreatmentGroupPlot(graphDiv) {
                 title: 'Treatments',
                 domain: [0.0, 0.3],
                 tickmode: 'array',
-                tickvals: groups.map(function(group) {return group.doseActivities.join(', ')})
+                tickvals: groups.map(function(group) {return group.groupLabel}),
+                showticklabels: false
             }
         };
         Plotly.newPlot(graphDiv, treatmentGrpTraces.concat(treatmentGrpTraces2), treatmentGrpLayout);
