@@ -49,6 +49,7 @@
         var treatments = {{ treatments|tojson }};
         var measurements = {{ measurements|tojson }};
         var animals = {{ animals|tojson }};
+        var groupLabels = {{ group_labels|tojson }};
 
         var groupMap = {};
         var groups = [];
@@ -111,9 +112,13 @@
             group.nearEndMeasIdx = findNearestMeasureDayIdx(group.uniqMeasureDays, treatmentEndDay);
             group.nearStartMeasDay = group.uniqMeasureDays[group.nearStartMeasIdx];
             group.nearEndMeasDay = group.uniqMeasureDays[group.nearEndMeasIdx];
-            group.groupLabel =
-                    group.doseActivities.join(', ') +
-                    ' (' + group.doseAmounts.join(', ') + ' ' + group.doseUnits.join(', ') + ')';
+            if(typeof(groupLabels[group.groupName]) === 'undefined') {
+                group.groupLabel =
+                        group.doseActivities.join(', ') +
+                        ' (' + group.doseAmounts.join(', ') + ' ' + group.doseUnits.join(', ') + ')';
+            } else {
+                group.groupLabel = groupLabels[group.groupName];
+            }
         });
 
         animals.forEach(function(animal) {

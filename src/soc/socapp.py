@@ -35,13 +35,13 @@ def study_html(study_number):
     c = dbCon.cursor()
     c.execute(
         '''SELECT * FROM studies WHERE study_number=?''',
-        (study_number, )
+        (study_number, ),
     )
     study = _dictify_row(c, next(c))
 
     c.execute(
         '''SELECT * FROM treatments WHERE study_number=? ORDER BY CAST(treatment_day AS FLOAT)''',
-        (study_number, )
+        (study_number, ),
     )
     treatments = list(dictify_cursor(c))
     for treatment in treatments:
@@ -60,7 +60,7 @@ def study_html(study_number):
             AND measurement_units = "mm3"
         ORDER BY CAST(measurement_day AS FLOAT)
         ''',
-        (study_number, )
+        (study_number, ),
     )
     measurements = list(dictify_cursor(c))
     for measurement in measurements:
@@ -74,12 +74,19 @@ def study_html(study_number):
     )
     animals = list(dictify_cursor(c))
 
+    c.execute(
+        '''SELECT group_name, group_label FROM group_labels WHERE study_number=?''',
+        (study_number, ),
+    )
+    group_labels = {d['group_name']: d['group_label'] for d in dictify_cursor(c)}
+
     return flask.render_template(
         'study.html',
         study=study,
         treatments=treatments,
         measurements=measurements,
         animals=animals,
+        group_labels=group_labels,
     )
 
 
