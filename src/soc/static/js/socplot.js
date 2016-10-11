@@ -160,7 +160,23 @@ function findNearestMeasureDayIdx(uniqMeasurementDays, treatmentDay) {
 function WaterfallPlot(graphDiv) {
     this.graphDiv = graphDiv;
 
-    this.renderPlot = function(animals, groups, study) {
+    this.renderPlot = function(yAxisType, animals, groups, study) {
+        // shallow array copy
+        animals = animals.slice(0);
+
+        var yAxisKey;
+        if(yAxisType === 'rel-vol') {
+            yAxisKey = 'measurement_diff';
+        } else if(yAxisType === 'rel-change') {
+            yAxisKey = 'measurement_fold_change';
+        }
+        animals.sort(function(animal1, animal2) {
+            return animal2[yAxisKey] - animal1[yAxisKey];
+        });
+        animals.forEach(function(animal, i) {
+            animal.index = i;
+        });
+
         var traces = groups.map(function(group) {
             var grpLbl =
                     group.groupLabel + ' [days ' +
@@ -168,7 +184,7 @@ function WaterfallPlot(graphDiv) {
             return {
                 name: grpLbl,
                 x: group.animals.map(function(animal) {return animal.index}),
-                y: group.animals.map(function(animal) {return animal.measurement_diff}),
+                y: group.animals.map(function(animal) {return animal[yAxisKey]}),
                 type: 'bar',
                 showlegend: true,
                 marker: {
@@ -177,10 +193,17 @@ function WaterfallPlot(graphDiv) {
             };
         });
 
+        var yAxisTitle;
+        if(yAxisType === 'rel-vol') {
+            yAxisTitle = 'Change in Tumor Volume (mm^3)';
+        } else if(yAxisType === 'rel-change') {
+            yAxisTitle = 'Fold Change in Tumor Volume (mm^3)';
+        }
+
         var layout = {
             title: study.study_title,
             yaxis: {
-                title: 'Change in Tumor Volume (mm^3)'
+                title: yAxisTitle
             },
             xaxis: {
                 title: 'Samples',
@@ -198,14 +221,21 @@ function WaterfallPlot(graphDiv) {
 function TreatmentGroupPlot(graphDiv) {
     this.graphDiv = graphDiv;
 
-    this.renderPlot = function(measurements, treatments, groups, study) {
+    this.renderPlot = function(yAxisType, measurements, treatments, groups, study) {
         var treatmentGrpTraces = groups.map(function(group) {
             var measGrpByDay = group.uniqMeasureDays.map(function() {return []});
             group.animals.forEach(function(animal) {
                 animal.measurements.forEach(function(measurement) {
                     var dayIndex = binarySearch(group.uniqMeasureDays, measurement.measurement_day);
                     if(dayIndex >= 0) {
-                        measGrpByDay[dayIndex].push(measurement.measurement_value);
+                        var currVal;
+                        if(yAxisType === 'abs-vol') {
+                            currVal = measurement.measurement_value;
+                        } else if(yAxisType === 'rel-change') {
+                            var startVal = animal.start_day_measurement.measurement_value;
+                            currVal = (measurement.measurement_value - startVal) / startVal;
+                        }
+                        measGrpByDay[dayIndex].push(currVal);
                     }
                 });
             });
@@ -274,13 +304,21 @@ function TreatmentGroupPlot(graphDiv) {
                 maxDay = day;
             }
         });
+
+        var yAxisTitle;
+        if(yAxisType === 'abs-vol') {
+            yAxisTitle = 'Tumor Volume (mm^3)';
+        } else if(yAxisType === 'rel-change') {
+            yAxisTitle = 'Fold Change in Tumor Volume';
+        }
+
         var treatmentGrpLayout = {
             title: study.study_title,
             xaxis: {
                 range: [minDay, maxDay]
             },
             yaxis: {
-                title: 'Tumor Volume (mm^3)',
+                title: yAxisTitle,
                 domain: [0.3, 1.0]
             },
             xaxis2: {
@@ -337,7 +375,9 @@ function TGIPlot(graphDiv) {
     this.graphDiv = graphDiv;
 
     function groupEndDayMean(group) {
-        var meanStddevResult = meanStddev(group.animals.map(function(animal) {return animal.end_day_measurement}));
+        var meanStddevResult = meanStddev(group.animals.map(function(animal) {
+            return animal.end_day_measurement.measurement_value;
+        }));
         return meanStddevResult.mean;
     }
 

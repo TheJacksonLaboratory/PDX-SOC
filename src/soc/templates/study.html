@@ -10,13 +10,41 @@
 
 
 {% block content %}
+
+<form class="form-inline">
+    <div class="form-group">
+        <label for="waterfall-change-type-select">Y Axis: </label>
+        <select id="waterfall-change-type-select" type="text" class="form-control">
+            <option value="rel-vol">Relative Volume</option>
+            <option value="rel-change">Fold Change in Volume (currentSize - day1Size) / day1Size</option>
+        </select>
+    </div>
+</form>
 <div id="waterfall-plot" style="width: 1000px; height: 600px"></div>
+<hr>
+
+<form class="form-inline">
+    <div class="form-group">
+        <label for="treatment-group-change-type-select">Y Axis: </label>
+        <select id="treatment-group-change-type-select" type="text" class="form-control">
+            <option value="abs-vol">Absolute Volume</option>
+            <option value="rel-change">Fold Change in Volume (currentSize - day1Size) / day1Size</option>
+        </select>
+    </div>
+</form>
 <div id="treatment-group-plot" style="width: 1000px; height: 600px"></div>
+<hr>
+
 <div id="spider-plot" style="width: 1000px; height: 600px"></div>
+<hr>
+
 <div id="tgi-plot" style="width: 1000px; height: 600px"></div>
 
 <script>
     $(function() {
+        var treatGrpChgTypeSel = $('#treatment-group-change-type-select');
+        var waterfallChgTypeSel = $('#waterfall-change-type-select');
+
         var study = {{ study|tojson }};
         var treatments = {{ treatments|tojson }};
         var measurements = {{ measurements|tojson }};
@@ -70,8 +98,8 @@
             var grp = groupMap[grpName];
             var day = treatment['treatment_day'];
             insertUnique(grp.uniqTreatDays, day);
-            insertUnique(grp.doseActivities, treatment['dose_activity']);
-            insertUnique(grp.doseUnits, treatment['administration_route_units']);
+            insertUnique(grp.doseActivities, treatment['dose_activity'], compareBasic);
+            insertUnique(grp.doseUnits, treatment['administration_route_units'], compareBasic);
             insertUnique(grp.doseAmounts, treatment['test_material_amount']);
             animalMap[animalName].treatments.push(treatment);
         });
@@ -96,10 +124,10 @@
             var measEnd = null;
             animal.measurements.forEach(function(measurement) {
                 if(measurement.measurement_day === grp.nearStartMeasDay) {
-                    measStart = measurement.measurement_value;
+                    measStart = measurement;
                 }
                 if(measurement.measurement_day === grp.nearEndMeasDay) {
-                    measEnd = measurement.measurement_value;
+                    measEnd = measurement;
                 }
             });
 
@@ -108,26 +136,25 @@
                 if(lastMeas.measurement_day < grp.nearEndMeasDay) {
                     // indicates that the animal died early
                     // TODO add some visual indication for these animals
-                    measEnd = lastMeas.measurement_value;
+                    measEnd = lastMeas;
                 }
             }
 
             if(measStart === null || measEnd === null) {
                 console.error('bad measurement for animal: ' + animal.animal_name);
             }
+            animal.start_day_measurement = measStart;
             animal.end_day_measurement = measEnd;
-            animal.measurement_diff = measEnd - measStart;
-        });
-        animals.sort(function(animal1, animal2) {
-            return animal2.measurement_diff - animal1.measurement_diff;
-        });
-        animals.forEach(function(animal, i) {
-            animal.index = i;
+            animal.measurement_diff = measEnd.measurement_value - measStart.measurement_value;
+            animal.measurement_fold_change = animal.measurement_diff / measStart.measurement_value;
         });
 
         var waterfallPlotNode = document.getElementById('waterfall-plot');
         var waterfallPlot = new WaterfallPlot(waterfallPlotNode);
-        waterfallPlot.renderPlot(animals, groups, study);
+        waterfallChgTypeSel.change(function() {
+            waterfallPlot.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
+        });
+        waterfallPlot.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
 
         var spiderPlotNode = document.getElementById('spider-plot');
         var spiderPlot = new SpiderPlot(spiderPlotNode);
@@ -135,7 +162,10 @@
 
         var treatmentGroupPlotNode = document.getElementById('treatment-group-plot');
         var treatmentGroupPlot = new TreatmentGroupPlot(treatmentGroupPlotNode);
-        treatmentGroupPlot.renderPlot(measurements, treatments, groups, study);
+        treatGrpChgTypeSel.change(function() {
+            treatmentGroupPlot.renderPlot(treatGrpChgTypeSel.val(), measurements, treatments, groups, study);
+        });
+        treatmentGroupPlot.renderPlot(treatGrpChgTypeSel.val(), measurements, treatments, groups, study);
 
         var tgiPlotNode = document.getElementById('tgi-plot');
         var tgiPlot = new TGIPlot(tgiPlotNode);
