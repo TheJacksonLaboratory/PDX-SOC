@@ -245,8 +245,8 @@ function TreatmentGroupPlot(graphDiv) {
             var errorVals = [];
             measGrpByDay.forEach(function(measDayGrp) {
                 var meanStdVal = meanStderrStddev(measDayGrp);
-                means.push(meanStdVal.mean);
-                errorVals.push(meanStdVal.stdErr);
+                means.push(+meanStdVal.mean.toFixed(2));
+                errorVals.push(+meanStdVal.stdErr.toFixed(2));
             });
 
             return {
@@ -412,10 +412,11 @@ function TGIPlot(graphDiv) {
 
         var vehicleFinalMean = groupEndDayMean(vehicleGroup);
         var tgiTraces = groups.map(function(group) {
-            return {
+            var toPoint2Precision = +(100 * (groupEndDayMean(group) / vehicleFinalMean)).toFixed(2);
+			return {
                 name: group.groupLabel,
                 x: [group.groupLabel],
-                y: [100 * (groupEndDayMean(group) / vehicleFinalMean)],
+                y: [toPoint2Precision],
                 type: 'bar',
                 marker: {
                     color: colors[group.index % colors.length]
