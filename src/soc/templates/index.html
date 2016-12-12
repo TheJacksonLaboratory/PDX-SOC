@@ -17,8 +17,8 @@
                 <tbody>
                 {% for study in studies %}
                     <tr>
-                        <td><a href="{{ url_for('study_html', study_number=study.study_number) }}">{{ study.study_number }}</a></td>
-                        <td>{{ study.study_title }}</td>
+                        <td><a href="{{ url_for('study_html', curated_study_number=study.curated_study_number) }}">{{ study.curated_study_number }}</a></td>
+                        <td>{{ study.curated_study_name }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>

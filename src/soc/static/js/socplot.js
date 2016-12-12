@@ -201,7 +201,7 @@ function WaterfallPlot(graphDiv) {
         }
 
         var layout = {
-            title: study.study_title,
+            title: study.curated_study_name,
             yaxis: {
                 title: yAxisTitle
             },
@@ -335,7 +335,7 @@ function TreatmentGroupPlot(graphDiv) {
         }
 
         var treatmentGrpLayout = {
-            title: study.study_title,
+            title: study.curated_study_name,
             xaxis: {
                 range: [minDay, maxDay],
                 showticklabels: false
@@ -381,7 +381,7 @@ function SpiderPlot(graphDiv) {
             }
         });
         var spiderLayout = {
-            title: study.study_title,
+            title: study.curated_study_name,
             yaxis: {
                 title: 'Tumor Volume (mm^3)'
             },
@@ -423,7 +423,7 @@ function TGIPlot(graphDiv) {
             };
         });
         var tgiLayout = {
-            title: study.study_title,
+            title: study.curated_study_name,
             yaxis: {
                 title: 'Percentage (%)'
             }

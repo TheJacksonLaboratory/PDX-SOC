@@ -29,15 +29,16 @@ def get_db_connection():
         raise Exception(dbPath + ' not found')
 
 
-@app.route('/study/<study_number>.html')
-def study_html(study_number):
+@app.route('/study/<curated_study_number>.html')
+def study_html(curated_study_number):
     dbCon = get_db_connection()
     c = dbCon.cursor()
     c.execute(
-        '''SELECT * FROM studies WHERE study_number=?''',
-        (study_number, ),
+        '''SELECT * FROM studies WHERE curated_study_number=?''',
+        (curated_study_number, ),
     )
     study = _dictify_row(c, next(c))
+    study_number = study.items()[0][1]
 
     c.execute(
         '''SELECT * FROM treatments WHERE study_number=? ORDER BY CAST(treatment_day AS FLOAT)''',
