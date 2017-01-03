@@ -206,7 +206,7 @@ function WaterfallPlot(graphDiv) {
                 title: yAxisTitle
             },
             xaxis: {
-                title: 'Samples',
+                title: 'Animals',
                 tickmode: 'array',
                 tickvals: animals.map(function(animal) {return animal.index}),
                 ticktext: animals.map(function(animal) {return animal.animal_name})
@@ -222,10 +222,12 @@ function TreatmentGroupPlot(graphDiv) {
     this.graphDiv = graphDiv;
 
     this.renderPlot = function(yAxisType, measurements, treatments, groups, study) {
-        // build up per-group traces for measurements
+        // console.log(groups);
+		// build up per-group traces for measurements
         var treatmentGrpTraces = groups.map(function(group) {
             var measGrpByDay = group.uniqMeasureDays.map(function() {return []});
-            group.animals.forEach(function(animal) {
+            console.log(measGrpByDay);
+			group.animals.forEach(function(animal) {
                 animal.measurements.forEach(function(measurement) {
                     var dayIndex = binarySearch(group.uniqMeasureDays, measurement.measurement_day);
                     if(dayIndex >= 0) {
@@ -244,8 +246,11 @@ function TreatmentGroupPlot(graphDiv) {
             var means = [];
             var errorVals = [];
             measGrpByDay.forEach(function(measDayGrp) {
+				//console.log("here");
+				//console.log(measDayGrp);
                 var meanStdVal = meanStderrStddev(measDayGrp);
-                means.push(+meanStdVal.mean.toFixed(2));
+                //console.log(meanStdVal);
+				means.push(+meanStdVal.mean.toFixed(2));
                 errorVals.push(+meanStdVal.stdErr.toFixed(2));
             });
 
