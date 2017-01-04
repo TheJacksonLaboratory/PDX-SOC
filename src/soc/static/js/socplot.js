@@ -246,10 +246,7 @@ function TreatmentGroupPlot(graphDiv) {
             var means = [];
             var errorVals = [];
             measGrpByDay.forEach(function(measDayGrp) {
-				//console.log("here");
-				//console.log(measDayGrp);
                 var meanStdVal = meanStderrStddev(measDayGrp);
-                //console.log(meanStdVal);
 				means.push(+meanStdVal.mean.toFixed(2));
                 errorVals.push(+meanStdVal.stdErr.toFixed(2));
             });
@@ -268,6 +265,7 @@ function TreatmentGroupPlot(graphDiv) {
                     color: colors[group.index % colors.length]
                 },
                 type: 'scatter',
+				hoverinfo: 'y+x+text',
                 marker: {
                     color: colors[group.index % colors.length]
                 }
@@ -411,29 +409,80 @@ function TGIPlot(graphDiv) {
     }
 
     this.renderPlot = function(groups, study) {
-        // TODO what is the right way to get a handle on the vehicle group. It seems we can't rely on "vehicle" being
-        // in the name.
+        // TODO what is the right way to get a handle on the vehicle group. It seems we can't rely on "vehicle" being in the name.
         var vehicleGroup = groups[0];
-
+        
         var vehicleFinalMean = groupEndDayMean(vehicleGroup);
         var tgiTraces = groups.map(function(group) {
-            var toPoint2Precision = +(100 * (groupEndDayMean(group) / vehicleFinalMean)).toFixed(2);
+            // var toPoint2Precision = +(100 * (groupEndDayMean(group) / vehicleFinalMean)).toFixed(2);
+            var hide = 'skip';
+			var roundedMean = Math.round(100 * (groupEndDayMean(group) / vehicleFinalMean));
+			
+			if(100 <= Math.round(100 * (groupEndDayMean(group) / vehicleFinalMean))) {
+				hide = 'y+x+text';
+			}
 			return {
                 name: group.groupLabel,
                 x: [group.groupLabel],
-                y: [toPoint2Precision],
+                y: [roundedMean],
+				text: [group.groupLabel],
                 type: 'bar',
+				hoverinfo: hide,
                 marker: {
                     color: colors[group.index % colors.length]
                 }
             };
         });
+		
+		var tgiTraces2 = groups.map(function(group) {
+            // var toPoint2Precision = +(100 * (groupEndDayMean(group) / vehicleFinalMean)).toFixed(2);
+            var difference;
+            if(100 > Math.round(100 * (groupEndDayMean(group) / vehicleFinalMean))) {
+				difference = 100 - Math.round(100 * (groupEndDayMean(group) / vehicleFinalMean));
+			}
+            			
+			return {
+                name: group.groupLabel,
+				x: [group.groupLabel],
+                y: [difference],
+				text:[group.groupLabel],
+				textposition: 'bottom',
+				hoverinfo: 'y+x+text',
+                type: 'bar',
+				width: 0.025,
+				showlegend: false,
+                marker: {
+                    color: colors[group.index % colors.length]
+                }
+            };
+        });
+		
+		var tgiTraces3 = groups.map(function(group) {
+            var yValue = 0;
+			if(100 > Math.round(100 * (groupEndDayMean(group) / vehicleFinalMean))) {
+				yValue = 1;
+			}
+			return {
+				hoverinfo: 'skip',
+                x: [group.groupLabel],
+                y: [yValue],
+                type: 'bar',
+				showlegend: false,
+                marker: {
+                    color: colors[group.index % colors.length]
+                }
+            };
+        });
+		
+		var tgiFinal = tgiTraces.concat(tgiTraces2);
+		var tgiFinal1 = tgiFinal.concat(tgiTraces3);
         var tgiLayout = {
             title: study.curated_study_name,
             yaxis: {
                 title: 'Percentage (%)'
-            }
+            },
+			barmode:'relative'
         };
-        Plotly.newPlot(graphDiv, tgiTraces, tgiLayout);
+        Plotly.newPlot(graphDiv, tgiFinal1, tgiLayout);
     };
 }
