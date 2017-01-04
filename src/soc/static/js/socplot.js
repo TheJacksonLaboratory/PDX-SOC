@@ -476,7 +476,10 @@ function TGIPlot(graphDiv) {
 		
 		var tgiFinal = tgiTraces.concat(tgiTraces2);
 		var tgiFinal1 = tgiFinal.concat(tgiTraces3);
-        var tgiLayout = {
+        
+		var annotationContent = [];
+		
+		var tgiLayout = {
             title: study.curated_study_name,
             yaxis: {
                 title: 'Percentage (%)'
@@ -492,8 +495,30 @@ function TGIPlot(graphDiv) {
 			},
 			margin: {
 				b: 120
-			}
+			}, 
+			annotations: annotationContent
         };
+		
+		for( var i = 0 ; i < groups.length ; i++ ){
+			var y;
+			
+			if(100 > Math.round(100 * (groupEndDayMean(groups[i]) / vehicleFinalMean))) {
+				y = 100 - Math.round(100 * (groupEndDayMean(groups[i]) / vehicleFinalMean));
+			} else {
+				y = 0;
+			}
+			
+			var result = {
+				x: groups[i].groupLabel,
+				y: Math.round(100 * (groupEndDayMean(groups[i]) / vehicleFinalMean)),
+				text: y + "% reduction",
+				xanchor: 'center',
+				yanchor: 'bottom',
+				showarrow: false
+			};
+			annotationContent.push(result);
+		}
+		
         Plotly.newPlot(graphDiv, tgiFinal1, tgiLayout);
     };
 }
