@@ -504,14 +504,15 @@ function TGIPlot(graphDiv) {
 			
 			if(100 > Math.round(100 * (groupEndDayMean(groups[i]) / vehicleFinalMean))) {
 				y = 100 - Math.round(100 * (groupEndDayMean(groups[i]) / vehicleFinalMean));
+				y = y + "% reduction";
 			} else {
-				y = 0;
+				y = "control group";
 			}
 			
 			var result = {
 				x: groups[i].groupLabel,
 				y: Math.round(100 * (groupEndDayMean(groups[i]) / vehicleFinalMean)),
-				text: y + "% reduction",
+				text: y,
 				xanchor: 'center',
 				yanchor: 'bottom',
 				showarrow: false
