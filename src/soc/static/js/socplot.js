@@ -222,11 +222,10 @@ function TreatmentGroupPlot(graphDiv) {
     this.graphDiv = graphDiv;
 
     this.renderPlot = function(yAxisType, measurements, treatments, groups, study) {
-        // console.log(groups);
 		// build up per-group traces for measurements
         var treatmentGrpTraces = groups.map(function(group) {
             var measGrpByDay = group.uniqMeasureDays.map(function() {return []});
-            console.log(measGrpByDay);
+            
 			group.animals.forEach(function(animal) {
                 animal.measurements.forEach(function(measurement) {
                     var dayIndex = binarySearch(group.uniqMeasureDays, measurement.measurement_day);
@@ -360,7 +359,8 @@ function TreatmentGroupPlot(graphDiv) {
                 tickmode: 'array',
                 tickvals: groups.map(function(group) {return group.groupLabel}),
                 showticklabels: false
-            }
+            },
+			hovermode: 'closest'
         };
         Plotly.newPlot(graphDiv, treatmentGrpTraces.concat(treatmentGrpTraces2), treatmentGrpLayout);
     };
