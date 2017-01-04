@@ -487,7 +487,7 @@ function TGIPlot(graphDiv) {
 				tickangle: 15,
 				tickfont: {
 					family: 'Arial, sans-serif',
-					size: 10
+					size: 14
 				}
 			},
 			margin: {
