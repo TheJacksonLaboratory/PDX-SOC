@@ -481,7 +481,18 @@ function TGIPlot(graphDiv) {
             yaxis: {
                 title: 'Percentage (%)'
             },
-			barmode:'relative'
+			barmode:'relative',
+			xaxis: {
+                showticklabels: true,
+				tickangle: 15,
+				tickfont: {
+					family: 'Arial, sans-serif',
+					size: 10
+				}
+			},
+			margin: {
+				b: 120
+			}
         };
         Plotly.newPlot(graphDiv, tgiFinal1, tgiLayout);
     };
