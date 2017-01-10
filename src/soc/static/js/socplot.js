@@ -246,16 +246,20 @@ function TreatmentGroupPlot(graphDiv) {
             var errorVals = [];
             measGrpByDay.forEach(function(measDayGrp) {
                 var meanStdVal = meanStderrStddev(measDayGrp);
-				means.push(+meanStdVal.mean.toFixed(2));
-                errorVals.push(+meanStdVal.stdErr.toFixed(2));
+				means.push(Math.round(meanStdVal.mean));
+                errorVals.push(Math.round(meanStdVal.stdErr));
             });
 
             return {
                 name: group.groupLabel,
                 x: group.uniqMeasureDays,
                 y: means,
-                text: measGrpByDay.map(function(dayGrp) {
-                    return 'N: ' + dayGrp.length;
+                text: measGrpByDay.map(function(dayGrp, index) {
+                    var msg = "   <b>DAY:</b> " + group.uniqMeasureDays[index];
+                    msg = msg + ",  <b>x&#772;:</b> " + means[index];
+                    msg = msg + ",  <b>&#963;<sub>x&#772;</sub>:</b> &#8723;" + errorVals[index];
+                    msg = msg + ",  <b>N:</b> " + dayGrp.length + "  ";
+                    return msg;
                 }),
                 error_y: {
                     type: 'data',
@@ -264,7 +268,7 @@ function TreatmentGroupPlot(graphDiv) {
                     color: colors[group.index % colors.length]
                 },
                 type: 'scatter',
-				hoverinfo: 'y+x+text',
+				hoverinfo: 'text',
                 marker: {
                     color: colors[group.index % colors.length]
                 }
