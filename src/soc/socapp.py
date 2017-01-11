@@ -76,10 +76,14 @@ def study_html(curated_study_number):
     animals = list(dictify_cursor(c))
 
     c.execute(
-        '''SELECT group_name, group_label FROM group_labels WHERE study_number=?''',
+        '''SELECT group_name, curated_group_name FROM groups
+                WHERE
+                study_number=?
+                AND curated_group_name != ""
+        ''',
         (study_number, ),
     )
-    group_labels = {d['group_name']: d['group_label'] for d in dictify_cursor(c)}
+    group_labels = {d['group_name']: d['curated_group_name'] for d in dictify_cursor(c)}
 
     return flask.render_template(
         'study.html',
