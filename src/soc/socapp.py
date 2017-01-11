@@ -107,4 +107,8 @@ def index_html():
 
 if __name__ == '__main__':
     app.debug = True
-    app.run(host='0.0.0.0')
+    try:
+        app.run(host='0.0.0.0')
+    except:
+        app.run(host='0.0.0.0', port="5001")
+        
