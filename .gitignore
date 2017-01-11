@@ -2,3 +2,5 @@
 soc_data/
 communications/
 venv/
+*.pyc
+twistd.pid
