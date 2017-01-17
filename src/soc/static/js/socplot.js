@@ -188,7 +188,7 @@ function WaterfallPlot(graphDiv) {
                 type: 'bar',
                 showlegend: true,
                 marker: {
-                    color: colors[group.index % colors.length]
+                    color: (group.color !== null) ? group.color : colors[group.index % colors.length]
                 }
             };
         });
@@ -265,12 +265,12 @@ function TreatmentGroupPlot(graphDiv) {
                     type: 'data',
                     array: errorVals,
                     visible: true,
-                    color: colors[group.index % colors.length]
+                    color: (group.color !== null) ? group.color : colors[group.index % colors.length]
                 },
                 type: 'scatter',
 				hoverinfo: 'text',
                 marker: {
-                    color: colors[group.index % colors.length]
+                    color: (group.color !== null) ? group.color : colors[group.index % colors.length]
                 }
             }
         });
@@ -305,7 +305,7 @@ function TreatmentGroupPlot(graphDiv) {
                 showlegend: false,
                 mode: 'lines+markers',
                 marker: {
-                    color: colors[group.index % colors.length]
+                    color: (group.color !== null) ? group.color : colors[group.index % colors.length]
                 },
                 hoverinfo: 'text+x'
             };
@@ -383,7 +383,7 @@ function SpiderPlot(graphDiv) {
                 mode: 'lines',
                 showlegend: false,
                 marker: {
-                    color: colors[group.index % colors.length]
+                    color: (group.color !== null) ? group.color : colors[group.index % colors.length]
                 }
             }
         });
@@ -418,9 +418,9 @@ function TGIPlot(graphDiv) {
         
         var vehicleFinalMean = groupEndDayMean(vehicleGroup);
         
-        groups.sort(function(a, b) {
+        groups = groups.slice(0,1).concat(groups.slice(1).sort(function(a, b) {
             return groupEndDayMean(b) - groupEndDayMean(a);
-        });
+        }));
 		
         var tgiTraces = groups.map(function(group) {
             // var toPoint2Precision = +(100 * (groupEndDayMean(group) / vehicleFinalMean)).toFixed(2);
@@ -438,7 +438,7 @@ function TGIPlot(graphDiv) {
                 type: 'bar',
 				hoverinfo: hide,
                 marker: {
-                    color: colors[group.index % colors.length]
+                    color: (group.color !== null) ? group.color : colors[group.index % colors.length]
                 }
             };
         });
@@ -461,7 +461,7 @@ function TGIPlot(graphDiv) {
 				width: 0.025,
 				showlegend: false,
                 marker: {
-                    color: colors[group.index % colors.length]
+                    color: (group.color !== null) ? group.color : colors[group.index % colors.length]
                 }
             };
         });
@@ -478,7 +478,7 @@ function TGIPlot(graphDiv) {
                 type: 'bar',
 				showlegend: false,
                 marker: {
-                    color: colors[group.index % colors.length]
+                    color: (group.color !== null) ? group.color : colors[group.index % colors.length]
                 }
             };
         });

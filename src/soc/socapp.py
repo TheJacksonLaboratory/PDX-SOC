@@ -85,7 +85,7 @@ def study_html(curated_study_number):
         (study_number, ),
     )
     group_labels = list(dictify_cursor(c))
-    print(group_labels)
+    
     return flask.render_template(
         'study.html',
         study=study,
