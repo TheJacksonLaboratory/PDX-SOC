@@ -76,14 +76,16 @@ def study_html(curated_study_number):
     animals = list(dictify_cursor(c))
 
     c.execute(
-        '''SELECT group_name, curated_group_name, is_control FROM groups
-                WHERE
-                study_number=?
+        '''SELECT g.group_name, g.curated_group_name, g.is_control, c.color
+                FROM groups AS g LEFT JOIN colors AS c
+                    ON g.drug = c.drug
+                    WHERE
+                    study_number=?
         ''',
         (study_number, ),
     )
     group_labels = list(dictify_cursor(c))
-
+    print(group_labels)
     return flask.render_template(
         'study.html',
         study=study,
