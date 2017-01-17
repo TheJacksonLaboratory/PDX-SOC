@@ -1,13 +1,10 @@
 {% extends "layout.html" %}
 
-
 {% block title %}Study {{ study.curated_study_number }}{% endblock %}
-
 
 {% block head %}
     {{ super() }}
 {% endblock %}
-
 
 {% block content %}
 
@@ -65,6 +62,7 @@
                     doseActivities: [],
                     doseUnits: [],
                     doseAmounts: [],
+                    isControl: 0,
                     uniqTreatDays: [],
                     uniqMeasureDays: [],
                     animals: [],
@@ -80,9 +78,6 @@
         });
         groups.sort(function(g1, g2) {
             return g1.groupName.localeCompare(g2.groupName);
-        });
-        groups.forEach(function(group, i) {
-            group.index = i;
         });
 
         measurements.forEach(function(measurement) {
@@ -112,15 +107,36 @@
             group.nearEndMeasIdx = findNearestMeasureDayIdx(group.uniqMeasureDays, treatmentEndDay);
             group.nearStartMeasDay = group.uniqMeasureDays[group.nearStartMeasIdx];
             group.nearEndMeasDay = group.uniqMeasureDays[group.nearEndMeasIdx];
-            if(typeof(groupLabels[group.groupName]) === 'undefined') {
-                group.groupLabel =
-                        group.doseActivities.join(', ') +
-                        ' (' + group.doseAmounts.join(', ') + ' ' + group.doseUnits.join(', ') + ')';
-            } else {
-                group.groupLabel = groupLabels[group.groupName];
+            
+            for(var i = 0; i < groupLabels.length; i++) {
+                if((groupLabels[i].group_name === group.groupName)) {
+                    if(groupLabels[i].curated_group_name !== '') {
+                        group.groupLabel = groupLabels[i].curated_group_name;
+				    } else {
+                        group.groupLabel = 
+                            group.doseActivities.join(', ') + 
+                            ' (' + group.doseAmounts.join(', ') + ' ' + group.doseUnits.join(', ') + ')';
+                    }
+					
+					if(groupLabels[i].is_control === 1) group.isControl = 1;
+                }
             }
         });
-
+        
+		// place the control group at the first position
+		var controlIndex = 0;
+        for(var i = 0; i < groups.length; i++) { 
+            if(groups[i].isControl === 1) {
+                controlIndex = i;
+            }
+        }
+		groups.splice(0, 0, groups[controlIndex]);
+        groups.splice(controlIndex+1, 1);
+        
+        groups.forEach(function(group, i) {
+            group.index = i;
+        });
+        
         animals.forEach(function(animal) {
             var grpName = animal['group_name'];
             var grp = groupMap[grpName];

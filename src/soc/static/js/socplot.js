@@ -130,7 +130,7 @@ function meanStderrStddev(nums) {
 //];
 
 var colors = [
-    "#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f",
+    "#000000", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f",
     "#ff7f00", "#cab2d6", "#6a3d9a"
 ];
 
@@ -417,6 +417,11 @@ function TGIPlot(graphDiv) {
         var vehicleGroup = groups[0];
         
         var vehicleFinalMean = groupEndDayMean(vehicleGroup);
+        
+        groups.sort(function(a, b) {
+            return groupEndDayMean(b) - groupEndDayMean(a);
+        });
+		
         var tgiTraces = groups.map(function(group) {
             // var toPoint2Precision = +(100 * (groupEndDayMean(group) / vehicleFinalMean)).toFixed(2);
             var hide = 'skip';
