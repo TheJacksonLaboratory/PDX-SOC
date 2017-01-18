@@ -404,7 +404,7 @@ function SpiderPlot(graphDiv) {
 
 function TGIPlot(graphDiv) {
     this.graphDiv = graphDiv;
-
+    
     function groupEndDayMean(group) {
         var meanStddevResult = meanStddev(group.animals.map(function(animal) {
             return animal.end_day_measurement.measurement_value;
@@ -413,7 +413,6 @@ function TGIPlot(graphDiv) {
     }
 
     this.renderPlot = function(groups, study) {
-        // TODO what is the right way to get a handle on the vehicle group. It seems we can't rely on "vehicle" being in the name.
         var vehicleGroup = groups[0];
         
         var vehicleFinalMean = groupEndDayMean(vehicleGroup);
@@ -422,71 +421,72 @@ function TGIPlot(graphDiv) {
             return groupEndDayMean(b) - groupEndDayMean(a);
         }));
 		
-        var tgiTraces = groups.map(function(group) {
-            // var toPoint2Precision = +(100 * (groupEndDayMean(group) / vehicleFinalMean)).toFixed(2);
-            var hide = 'skip';
-			var roundedMean = Math.round(100 * (groupEndDayMean(group) / vehicleFinalMean));
-			
-			if(100 <= Math.round(100 * (groupEndDayMean(group) / vehicleFinalMean))) {
-				hide = 'y+x+text';
-			}
-			return {
+        var tgiTraces1 = groups.map(function(group) {
+            var roundedMean = Math.round(100 * (groupEndDayMean(group) / vehicleFinalMean));
+            var hoverInfo = 'skip';
+            // bars for groups (including control) that have higer increase than control will show text on hover
+            if(100 <= roundedMean) {
+                hoverInfo = 'x+text';
+            }
+            return {
                 name: group.groupLabel,
                 x: [group.groupLabel],
                 y: [roundedMean],
-				text: [group.groupLabel],
+                text: (group.isControl === 1) ? [" CONTROL GROUP "] : [group.groupLabel + " : " + (roundedMean - 100) + "% increase"],
                 type: 'bar',
-				hoverinfo: hide,
+                hoverinfo: hoverInfo,
                 marker: {
                     color: (group.color !== null) ? group.color : colors[group.index % colors.length]
                 }
             };
         });
-		
-		var tgiTraces2 = groups.map(function(group) {
-            // var toPoint2Precision = +(100 * (groupEndDayMean(group) / vehicleFinalMean)).toFixed(2);
-            var difference;
-            if(100 > Math.round(100 * (groupEndDayMean(group) / vehicleFinalMean))) {
-				difference = 100 - Math.round(100 * (groupEndDayMean(group) / vehicleFinalMean));
-			}
-            			
-			return {
-                name: group.groupLabel,
-				x: [group.groupLabel],
-                y: [difference],
-				text:[group.groupLabel],
-				textposition: 'bottom',
-				hoverinfo: 'y+x+text',
-                type: 'bar',
-				width: 0.025,
-				showlegend: false,
-                marker: {
-                    color: (group.color !== null) ? group.color : colors[group.index % colors.length]
-                }
-            };
-        });
-		
-		var tgiTraces3 = groups.map(function(group) {
-            var yValue = 0;
-			if(100 > Math.round(100 * (groupEndDayMean(group) / vehicleFinalMean))) {
-				yValue = 1;
-			}
-			return {
-				hoverinfo: 'skip',
-                x: [group.groupLabel],
-                y: [yValue],
-                type: 'bar',
-				showlegend: false,
-                marker: {
-                    color: (group.color !== null) ? group.color : colors[group.index % colors.length]
-                }
-            };
-        });
-		
-		var tgiFinal = tgiTraces.concat(tgiTraces2);
-		var tgiFinal1 = tgiFinal.concat(tgiTraces3);
         
-		var annotationContent = [];
+        var tgiTraces2 = groups.map(function(group) {
+            var roundedMean = Math.round(100 * (groupEndDayMean(group) / vehicleFinalMean));
+            var hoverInfo = 'skip';
+            var reductionFromControl = 0;
+            if(100 > roundedMean) {
+                reductionFromControl = 100 - roundedMean;
+                hoverInfo = 'x+text';
+            }
+            			
+            return {
+                name: group.groupLabel,
+                x: [group.groupLabel],
+                y: (100 > roundedMean) ? [reductionFromControl - 0.5] : [reductionFromControl],
+                text:[group.groupLabel + " : " + reductionFromControl + "% reduction"],
+                textposition: 'bottom',
+                hoverinfo: hoverInfo,
+                type: 'bar',
+                width: 0.02,
+                showlegend: false,
+                marker: {
+                    color: (group.color !== null) ? group.color : colors[group.index % colors.length]
+                }
+            };
+        });
+        
+        var tgiTraces3 = groups.map(function(group) {
+            var horizontalBar = 0;
+            if(100 > Math.round(100 * (groupEndDayMean(group) / vehicleFinalMean))) {
+                horizontalBar = 0.5;
+            }
+            return {
+                hoverinfo: 'skip',
+                x: [group.groupLabel],
+                y: [horizontalBar],
+                type: 'bar',
+                showlegend: false,
+                marker: {
+                    color: (group.color !== null) ? group.color : colors[group.index % colors.length]
+                }
+            };
+        });
+        
+        var tgiFinal = tgiTraces1.concat(tgiTraces2);
+        var tgiFinal1 = tgiFinal.concat(tgiTraces3);
+        
+        var annotationContent = [];
 		
 		var tgiLayout = {
             title: study.curated_study_name,
@@ -508,23 +508,26 @@ function TGIPlot(graphDiv) {
 			annotations: annotationContent
         };
 		
-		for( var i = 0 ; i < groups.length ; i++ ){
-			var y;
-			
-			if(100 > Math.round(100 * (groupEndDayMean(groups[i]) / vehicleFinalMean))) {
-				y = 100 - Math.round(100 * (groupEndDayMean(groups[i]) / vehicleFinalMean));
-				y = y + "% reduction";
-			} else {
-				y = "control group";
+        for(var i = 0 ; i < groups.length ; i++) {
+            var annotationText;
+            var roundedMean = Math.round(100 * (groupEndDayMean(groups[i]) / vehicleFinalMean));
+			if(100 > roundedMean) {
+                annotationText = 100 - roundedMean;
+                annotationText = annotationText + "% reduction";
+			} else if(100 === roundedMean) {
+                annotationText = "CONTROL GROUP";
+            } else {
+                annotationText = roundedMean - 100;
+                annotationText = annotationText + "% increase";
 			}
 			
-			var result = {
-				x: groups[i].groupLabel,
-				y: Math.round(100 * (groupEndDayMean(groups[i]) / vehicleFinalMean)),
-				text: y,
-				xanchor: 'center',
-				yanchor: 'bottom',
-				showarrow: false
+            var result = {
+                x: groups[i].groupLabel,
+                y: roundedMean,
+                text: annotationText,
+                xanchor: 'center',
+                yanchor: 'bottom',
+                showarrow: false
 			};
 			annotationContent.push(result);
 		}
