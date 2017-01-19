@@ -512,13 +512,15 @@ function TGIPlot(graphDiv) {
             var annotationText;
             var roundedMean = Math.round(100 * (groupEndDayMean(groups[i]) / vehicleFinalMean));
 			if(100 > roundedMean) {
-                annotationText = 100 - roundedMean;
-                annotationText = annotationText + "% reduction";
+                annotationText = (100 - roundedMean) + "% reduction" ;
 			} else if(100 === roundedMean) {
-                annotationText = "CONTROL GROUP";
+                if(groups[i].index === 0) {
+                    annotationText = "CONTROL GROUP";
+                } else {
+                    annotationText = "no change";
+                }
             } else {
-                annotationText = roundedMean - 100;
-                annotationText = annotationText + "% increase";
+                annotationText = (roundedMean - 100) + "% increase";
 			}
 			
             var result = {
