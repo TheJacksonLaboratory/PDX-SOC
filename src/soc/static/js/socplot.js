@@ -491,7 +491,7 @@ function TGIPlot(graphDiv) {
 		var tgiLayout = {
             title: study.curated_study_name,
             yaxis: {
-                title: 'Percentage (%)'
+                title: 'Tumor Volume Percentage (%)'
             },
 			barmode:'relative',
 			xaxis: {
