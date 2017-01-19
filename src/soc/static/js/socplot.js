@@ -371,23 +371,33 @@ function TreatmentGroupPlot(graphDiv) {
 
 function SpiderPlot(graphDiv) {
     this.graphDiv = graphDiv;
-
+    
     this.renderPlot = function(animals, groupMap, study) {
         var spiderTraces = animals.map(function(animal) {
             var group = groupMap[animal.group_name];
+            
             return {
                 name: animal.animal_name,
                 x: animal.measurements.map(function(meas) {return meas.measurement_day}),
                 y: animal.measurements.map(function(meas) {return meas.measurement_value}),
-                //type: 'scatter',
+				text: animal.measurements.map(function(meas) 
+                    {
+                        return " ID: <b>" + animal.animal_name 
+                            + "</b> ; DAY: <b>" + meas.measurement_day 
+                            + "</b> ; VOLUME: <b>" + Math.round(meas.measurement_value) + "</b> ";
+                    }
+                ),
+                type: 'scatter',
                 mode: 'lines',
                 showlegend: false,
+				hoverinfo: 'text',
                 marker: {
                     color: (group.color !== null) ? group.color : colors[group.index % colors.length]
                 }
             }
         });
-        var spiderLayout = {
+        
+		var spiderLayout = {
             title: study.curated_study_name,
             yaxis: {
                 title: 'Tumor Volume (mm^3)'
