@@ -102,10 +102,9 @@
         });
 
         $.each(groupMap, function(grpName, group) {
-            var treatmentStartDay = group.uniqTreatDays[0];
-            var treatmentEndDay = group.uniqTreatDays[group.uniqTreatDays.length - 1];
-            group.nearStartMeasIdx = findNearestMeasureDayIdx(group.uniqMeasureDays, treatmentStartDay);
-            group.nearEndMeasIdx = findNearestMeasureDayIdx(group.uniqMeasureDays, treatmentEndDay);
+            group.nearStartMeasIdx = findNearestMeasureDayIdx(group.uniqMeasureDays, 0);
+            group.nearEndMeasIdx = 
+                findNearestMeasureDayIdx(group.uniqMeasureDays, group.uniqMeasureDays[group.uniqMeasureDays.length - 1]);
             group.nearStartMeasDay = group.uniqMeasureDays[group.nearStartMeasIdx];
             group.nearEndMeasDay = group.uniqMeasureDays[group.nearEndMeasIdx];
             
