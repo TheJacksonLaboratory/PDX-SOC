@@ -413,7 +413,6 @@ function TGIPlot(graphDiv) {
     }
 
     this.renderPlot = function(groups, study) {
-		console.log(groups);
         var vehicleGroup = groups[0];
         
         var vehicleFinalMean = groupEndDayMean(vehicleGroup);

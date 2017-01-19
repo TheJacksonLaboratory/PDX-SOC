@@ -67,7 +67,7 @@
                     uniqTreatDays: [],
                     uniqMeasureDays: [],
                     animals: [],
-                    groupName: grpName.trim(),
+                    groupName: grpName,
                     groupLabel: null
                 };
                 groupMap[grpName] = group;
@@ -121,8 +121,6 @@
 					
 					if(groupLabels[i].is_control === 1) group.isControl = 1;
                     if(groupLabels[i].color !== null) group.color = groupLabels[i].color;
-					console.log(groupLabels[i].color);
-					console.log(group.color);
                 }
             }
         });
