@@ -123,16 +123,16 @@ function meanStderrStddev(nums) {
     return retVal;
 }
 
-//var colors = [
-//    "#8b8b8b", "#1414c8", "#96e9e9", "#008B50", "#00B8CE", "#91C74B", "#7da564",
-//    "#FAED3F", "#C4A2A3", "#d0811d", "#F69686", "#f5cac4", "#f5600f", "#B65578",
-//    "#A94F97", "#E4483C", "#d5d5d5", "#98383A", "#964A94", "#0098A3", "#009DE0"
-//];
-
 var colors = [
-    "#000000", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f",
-    "#ff7f00", "#cab2d6", "#6a3d9a"
+    "#000000", "#1F78B4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f",
+    "#FF7F00", "#cab2d6", "#6a3d9a"
 ];
+
+var modebar = {
+    displayModeBar: true, 
+    displaylogo: false, 
+    modeBarButtonsToRemove: ['sendDataToCloud']
+};
 
 // we want to capture the measurements nearest the start/stop of treatment
 function findNearestMeasureDayIdx(uniqMeasurementDays, treatmentDay) {
@@ -213,7 +213,7 @@ function WaterfallPlot(graphDiv) {
             },
             bargap: 0.0
         };
-        Plotly.newPlot(graphDiv, traces, layout);
+        Plotly.newPlot(graphDiv, traces, layout, modebar);
     }
 }
 
@@ -364,17 +364,21 @@ function TreatmentGroupPlot(graphDiv) {
             },
 			hovermode: 'closest'
         };
-        Plotly.newPlot(graphDiv, treatmentGrpTraces.concat(treatmentGrpTraces2), treatmentGrpLayout);
+        Plotly.newPlot(graphDiv, treatmentGrpTraces.concat(treatmentGrpTraces2), treatmentGrpLayout, modebar);
     };
 }
 
 
 function SpiderPlot(graphDiv) {
     this.graphDiv = graphDiv;
-    
+    var xAxisMax = 0;
+    var xAxisMin = 0;
     this.renderPlot = function(animals, groupMap, study) {
         var spiderTraces = animals.map(function(animal) {
             var group = groupMap[animal.group_name];
+            
+            if(group.nearEndMeasDay > xAxisMax) xAxisMax = group.nearEndMeasDay;
+            if(group.nearStartMeasDay < xAxisMin) xAxisMin = group.nearStartMeasDay;
             
             return {
                 name: animal.animal_name,
@@ -399,15 +403,28 @@ function SpiderPlot(graphDiv) {
         
 		var spiderLayout = {
             title: study.curated_study_name,
+            titlefont: {
+                family: 'helvetica',
+                size: 19
+            },	
             yaxis: {
-                title: 'Tumor Volume (mm^3)'
+                title: 'Tumor Volume (mm<sup>3</sup>)',
+                titlefont: {
+                    family: 'helvetica',
+                    size: 19
+                }
             },
             xaxis: {
-                title: 'Day'
+                title: 'Days Since Measurement Initiation',
+                titlefont: {
+                    family: 'helvetica',
+                    size: 19
+                } // , 
+                // range: [xAxisMin - 0.5, xAxisMax + 0.5]
             },
             hovermode: 'closest'
         };
-        Plotly.newPlot(graphDiv, spiderTraces, spiderLayout);
+        Plotly.newPlot(graphDiv, spiderTraces, spiderLayout, modebar);
     };
 }
 
@@ -544,6 +561,6 @@ function TGIPlot(graphDiv) {
 			annotationContent.push(result);
 		}
 		
-        Plotly.newPlot(graphDiv, tgiFinal1, tgiLayout);
+        Plotly.newPlot(graphDiv, tgiFinal1, tgiLayout, modebar);
     };
 }
