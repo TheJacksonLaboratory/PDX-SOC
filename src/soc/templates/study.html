@@ -17,7 +17,7 @@
         </select>
     </div>
 </form>
-<div id="waterfall-plot" style="width: 1000px; height: 600px"></div>
+<div id="waterfall-plot" style="width: 100%; height: 600px"></div>
 <hr>
 
 <form class="form-inline">
@@ -29,12 +29,12 @@
         </select>
     </div>
 </form>
-<div id="treatment-group-plot" style="width: 1000px; height: 600px"></div>
+<div id="treatment-group-plot" style="width: 100%; height: 600px"></div>
 <hr>
 <div id="spider-plot" style="width: 100%; height: 600px;"></div>
 <hr>
 
-<div id="tgi-plot" style="width: 1000px; height: 720px"></div>
+<div id="tgi-plot" style="width: 100%; height: 720px"></div>
 
 <script>
     $(function() {
@@ -166,8 +166,8 @@
             }
             animal.start_day_measurement = measStart;
             animal.end_day_measurement = measEnd;
-            animal.measurement_diff = measEnd.measurement_value - measStart.measurement_value;
-            animal.measurement_fold_change = animal.measurement_diff / measStart.measurement_value;
+            animal.measurement_diff = Math.round(measEnd.measurement_value - measStart.measurement_value);
+            animal.measurement_fold_change = parseFloat(Math.round((animal.measurement_diff / measStart.measurement_value + 0.00001) * 100) / 100).toFixed(2);
         });
 
         var waterfallPlotNode = document.getElementById('waterfall-plot');

@@ -185,8 +185,12 @@ function WaterfallPlot(graphDiv) {
                 name: grpLbl,
                 x: group.animals.map(function(animal) {return animal.index}),
                 y: group.animals.map(function(animal) {return animal[yAxisKey]}),
+                text: group.animals.map(function(animal) {
+                    return " <b>" + animal[yAxisKey] + "</b> ";
+                }),
                 type: 'bar',
                 showlegend: true,
+                hoverinfo: 'x+text',
                 marker: {
                     color: (group.color !== null) ? group.color : colors[group.index % colors.length]
                 }
@@ -195,9 +199,9 @@ function WaterfallPlot(graphDiv) {
 
         var yAxisTitle;
         if(yAxisType === 'rel-vol') {
-            yAxisTitle = 'Change in Tumor Volume (mm^3)';
+            yAxisTitle = 'Change in Tumor Volume (mm<sup>3</sup>)';
         } else if(yAxisType === 'rel-change') {
-            yAxisTitle = 'Fold Change in Tumor Volume (mm^3)';
+            yAxisTitle = 'Fold Change in Tumor Volume (mm<sup>3</sup>)';
         }
 
         var layout = {
@@ -211,7 +215,11 @@ function WaterfallPlot(graphDiv) {
                 tickvals: animals.map(function(animal) {return animal.index}),
                 ticktext: animals.map(function(animal) {return animal.animal_name})
             },
-            bargap: 0.0
+            legend: {
+                xanchor: 'right',
+                yanchor: 'top'
+            },
+            bargap: 0.1
         };
         Plotly.newPlot(graphDiv, traces, layout, modebar);
     }
