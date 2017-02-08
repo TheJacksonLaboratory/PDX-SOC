@@ -376,66 +376,6 @@ function TreatmentGroupPlot(graphDiv) {
 }
 
 
-function SpiderPlot(graphDiv) {
-    this.graphDiv = graphDiv;
-    var xAxisMax = 0;
-    var xAxisMin = 0;
-    this.renderPlot = function(animals, groupMap, study) {
-        var spiderTraces = animals.map(function(animal) {
-            var group = groupMap[animal.group_name];
-            
-            if(group.nearEndMeasDay > xAxisMax) xAxisMax = group.nearEndMeasDay;
-            if(group.nearStartMeasDay < xAxisMin) xAxisMin = group.nearStartMeasDay;
-            
-            return {
-                name: animal.animal_name,
-                x: animal.measurements.map(function(meas) {return meas.measurement_day}),
-                y: animal.measurements.map(function(meas) {return meas.measurement_value}),
-				text: animal.measurements.map(function(meas) 
-                    {
-                        return " ID: <b>" + animal.animal_name 
-                            + "</b> ; DAY: <b>" + meas.measurement_day 
-                            + "</b> ; VOLUME: <b>" + Math.round(meas.measurement_value) + "</b> ";
-                    }
-                ),
-                type: 'scatter',
-                mode: 'lines',
-                showlegend: false,
-				hoverinfo: 'text',
-                marker: {
-                    color: (group.color !== null) ? group.color : colors[group.index % colors.length]
-                }
-            }
-        });
-        
-		var spiderLayout = {
-            title: study.curated_study_name,
-            titlefont: {
-                family: 'helvetica',
-                size: 19
-            },	
-            yaxis: {
-                title: 'Tumor Volume (mm<sup>3</sup>)',
-                titlefont: {
-                    family: 'helvetica',
-                    size: 19
-                }
-            },
-            xaxis: {
-                title: 'Day of Study',
-                titlefont: {
-                    family: 'helvetica',
-                    size: 19
-                } // , 
-                // range: [xAxisMin - 0.5, xAxisMax + 0.5]
-            },
-            hovermode: 'closest'
-        };
-        Plotly.newPlot(graphDiv, spiderTraces, spiderLayout, modebar);
-    };
-}
-
-
 function TGIPlot(graphDiv) {
     this.graphDiv = graphDiv;
     

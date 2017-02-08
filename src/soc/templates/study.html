@@ -178,8 +178,12 @@
         waterfallPlot.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
 
         var spiderPlotNode = document.getElementById('spider-plot');
-        var spiderPlot = new SpiderPlot(spiderPlotNode);
-        spiderPlot.renderPlot(animals, groupMap, study);
+		// console.log(">> " + spiderPlotNode);
+        spiderPlotGraph.setGraphNode(spiderPlotNode);
+        spiderPlotGraph.renderPlot(animals, groupMap, study);
+		// document.write("HERE: " + x);
+        // var spiderPlot = new SpiderPlot(spiderPlotNode);
+        // spiderPlot.renderPlot(animals, groupMap, groups, study);
 
         var treatmentGroupPlotNode = document.getElementById('treatment-group-plot');
         var treatmentGroupPlot = new TreatmentGroupPlot(treatmentGroupPlotNode);
