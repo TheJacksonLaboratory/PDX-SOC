@@ -343,7 +343,7 @@ function TreatmentGroupPlot(graphDiv) {
 
         var yAxisTitle;
         if(yAxisType === 'abs-vol') {
-            yAxisTitle = 'Tumor Volume (mm^3)';
+            yAxisTitle = 'Tumor Volume (mm<sup>3</sup>)';
         } else if(yAxisType === 'rel-change') {
             yAxisTitle = 'Fold Change in Tumor Volume';
         }
