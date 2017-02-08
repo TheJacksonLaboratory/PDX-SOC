@@ -211,9 +211,8 @@ function WaterfallPlot(graphDiv) {
             },
             xaxis: {
                 title: 'Animals',
-                tickmode: 'array',
-                tickvals: animals.map(function(animal) {return animal.index}),
-                ticktext: animals.map(function(animal) {return animal.animal_name})
+				ticks: '',
+                showticklabels: false
             },
             legend: {
                 xanchor: 'right',
