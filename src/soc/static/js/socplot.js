@@ -359,7 +359,7 @@ function TreatmentGroupPlot(graphDiv) {
                 domain: [0.3, 1.0]
             },
             xaxis2: {
-                title: 'Day',
+                title: 'Day of Study',
                 anchor: 'y2',
                 range: [minDay, maxDay]
             },
@@ -423,7 +423,7 @@ function SpiderPlot(graphDiv) {
                 }
             },
             xaxis: {
-                title: 'Days Since Measurement Initiation',
+                title: 'Day of Study',
                 titlefont: {
                     family: 'helvetica',
                     size: 19
