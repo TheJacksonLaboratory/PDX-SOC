@@ -12,7 +12,7 @@
     <div class="form-group">
         <label for="waterfall-change-type-select">Y Axis: </label>
         <select id="waterfall-change-type-select" type="text" class="form-control">
-            <option value="rel-vol">Relative Volume</option>
+            <option value="rel-vol">Volume Percentage Change</option>
             <option value="rel-change">Fold Change in Volume (currentSize - day1Size) / day1Size</option>
         </select>
     </div>
@@ -166,7 +166,7 @@
             }
             animal.start_day_measurement = measStart;
             animal.end_day_measurement = measEnd;
-            animal.percent_change_volume = Math.round(measEnd.measurement_value / measStart.measurement_value)
+            animal.percent_change_volume = Math.round(((measEnd.measurement_value / measStart.measurement_value) * 100) - 100);
 			animal.measurement_diff = Math.round(measEnd.measurement_value - measStart.measurement_value);
             animal.measurement_fold_change = parseFloat(Math.round((animal.measurement_diff / measStart.measurement_value + 0.00001) * 100) / 100).toFixed(2);
         });

@@ -56,11 +56,12 @@ var waterfallPlotGraph = (function() {
                     title: yAxisTitle
                 },
                 xaxis: {
-                    title: 'Animals'
-                    //ticks: '',
-                    //showticklabels: false
+                    title: 'Animals',
+                    ticks: '',
+                    showticklabels: false
                 },
                 legend: {
+                    bgcolor: 'lighgrey',
                     xanchor: 'right',
                     yanchor: 'top'
                 },
