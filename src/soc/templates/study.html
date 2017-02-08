@@ -166,24 +166,22 @@
             }
             animal.start_day_measurement = measStart;
             animal.end_day_measurement = measEnd;
-            animal.measurement_diff = Math.round(measEnd.measurement_value - measStart.measurement_value);
+            animal.percent_change_volume = Math.round(measEnd.measurement_value / measStart.measurement_value)
+			animal.measurement_diff = Math.round(measEnd.measurement_value - measStart.measurement_value);
             animal.measurement_fold_change = parseFloat(Math.round((animal.measurement_diff / measStart.measurement_value + 0.00001) * 100) / 100).toFixed(2);
         });
 
         var waterfallPlotNode = document.getElementById('waterfall-plot');
-        var waterfallPlot = new WaterfallPlot(waterfallPlotNode);
+        waterfallPlotGraph.setGraphNode(waterfallPlotNode);
+		//var waterfallPlot = new WaterfallPlot(waterfallPlotNode);
         waterfallChgTypeSel.change(function() {
-            waterfallPlot.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
+            waterfallPlotGraph.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
         });
-        waterfallPlot.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
+        waterfallPlotGraph.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
 
         var spiderPlotNode = document.getElementById('spider-plot');
-		// console.log(">> " + spiderPlotNode);
         spiderPlotGraph.setGraphNode(spiderPlotNode);
         spiderPlotGraph.renderPlot(animals, groupMap, study);
-		// document.write("HERE: " + x);
-        // var spiderPlot = new SpiderPlot(spiderPlotNode);
-        // spiderPlot.renderPlot(animals, groupMap, groups, study);
 
         var treatmentGroupPlotNode = document.getElementById('treatment-group-plot');
         var treatmentGroupPlot = new TreatmentGroupPlot(treatmentGroupPlotNode);

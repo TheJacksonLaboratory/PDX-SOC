@@ -63,6 +63,7 @@ var spiderPlotGraph = (function() {
                     }
                 },
                 legend: {
+                    bgcolor: 'none',
                     x: 0.05,
                     y: 0.95
                 },
