@@ -34,7 +34,7 @@
 <div id="spider-plot" style="width: 100%; height: 600px;"></div>
 <hr>
 
-<div id="tgi-plot" style="width: 100%; height: 720px"></div>
+<div id="tgi-plot" style="width: 100%; height: 600px;"></div>
 
 <script>
     $(function() {
@@ -184,15 +184,19 @@
         spiderPlotGraph.renderPlot(animals, groupMap, study);
 
         var treatmentGroupPlotNode = document.getElementById('treatment-group-plot');
-        var treatmentGroupPlot = new TreatmentGroupPlot(treatmentGroupPlotNode);
-        treatGrpChgTypeSel.change(function() {
-            treatmentGroupPlot.renderPlot(treatGrpChgTypeSel.val(), measurements, treatments, groups, study);
+        // var treatmentGroupPlot = new TreatmentGroupPlot(treatmentGroupPlotNode);
+        treatmentGroupPlotGraph.setGraphNode(treatmentGroupPlotNode);
+		treatGrpChgTypeSel.change(function() {
+            treatmentGroupPlotGraph.renderPlot(treatGrpChgTypeSel.val(), measurements, treatments, groups, study);
+            // treatmentGroupPlot.renderPlot(treatGrpChgTypeSel.val(), measurements, treatments, groups, study);
         });
-        treatmentGroupPlot.renderPlot(treatGrpChgTypeSel.val(), measurements, treatments, groups, study);
+        treatmentGroupPlotGraph.renderPlot(treatGrpChgTypeSel.val(), measurements, treatments, groups, study);
 
         var tgiPlotNode = document.getElementById('tgi-plot');
-        var tgiPlot = new TGIPlot(tgiPlotNode);
-        tgiPlot.renderPlot(groups, study);
+        tgiPlotGraph.setGraphNode(tgiPlotNode);
+        tgiPlotGraph.renderPlot(groups, study);
+        // var tgiPlot = new TGIPlot(tgiPlotNode);
+        // tgiPlot.renderPlot(groups, study);
     });
 </script>
 {% endblock %}

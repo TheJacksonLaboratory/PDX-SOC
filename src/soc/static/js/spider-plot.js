@@ -1,12 +1,12 @@
 var spiderPlotGraph = (function() {
-	var graphdiv;
+	var myPlot;
 	var xAxisMax = 0;
     var xAxisMin = 0;
     var grouplist = [];
 	
 	return {
 		setGraphNode: function(graphDiv) {
-            graphdiv = graphDiv;
+            myPlot = graphDiv;
         },
         renderPlot: function(animals, groupMap, study) {
             var traces = animals.map(function(animal) {
@@ -43,6 +43,7 @@ var spiderPlotGraph = (function() {
             });
             
             var layout = {
+                autosize: false,
                 title: study.curated_study_name,
                 titlefont: {
                     family: 'helvetica',
@@ -62,6 +63,8 @@ var spiderPlotGraph = (function() {
                         size: 19
                     }
                 },
+                width: myPlot.offsetWidth,
+                height: myPlot.offsetHeight,
                 legend: {
                     bgcolor: 'none',
                     x: 0.05,
@@ -70,7 +73,7 @@ var spiderPlotGraph = (function() {
                 hovermode: 'closest'
             };
             
-			Plotly.newPlot(graphdiv, traces, layout, modebar);
+			Plotly.newPlot(myPlot, traces, layout, modebar);
         }
     };
 }());

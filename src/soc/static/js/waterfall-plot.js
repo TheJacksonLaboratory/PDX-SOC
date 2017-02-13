@@ -1,9 +1,9 @@
 var waterfallPlotGraph = (function() {
-    var graphdiv;
+    var myPlot;
     
     return {
         setGraphNode: function(graphDiv) {
-            graphdiv = graphDiv;
+            myPlot = graphDiv;
         },
         renderPlot: function(yAxisType, animals, groups, study) {
             // shallow array copy
@@ -51,6 +51,7 @@ var waterfallPlotGraph = (function() {
             }
             
 			var layout = {
+                autosize: false,
                 title: study.curated_study_name,
                 yaxis: {
                     title: yAxisTitle
@@ -60,6 +61,8 @@ var waterfallPlotGraph = (function() {
                     ticks: '',
                     showticklabels: false
                 },
+                width: myPlot.offsetWidth,
+                height: myPlot.offsetHeight,
                 legend: {
                     bgcolor: 'lighgrey',
                     xanchor: 'right',
@@ -67,7 +70,7 @@ var waterfallPlotGraph = (function() {
                 },
                 bargap: 0.1
             };
-            Plotly.newPlot(graphdiv, traces, layout, modebar);
+            Plotly.newPlot(myPlot, traces, layout, modebar);
         }
     };
 }());
