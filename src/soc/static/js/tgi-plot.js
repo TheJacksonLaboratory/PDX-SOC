@@ -1,12 +1,13 @@
 var tgiPlotGraph = (function() {
     var myPlot;
     
-	/**
-	*
-	*
-	*
-	*
-	*/
+    /**
+    *  calculates the group tumor volume mean at the end of the study.
+    *  
+    *  @param {object} storing group information
+    *  @return {number} the mean tumor volume across all the animals in that group
+    *  
+    */
     function groupEndDayMean(group) {
         var meanStddevResult = meanStddev(group.animals.map(function(animal) {
             return animal.end_day_measurement.measurement_value;
@@ -15,9 +16,10 @@ var tgiPlotGraph = (function() {
     }
 	
     /**
-    *  extracts the x coordinate from the 'moveto' instruction
-    *  @param: {String} - ex. "M24.27,420V21H97.07V420Z"
-    *  @return:
+    *  parses the information in SVG's <path> {d} attribute
+    *	
+    *  @param: {string} - ex. "M24.27,420V21H97.07V420Z"
+    *  @return: {array} - ex. [{"M":[24.27, 420]}, {"V":[21]}, {"H": [97.07]}, {"V":[420]}]
     */
     function parsePathCoordinates(s) {
         var res = [];
@@ -143,8 +145,7 @@ var tgiPlotGraph = (function() {
                             width: 1
                         }
                     },
-                    width: 0.6 //,
-					// opacity: 0.8
+                    width: 0.6
                 };
             });
 
@@ -163,7 +164,10 @@ var tgiPlotGraph = (function() {
                     x: [group.groupLabel],
                     y: [roundedMean],
                     text: [roundedMean].map(function(m) {
-                        var msg = "<b>x&#772;:</b> " + Math.round(meanStderrStddev(lastdaymeas).mean) + ", <b>&#963;<sub>x&#772;</sub>:</b> &#8723; " + Math.round(meanStderrStddev(lastdaymeas).stdErr);
+                        var msg = "<b>x&#772;:</b> " 
+                            + Math.round(meanStderrStddev(lastdaymeas).mean) 
+                            + ", <b>&#963;<sub>x&#772;</sub>:</b> &#8723; " 
+                            + Math.round(meanStderrStddev(lastdaymeas).stdErr);
 						return msg;
 					}),
                     error_y: {
@@ -214,25 +218,26 @@ var tgiPlotGraph = (function() {
 
 			var tgiLayout = {
                 autosize: false,
-                title: study.curated_study_name,
+                title: "TGI Plot: " + study.curated_study_name,
 				yaxis: {
                     // range: (maxMean > 100) ? [0, maxMean] : [0, 100],
                     // domain: [0, 1],
                     title: 'Tumor Volume Percentage (%)',
                     showline: true,
                     showgrid: true,
-                    ticks: "outside"
+                    ticks: "outside",
+                    ticksuffix: " "
 				},
                 xaxis: {
                     type: "category",
                     showticklabels: true,
                     tickangle: 20,
-					zeroline: true,
-					showline: true,
-					zerolinecolor: "black",
-    zerolinewidth: 10,
-	 linecolor: 'black',
-    linewidth: 2
+                    zeroline: true,
+                    showline: true,
+                    zerolinecolor: "black",
+                    zerolinewidth: 10,
+                    linecolor: 'black',
+                    linewidth: 2
 				},
                 width: myPlot.offsetWidth,
                 height: myPlot.offsetHeight,
@@ -240,7 +245,6 @@ var tgiPlotGraph = (function() {
                     b: 120
                 },
                 annotations: annotationContent
-				// barmode: "group"
 			};
                 
             for(var i = 0 ; i < groups.length ; i++) { 
