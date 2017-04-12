@@ -25,16 +25,16 @@ var spiderPlotGraph = (function() {
                     name: group.groupLabel,
                     x: animal.measurements.map(function(meas) {return meas.measurement_day}),
                     y: animal.measurements.map(function(meas) {return meas.measurement_value}),
-                    text: animal.measurements.map(function(meas) 
-                        {
-                            return " ID: <b>" + animal.animal_name 
-                                + "</b> ; DAY: <b>" + meas.measurement_day 
-                                + "</b> ; VOLUME: <b>" + Math.round(meas.measurement_value) + "</b> ";
+                    text: animal.measurements.map(function(meas) {
+                        return " ID: <b>" + animal.animal_name 
+                            + "</b> ; DAY: <b>" + meas.measurement_day 
+                            + "</b> ; VOLUME: <b>" + Math.round(meas.measurement_value) + "</b> ";
                         }
                     ),
                     type: 'scatter',
                     mode: 'lines',
                     showlegend: showLegend,
+					legendgroup: group.groupLabel,
                     hoverinfo: 'text',
                     marker: {
                         color: (group.color !== null) ? group.color : colors[group.index % colors.length]
@@ -44,7 +44,7 @@ var spiderPlotGraph = (function() {
             
             var layout = {
                 autosize: false,
-                title: study.curated_study_name,
+                title: "Spider: " + study.curated_study_name,
                 titlefont: {
                     family: 'helvetica',
                     size: 19
@@ -54,7 +54,9 @@ var spiderPlotGraph = (function() {
                     titlefont: {
                         family: 'helvetica',
                         size: 19
-                    }
+                    },
+					ticks: "outside",
+                    ticksuffix: " "
                 },
                 xaxis: {
                     title: 'Day of Study',
