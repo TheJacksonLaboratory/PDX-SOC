@@ -1,6 +1,12 @@
 var tgiPlotGraph = (function() {
     var myPlot;
     
+	/**
+	*
+	*
+	*
+	*
+	*/
     function groupEndDayMean(group) {
         var meanStddevResult = meanStddev(group.animals.map(function(animal) {
             return animal.end_day_measurement.measurement_value;
@@ -8,6 +14,99 @@ var tgiPlotGraph = (function() {
         return meanStddevResult.mean;
     }
 	
+    /**
+    *  extracts the x coordinate from the 'moveto' instruction
+    *  @param: {String} - ex. "M24.27,420V21H97.07V420Z"
+    *  @return:
+    */
+    function parsePathCoordinates(s) {
+        var res = [];
+        var commands = s.split(/(?=[MmLlHhVvCcSsQqTtAaZz])/);
+        
+        for(var i  = 0; i < commands.length; i++) {
+            var o = {};    
+            var command = commands[i].substring(0,1);
+			
+            switch(command) {
+                case "M": case "m": case "L": case "l":
+                    var val = commands[i].substring(1).split(",");
+				    o[command] = [parseFloat(val[0]), parseFloat(val[1])];
+				    break;
+                case "H": case "h": case "V": case "v":
+                    o[command] = [parseFloat(commands[i].substring(1))];
+                    break;
+                default:
+                    console.log("TGI plot: unrecognized path command: " + command);
+                    break;
+			}
+			
+            res.push(o);
+		}
+        
+        return res;
+    }
+    
+    /**
+    *
+    *  @param: groups in sorted order (control is first)
+    *  @return: 
+    */
+	function setAnchorLines(groups) {
+        console.log(groups);
+		groups.map(function(group) {
+            if(group.hasOwnProperty("reduction")){
+                if(group.reduction > 10) { // TO-DO
+                    console.log(group);
+				}
+			}
+		});
+	}
+	
+    /**
+    *  draws a thicker horizontal line
+    *  usually at the 100% mark
+    */
+	
+    function setReferenceLine() {
+        var plotID = null;
+        var line_index = -1;
+		var line_label = "100";
+        var line = null;
+        
+        if(myPlot.id !== "undefined") { plotID = myPlot.id; }
+        
+        var plotvis = Plotly.d3.select("[id=" + plotID + "]");
+        
+        plotvis.selectAll("g.ytick")
+            .filter(function(d, i){
+                if(this.textContent === line_label) {
+                    line_index = i;
+                }
+            });
+        
+		// on top of this x-line the reference line will be drawn
+        line = plotvis.selectAll('.ygrid')
+            .filter('.crisp')
+            .filter(function(d,i) {return i === (line_index - 1) ;});
+        
+		// get the reference line starting point y-position
+        var ly = Plotly.d3.transform(line.attr("transform")).translate[1];
+        
+        var barLayer = plotvis.select(".barlayer").selectAll("path");
+        // get the reference line starting point x-position
+        var lx = parsePathCoordinates(barLayer[0][0].getAttribute("d"))[0].M[0];
+		
+        // get the reference line end point position 
+        var endPoint = parsePathCoordinates(line.attr("d"))[1].h[0]; 
+        
+        plotvis.select(".gridlayer")
+            .append("path")
+            .attr("d", "M" + lx + "," + ly + "h" + (endPoint - lx))
+            .attr("stroke", "black")
+            .attr("stroke-width", 2)
+            .attr("fill", "none");
+    }
+
     return {
         setGraphNode: function(graphDiv) {
             myPlot = graphDiv;
@@ -16,110 +115,149 @@ var tgiPlotGraph = (function() {
             var vehicleGroup = groups[0];
             
             var vehicleFinalMean = groupEndDayMean(vehicleGroup);
-            
+            // reorders the treatment groups based on their final tumor volume mean 
+            // the group having the smallest tumor volume mean is positioned last in the array 
             groups = groups.slice(0,1).concat(groups.slice(1).sort(function(a, b) {
                 return groupEndDayMean(b) - groupEndDayMean(a);
             }));
-            
-            var tgiTraces1 = groups.map(function(group) {
+
+            var bottomBars = groups.map(function(group) {
                 var roundedMean = Math.round(100 * (groupEndDayMean(group) / vehicleFinalMean));
                 var hoverInfo = 'skip';
-                // bars for groups (including control) that have higer increase than control will show text on hover
-                if(100 <= roundedMean) {
-                    hoverInfo = 'x+text';
-                }
-            
+                // bars for those groups (including control) that have higher TVM than control 
+                // need to show text here because they will have no more bars
+                if(100 <= roundedMean) { hoverInfo = "x+text"; }
+
                 return {
                     name: group.groupLabel,
                     x: [group.groupLabel],
                     y: [roundedMean],
-                    text: (group.isControl === 1) ? [" CONTROL GROUP "] : [group.groupLabel + " : " + (roundedMean - 100) + "% increase"],
-                    type: 'bar',
+					xaxis: "x",
+                    yaxis: "y",
+                    text: (group.isControl === 1) ? [" CONTROL "] : [group.groupLabel + " : " + (roundedMean - 100) + "% increase"],
+                    type: "bar",
                     hoverinfo: hoverInfo,
                     marker: {
-                        color: (group.color !== null) ? group.color : colors[group.index % colors.length]
-                    }
+                        color: (group.color !== null) ? group.color : colors[group.index % colors.length],
+                        line: {
+                            width: 1
+                        }
+                    },
+                    width: 0.6 //,
+					// opacity: 0.8
                 };
             });
-            
-            var tgiTraces2 = groups.map(function(group) {
+
+            var errorBars = groups.map(function(group){
                 var roundedMean = Math.round(100 * (groupEndDayMean(group) / vehicleFinalMean));
-                var hoverInfo = 'skip';
-                var reductionFromControl = 0;
-                if(100 > roundedMean) {
-                    reductionFromControl = 100 - roundedMean;
-                    hoverInfo = 'x+text';
-                }
                 
+				// calculate the standard error (end day measurement for all animals in the group)
+                // collect the 
+				var lastdaymeas = [];
+				
+				group.animals.forEach(function(animal) {
+                    lastdaymeas.push(animal.end_day_measurement.measurement_value);
+                });
+				
                 return {
-                    name: group.groupLabel,
                     x: [group.groupLabel],
-                    y: (100 > roundedMean) ? [reductionFromControl - 0.5] : [reductionFromControl],
-                    text:[group.groupLabel + " : " + reductionFromControl + "% reduction"],
-                    textposition: 'bottom',
-                    hoverinfo: hoverInfo,
-                    type: 'bar',
-                    width: 0.02,
+                    y: [roundedMean],
+                    text: [roundedMean].map(function(m) {
+                        var msg = "<b>x&#772;:</b> " + Math.round(meanStderrStddev(lastdaymeas).mean) + ", <b>&#963;<sub>x&#772;</sub>:</b> &#8723; " + Math.round(meanStderrStddev(lastdaymeas).stdErr);
+						return msg;
+					}),
+                    error_y: {
+                        type: "data",
+                        array: [Math.round(100 * (meanStderrStddev(lastdaymeas).stdErr/ vehicleFinalMean))],
+                        visible: group.isControl ? false : true,
+                        color: "black"
+                    },
+                    mode: group.isControl ? "none" : "markers",
+                    hoverinfo: "text",
+                    type: "bar",
                     showlegend: false,
                     marker: {
-                        color: (group.color !== null) ? group.color : colors[group.index % colors.length]
-                    }
-                };
+                        color: (group.color !== null) ? group.color : colors[group.index % colors.length],
+						line: {
+							width: 0
+						}
+                    },
+                    offset: 0.194,
+					width: 0.1
+                }			
             });
-            
-            var tgiTraces3 = groups.map(function(group) {
-                var horizontalBar = 0;
-                if(100 > Math.round(100 * (groupEndDayMean(group) / vehicleFinalMean))) {
-                    horizontalBar = 0.5;
+
+            var maxMean = Math.round(100 * (groupEndDayMean(groups[1]) / vehicleFinalMean));
+
+			var refLine = {
+                x: [groups[0].groupLabel, groups[groups.length-1].groupLabel],
+                y: [99.7, 99.7],
+                xaxis: "x",
+                yaxis: "y",
+                type: 'scatter'	,
+                mode: 'lines',
+                hoverinfo: 'none',
+                showlegend: false,
+                line: {
+                    color: "black",
+                    width: 2
                 }
-                return {
-                    hoverinfo: 'skip',
-                    x: [group.groupLabel],
-                    y: [horizontalBar],
-                    type: 'bar',
-                    showlegend: false,
-                    marker: {
-                        color: (group.color !== null) ? group.color : colors[group.index % colors.length]
-                    }
-                };
-            });
+            }; 
+			
+            var tgiData = new Array();
             
-            var tgiFinal = tgiTraces1.concat(tgiTraces2);
-            var tgiFinal1 = tgiFinal.concat(tgiTraces3);
-            var annotationContent = [];
+            tgiData.push.apply(tgiData, bottomBars);
+			tgiData.push.apply(tgiData, errorBars);
+            tgiData.push(refLine);
             
-            var tgiLayout = {
+			var annotationContent = [];
+
+			var tgiLayout = {
                 autosize: false,
                 title: study.curated_study_name,
-                yaxis: {
-                    title: 'Tumor Volume Percentage (%)'
-                },
-                barmode:'relative',
+				yaxis: {
+                    // range: (maxMean > 100) ? [0, maxMean] : [0, 100],
+                    // domain: [0, 1],
+                    title: 'Tumor Volume Percentage (%)',
+                    showline: true,
+                    showgrid: true,
+                    ticks: "outside"
+				},
                 xaxis: {
+                    type: "category",
                     showticklabels: true,
-                    tickangle: 15,
-                    tickfont: {
-                        family: 'Arial, sans-serif',
-                        size: 14
-                    }
-                },
+                    tickangle: 20,
+					zeroline: true,
+					showline: true,
+					zerolinecolor: "black",
+    zerolinewidth: 10,
+	 linecolor: 'black',
+    linewidth: 2
+				},
                 width: myPlot.offsetWidth,
                 height: myPlot.offsetHeight,
                 margin: {
                     b: 120
                 },
                 annotations: annotationContent
-            };
-            
+				// barmode: "group"
+			};
+                
             for(var i = 0 ; i < groups.length ; i++) { 
                 var annotationText;
+                var showArrow = false;
                 var roundedMean = Math.round(100 * (groupEndDayMean(groups[i]) / vehicleFinalMean));
-                if(100 > roundedMean) {
+                var arrowPoint = roundedMean + 8;
+				if(100 > roundedMean) {
                     // annotationText = (100 - roundedMean) + "% reduction";
                     annotationText = (100 - roundedMean) + "%";
+					if(100 > arrowPoint) {
+						showArrow = true;
+					}
+                    
                 } else if(100 === roundedMean) {
                     if(groups[i].index === 0) {
-                        annotationText = "CONTROL GROUP";
+                        annotationText = "CONTROL";
                     } else {
                         annotationText = "no change";
                     }
@@ -132,14 +270,30 @@ var tgiPlotGraph = (function() {
                     x: groups[i].groupLabel,
                     y: roundedMean,
                     text: annotationText,
-                    xanchor: 'center',
-                    yanchor: 'bottom',
-                    showarrow: false
+                    xanchor: "center",
+                    yanchor: "bottom",
+                    showarrow: false,
                 };
-                annotationContent.push(result);
+				
+                var arrow = {
+                    x: groups[i].groupLabel,
+					y: arrowPoint,
+					text: "",
+					xanchor: "center",
+                    yanchor: "bottom",
+                    showarrow: showArrow,
+					ay: 100,
+					ax: 0,
+					ayref: "y"
+				}
+                
+                annotationContent.push(result); annotationContent.push(arrow);
             }
+			
+            Plotly.newPlot(myPlot, tgiData, tgiLayout, modebar);
             
-            Plotly.newPlot(myPlot, tgiFinal1, tgiLayout, modebar);
+            // setReferenceLine();
+            // setAnchorLines(groups);
         }
     };
 }());

@@ -1,0 +1,9 @@
+/* make the TGI plot legend non-clickable */
+[id=tgi-plot] .legend .traces .legendtoggle {
+    display: none;
+}
+
+[id=tgi-plot] .legend .traces .legendtext {
+    cursor: default;
+}
+/* END makes the TGI plot legend non-clickable */
