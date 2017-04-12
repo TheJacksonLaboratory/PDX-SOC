@@ -76,7 +76,7 @@ def study_html(curated_study_number):
     animals = list(dictify_cursor(c))
 
     c.execute(
-        '''SELECT g.group_name, g.curated_group_name, g.is_control, c.color
+        '''SELECT g.group_name, g.curated_group_name, g.is_control, c.color, g.recist
                 FROM groups AS g LEFT JOIN colors AS c
                     ON g.drug = c.drug
                     WHERE
