@@ -1,3 +1,15 @@
+@import "accordion.css";
+
+/* make the waterfall plot legend non-clickable */
+[id=waterfall-plot] .legend .traces .legendtoggle {
+    display: none;
+}
+
+[id=waterfall-plot] .legend .traces .legendtext {
+    cursor: default;
+}
+/* END makes the waterfall plot legend non-clickable */
+
 /* make the TGI plot legend non-clickable */
 [id=tgi-plot] .legend .traces .legendtoggle {
     display: none;
@@ -7,3 +19,37 @@
     cursor: default;
 }
 /* END makes the TGI plot legend non-clickable */
+
+div.section-header-1 {
+    font-size: 0.8em;
+    background-color: #05396B; /* JAX blue */
+    color: #FFFFFF;
+    width: 100%;
+    padding: 5px;
+}
+
+div.plot-container {
+    width: 100%; 
+    /* height: 600px; */ 
+}
+
+.recist {
+    width: 100%;
+	border: 1px solid black;
+	font-size: 0.7em;
+}
+
+.recist th, td {
+    padding: 2px 5px;
+	border: 1px solid black;
+}
+
+.recist th {
+    background-color: #F8F8F8;
+}
+
+.plot-buttons {
+	/* background-image: url("../img/thumbnail_tgi_plot.png"); */
+	height: 180px;
+	width: 171px;
+}

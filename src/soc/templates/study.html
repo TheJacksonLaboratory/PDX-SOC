@@ -8,6 +8,62 @@
 
 {% block content %}
 
+
+<div class="section-header-1 text-right" id="recist-categories">&nbsp;</div>
+
+<br />
+<div class="row">
+    <div class="col-md-2" style="background: #F8F8F8;"><br />
+        <a href="#" class="thumbnail">
+            <img class="plot-buttons" src="{{ url_for('static', filename='img/thumbnail_waterfall_plot.png') }}" alt="SOC Waterfall Plot">
+        </a>
+		<div class="caption  text-center" style="background: #F8F8F8;">
+		<b>Waterfall Plot</b>
+        </div><br />
+    </div>
+	
+    <div class="col-md-2" style="background: #F8F8F8;"><br />
+        <a href="#" class="thumbnail">
+            <img class="plot-buttons" src="{{ url_for('static', filename='img/thumbnail_treatment_group_plot.png') }}" alt="SOC Treatment Groups Plot" >
+        </a>
+		<div class="caption  text-center" style="background: #F8F8F8;">
+		<b>Treatment Groups Plot</b>
+		</div><br />
+    </div>
+	
+	<div class="col-md-2" style="background: #F8F8F8;"><br />
+        <a href="#" class="thumbnail">
+            <img class="plot-buttons" src="{{ url_for('static', filename='img/thumbnail_spider_plot.png') }}" alt="SOC Spider Plot" >
+        </a>
+		<div class="caption  text-center" style="background: #F8F8F8;">
+            <b>Spider Plot</b>
+		</div><br />
+    </div>
+	
+	<div class="col-md-2" style="background: #F8F8F8;"><br />
+        <a href="#" class="thumbnail">
+            <img class="plot-buttons" src="{{ url_for('static', filename='img/thumbnail_tgi_plot.png') }}" alt="SOC Tumor Growth Index Plot">
+        </a>
+		<div class="caption text-center">
+           <b>TGI Plot</b>
+			</div><br />
+    </div>
+    
+	<div class="col-md-4">
+	     <b>Study RECIST Classification</b>
+		 <br /><br /> 
+        <div id="recist-info-panel" class="plot-container text-left"></div>
+     </div>
+</div>
+<br />
+
+
+<div class="section-header-1" id="recist-categories">
+    <b>WATERFALL PLOT</b>
+</div>
+
+<br />
+
 <form class="form-inline">
     <div class="form-group">
         <label for="waterfall-change-type-select">Y Axis: </label>
@@ -63,6 +119,7 @@
                     doseUnits: [],
                     doseAmounts: [],
                     isControl: 0,
+					recistCat: null,
                     uniqTreatDays: [],
                     uniqMeasureDays: [],
                     animals: [],
@@ -106,6 +163,7 @@
                 findNearestMeasureDayIdx(group.uniqMeasureDays, group.uniqMeasureDays[group.uniqMeasureDays.length - 1]);
             group.nearStartMeasDay = group.uniqMeasureDays[group.nearStartMeasIdx];
             group.nearEndMeasDay = group.uniqMeasureDays[group.nearEndMeasIdx];
+			
             
             for(var i = 0; i < groupLabels.length; i++) {
                 if((groupLabels[i].group_name === group.groupName)) {
@@ -116,7 +174,7 @@
                             group.doseActivities.join(', ') + 
                             ' (' + group.doseAmounts.join(', ') + ' ' + group.doseUnits.join(', ') + ')';
                     }
-					
+					group.recistCat = groupLabels[i].recist;
 					if(groupLabels[i].is_control === 1) group.isControl = 1;
                     if(groupLabels[i].color !== null) group.color = groupLabels[i].color;
                 }
@@ -195,6 +253,10 @@
         var tgiPlotNode = document.getElementById('tgi-plot');
         tgiPlotGraph.setGraphNode(tgiPlotNode);
         tgiPlotGraph.renderPlot(groups, study);
+		
+		var recistPanelNode = document.getElementById("recist-info-panel");
+		recistPanel.setPanelNode(recistPanelNode);
+		recistPanel.renderTable(groups, study);
         // var tgiPlot = new TGIPlot(tgiPlotNode);
         // tgiPlot.renderPlot(groups, study);
     });
