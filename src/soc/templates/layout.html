@@ -1,66 +1,64 @@
 <!DOCTYPE html>
 <html lang="en-US">
-<head>
-    {% block head %}
-    <meta charset="utf-8">
+    <head>
+        {% block head %}
+        <meta charset="utf-8">
+        <title>{% block title %}{% endblock %}</title>
 
-    <title>{% block title %}{% endblock %}</title>
+        <!-- JQuery -->
+        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.11.1.min.js') }}"></script>
 
-    <!-- JQuery -->
-    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.11.1.min.js') }}"></script>
+        <!-- bootstrap stuff -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-3.3.5-dist/css/bootstrap.min.css') }}"> 
+        <script src="{{ url_for('static', filename='bootstrap-3.3.5-dist/js/bootstrap.min.js') }}"></script>
+        
+		<!-- plotting -->
+        <!--script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script-->
+        <script type="text/javascript" src="{{ url_for('static', filename='js/plotly-latest.min.js') }}"></script>
 
-    <!-- bootstrap stuff -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-3.3.5-dist/css/bootstrap.min.css') }}">
-    <script src="{{ url_for('static', filename='bootstrap-3.3.5-dist/js/bootstrap.min.js') }}"></script>
+        <!-- application specific -->
+        <script src="{{ url_for('static', filename='js/socplot.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/recist-panel.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/waterfall-plot.js') }}"></script>
+	    <script src="{{ url_for('static', filename='js/treatment-groups-plot.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/spider-plot.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/tgi-plot.js') }}"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/soc.css') }}">
+        {% endblock %}
+    </head>
+    <body>
+        <nav class="navbar navbar-default">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="{{ url_for('index_html') }}">SOC Plots</a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a href="#">
+                                <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+                                    Help &amp; About
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <!--/.nav-collapse -->
+            </div>
+        </nav>
 
-    <!-- plotting -->
-    <!--script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script-->
-    <script type="text/javascript" src="{{ url_for('static', filename='js/plotly-latest.min.js') }}"></script>
-
-    <!-- application specific -->
-    <script src="{{ url_for('static', filename='js/socplot.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/recist-panel.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/waterfall-plot.js') }}"></script>
-	<script src="{{ url_for('static', filename='js/treatment-groups-plot.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/spider-plot.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/tgi-plot.js') }}"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/soc.css') }}">
-    {% endblock %}
-</head>
-<body>
-
-<nav class="navbar navbar-default">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="{{ url_for('index_html') }}">SOC Plots</a>
+        <!--div id="content" class="container-fluid"-->
+        <div id="content" class="container">
+            {% block content %}{% endblock %}
         </div>
-        <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-                <li>
-                    <a href="#">
-                        <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
-                        Help &amp; About
-                    </a>
-                </li>
-            </ul>
+
+        <div id="footer">
+            <!-- TODO add footer content -->
         </div>
-        <!--/.nav-collapse -->
-    </div>
-</nav>
-
-<!--div id="content" class="container-fluid"-->
-<div id="content" class="container">
-    {% block content %}{% endblock %}
-</div>
-
-<div id="footer">
-    <!-- TODO add footer content -->
-</div>
-</body>
+    </body>
 </html>
