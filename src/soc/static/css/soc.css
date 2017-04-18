@@ -1,4 +1,8 @@
-@import "accordion.css";
+/* background colors */
+/* naming convention source - http://www.color-blindness.com/color-name-hue/ */
+.white-smoke-bg {
+    background-color: #F8F8F8;	
+}
 
 /* make the waterfall plot legend non-clickable */
 [id=waterfall-plot] .legend .traces .legendtoggle {

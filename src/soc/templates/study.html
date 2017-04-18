@@ -8,56 +8,64 @@
 
 {% block content %}
 
-
 <div class="section-header-1 text-right" id="recist-categories">&nbsp;</div>
 
 <br />
 
 <div class="row">
-    <div class="col-md-2" style="background: #F8F8F8;"><br />
+    <!-- waterfall plot thumbnail -->
+	<div class="col-md-2 white-smoke-bg">
+        <br />
         <a href="#waterfall-plot" class="thumbnail">
             <img class="plot-buttons" src="{{ url_for('static', filename='img/thumbnail_waterfall_plot.png') }}" alt="SOC Waterfall Plot">
         </a>
-		<div class="caption  text-center" style="background: #F8F8F8;">
-		<b>Waterfall Plot</b>
-        </div><br />
+		<div class="caption  text-center">
+            <b>Waterfall Plot</b>
+        </div>
+        <br />
     </div>
-	
-    <div class="col-md-2" style="background: #F8F8F8;"><br />
+    <!-- treatment groups plot thumbnail -->
+    <div class="col-md-2 white-smoke-bg">
+        <br />
         <a href="#treatment-group-plot" class="thumbnail">
             <img class="plot-buttons" src="{{ url_for('static', filename='img/thumbnail_treatment_group_plot.png') }}" alt="SOC Treatment Groups Plot" >
         </a>
-		<div class="caption  text-center" style="background: #F8F8F8;">
-		<b>Treatment Groups Plot</b>
-		</div><br />
+		<div class="caption  text-center">
+            <b>Treatment Groups Plot</b>
+		</div>
+        <br />
     </div>
-	
-	<div class="col-md-2" style="background: #F8F8F8;"><br />
+    <!-- spider plot thumbnail -->
+    <div class="col-md-2 white-smoke-bg">
+        <br />
         <a href="#spider-plot" class="thumbnail">
             <img class="plot-buttons" src="{{ url_for('static', filename='img/thumbnail_spider_plot.png') }}" alt="SOC Spider Plot" >
         </a>
-		<div class="caption  text-center" style="background: #F8F8F8;">
+		<div class="caption  text-center">
             <b>Spider Plot</b>
-		</div><br />
+		</div>
+        <br />
     </div>
-	
-	<div class="col-md-2" style="background: #F8F8F8;"><br />
+    <!-- TGI plot thumbnail -->
+    <div class="col-md-2 white-smoke-bg">
+        <br />
         <a href="#tgi-plot" class="thumbnail">
             <img class="plot-buttons" src="{{ url_for('static', filename='img/thumbnail_tgi_plot.png') }}" alt="SOC Tumor Growth Index Plot">
         </a>
-		<div class="caption text-center">
-           <b>TGI Plot</b>
-			</div><br />
+        <div class="caption text-center">
+            <b>TGI Plot</b>
+        </div>
+        <br />
     </div>
-    
-	<div class="col-md-4">
-	     <b>Study RECIST Classification</b>
-		 <br /><br /> 
+    <!-- RECIST table -->
+    <div class="col-md-4">
+        <b>Study RECIST Classification</b>
+        <br /><br /> 
         <div id="recist-info-panel" class="plot-container text-left"></div>
-     </div>
+    </div>
 </div>
-<br />
 
+<br />
 
 <div class="section-header-1" id="recist-categories">
     <b>WATERFALL PLOT</b>
@@ -105,7 +113,7 @@
         var waterfallChgTypeSel = $('#waterfall-change-type-select');
 
         var study = {{ study|tojson }};
-        var treatments = {{ treatments|tojson }};
+        var treatments = {{ treatments|tojson }}; 
         var measurements = {{ measurements|tojson }};
         var animals = {{ animals|tojson }};
         var groupLabels = {{ group_labels|tojson }};
