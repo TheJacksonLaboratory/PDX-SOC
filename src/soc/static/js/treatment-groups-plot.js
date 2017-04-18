@@ -37,7 +37,7 @@ var treatmentGroupPlotGraph = (function() {
                         errorVals.push(Math.round(meanStdVal.stdErr));
                     } else if(yAxisType === 'rel-change') {
                         means.push(roundTo(meanStdVal.mean, 2));
-                        errorVals.push(roundTo(meanStdVal.stdErr));
+                        errorVals.push(roundTo(meanStdVal.stdErr, 2));
                     }
                 });
 
