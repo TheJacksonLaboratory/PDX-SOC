@@ -32,8 +32,13 @@ var treatmentGroupPlotGraph = (function() {
                 var errorVals = [];
                 measGrpByDay.forEach(function(measDayGrp) {
                     var meanStdVal = meanStderrStddev(measDayGrp);
-                    means.push(Math.round(meanStdVal.mean));
-                    errorVals.push(Math.round(meanStdVal.stdErr));
+                    if(yAxisType === 'abs-vol') {
+                        means.push(Math.round(meanStdVal.mean));
+                        errorVals.push(Math.round(meanStdVal.stdErr));
+                    } else if(yAxisType === 'rel-change') {
+                        means.push(roundTo(meanStdVal.mean, 2));
+                        errorVals.push(roundTo(meanStdVal.stdErr));
+                    }
                 });
 
                 return {

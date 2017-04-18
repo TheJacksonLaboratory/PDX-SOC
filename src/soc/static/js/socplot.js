@@ -1,5 +1,7 @@
 "use strict";
 
+
+
 /**
  * This function takes two parameters (x, y) and will return a number less than,
  * greater than or equal to zero depending on whether x is less than,
@@ -154,4 +156,23 @@ function findNearestMeasureDayIdx(uniqMeasurementDays, treatmentDay) {
     }
 
     return idx;
+}
+
+/**
+*  rounding decimal points in JavaScript is not stable;
+*  function should resolve this and be used in the application
+*  TO-DO: move to utilitites module
+*  @param {numeric}
+*  @param {numeric}
+*  @return {numeric} 
+*/
+function roundTo(n, digits) {
+    if(digits === undefined) {
+        digits = 0;
+    }
+       
+    var multiplicator = Math.pow(10, digits);
+    n = parseFloat((n * multiplicator).toFixed(11));  
+    var test = (Math.round(n) / multiplicator); 
+    return +(test.toFixed(digits));
 }
