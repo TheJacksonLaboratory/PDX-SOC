@@ -109,8 +109,8 @@
 
 <script>
     $(function() {
-        var treatGrpChgTypeSel = $('#treatment-group-change-type-select');
-        var waterfallChgTypeSel = $('#waterfall-change-type-select');
+        var treatGrpChgTypeSel = $("[id=treatment-group-change-type-select]");
+        var waterfallChgTypeSel = $("[id=waterfall-change-type-select]");
 
         var study = {{ study|tojson }};
         var treatments = {{ treatments|tojson }}; 
@@ -121,7 +121,7 @@
         var groupMap = {};
         var groups = [];
         var animalMap = {};
-        animals.forEach(function(animal) {
+        animals.forEach(function(animal) { // console.log(animal);
             animal.measurements = [];
             animal.treatments = [];
 
@@ -184,7 +184,9 @@
                 if((groupLabels[i].group_name === group.groupName)) {
                     if(groupLabels[i].curated_group_name !== '') {
                         group.groupLabel = groupLabels[i].curated_group_name;
-				    } else {
+				    } else if(group.doseActivities.length <= 0)  { 
+                        group.groupLabel = "No Treatment";
+					} else {
                         group.groupLabel = 
                             group.doseActivities.join(', ') + 
                             ' (' + group.doseAmounts.join(', ') + ' ' + group.doseUnits.join(', ') + ')';
