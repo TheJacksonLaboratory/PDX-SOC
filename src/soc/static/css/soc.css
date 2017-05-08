@@ -30,7 +30,7 @@
 
 
 div.section-header-1 {
-    font-size: 0.8em;
+    font-size: 0.9em;
     background-color: #05396B; /* JAX blue */
     color: #FFFFFF;
     width: 100%;
@@ -45,7 +45,7 @@ div.plot-container {
 .recist {
     width: 100%;
 	border: 1px solid black;
-	font-size: 0.7em;
+	font-size: 1.0em;
 }
 
 .recist th, td {
