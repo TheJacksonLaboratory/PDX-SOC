@@ -6,16 +6,35 @@
 */
 
 var recistPanel = (function() {
-    var recistPanel;
+    var myTable;
     
+	return { 
+        setPanelNode: function(panelNode)  {
+            myTable = panelNode;
+        },
+        renderTable: function(groups, study) {
+            var data = [];
+            
+            groups.forEach(function(group) {
+                data.push({
+                    'Group Name': group.groupLabel, 
+                    'Color': (group.color !== null) ? group.color : colors[group.index % colors.length],
+					'RECIST Category': group.recistCat
+                });
+            });
+
+            tabulate(data, ['Group Name', "Color", 'RECIST Category']);
+		}
+    }
+	
     /**
     *
     * 
     *
     *  TO-DO: consider moving this function to utilities module
     */
-	function tabulate(data, columns) {
-        var vis = Plotly.d3.select(recistPanel);
+    function tabulate(data, columns) {
+        var vis = Plotly.d3.select(myTable);
 
         var table = vis.append("table"). classed("recist", true);
         var thead = table.append("thead");
@@ -45,25 +64,6 @@ var recistPanel = (function() {
 
         return table;
 	}
-	
-    return { 
-        setPanelNode: function(panelNode)  {
-            recistPanel = panelNode;
-        },
-        renderTable: function(groups, study) {
-            var data = [];
-            
-            groups.forEach(function(group) {
-                data.push({
-					["Group Name"]: group.groupLabel, 
-					["Color"]:  (group.color !== null) ? group.color : colors[group.index % colors.length],
-					["RECIST Category"]: group.recistCat
-				});
-			}); 
-            
-            tabulate(data, ['Group Name', "Color", 'RECIST Category']);
-		}
-	}
     
-	recistPanel = this.recistPanel;
+	// recistPanel = this.recistPanel;
 })();
