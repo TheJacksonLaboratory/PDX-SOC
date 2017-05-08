@@ -1,3 +1,7 @@
+@media (min-width: 768px) {
+	
+}
+
 /* background colors */
 /* naming convention source - http://www.color-blindness.com/color-name-hue/ */
 .white-smoke-bg {
@@ -12,7 +16,7 @@
 [id=waterfall-plot] .legend .traces .legendtext {
     cursor: default;
 }
-/* END makes the waterfall plot legend non-clickable */
+/* END make the waterfall plot legend non-clickable */
 
 /* make the TGI plot legend non-clickable */
 [id=tgi-plot] .legend .traces .legendtoggle {
@@ -22,7 +26,8 @@
 [id=tgi-plot] .legend .traces .legendtext {
     cursor: default;
 }
-/* END makes the TGI plot legend non-clickable */
+/* END make the TGI plot legend non-clickable */
+
 
 div.section-header-1 {
     font-size: 0.8em;
@@ -53,7 +58,36 @@ div.plot-container {
 }
 
 .plot-buttons {
-	/* background-image: url("../img/thumbnail_tgi_plot.png"); */
+	background-image: url("../img/thumbnail_plot1.png");
 	height: 180px;
-	width: 171px;
+	background-repeat: no-repeat;
+    background-position: center center;
+    -webkit-background-size: contain;
+    -moz-background-size: contain;
+    -o-background-size: contain;
+    background-size: contain;
+}
+
+.plot-buttons:hover {
+    background-color: #F8F8F8;
+}
+
+.plot-buttons div {
+	font-size: 1.3em;
+    opacity: 0.8;
+    background-color: #002D72;
+    color: #FFFFFF;
+	padding: 10px 0;
+    width: 99%;
+    margin: 0 auto;
+}
+
+.plot-buttons div a {
+    color: #FFFFFF;
+	text-decoration: none;
+}
+
+.plot-buttons div a:hover {
+    color: #FFFFFF;
+	text-decoration: none;
 }
