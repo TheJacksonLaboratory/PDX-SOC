@@ -218,7 +218,7 @@ var tgiPlotGraph = (function() {
 
 			var tgiLayout = {
                 autosize: false,
-                title: "TGI: " + study.curated_study_name,
+                title: study.curated_study_name,
 				yaxis: {
                     // range: (maxMean > 100) ? [0, maxMean] : [0, 100],
                     // domain: [0, 1],

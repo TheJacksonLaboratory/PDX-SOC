@@ -44,7 +44,7 @@ var spiderPlotGraph = (function() {
             
             var layout = {
                 autosize: false,
-                title: "Spider: " + study.curated_study_name,
+                title: study.curated_study_name,
                 titlefont: {
                     family: 'helvetica',
                     size: 19

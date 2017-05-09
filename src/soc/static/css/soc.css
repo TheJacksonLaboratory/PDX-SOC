@@ -8,6 +8,26 @@
     background-color: #F8F8F8;	
 }
 
+/* make the spider plot legend non-clickable */
+[id=spider-plot] .legend .traces .legendtoggle {
+    display: none;
+}
+
+[id=spider-plot] .legend .traces .legendtext {
+    cursor: default;
+}
+/* END make the spider plot legend non-clickable */
+
+/* make the waterfall plot legend non-clickable */
+[id=treatment-group-plot] .legend .traces .legendtoggle {
+    display: none;
+}
+
+[id=treatment-group-plot] .legend .traces .legendtext {
+    cursor: default;
+}
+/* END make the waterfall plot legend non-clickable */
+
 /* make the waterfall plot legend non-clickable */
 [id=waterfall-plot] .legend .traces .legendtoggle {
     display: none;
@@ -61,7 +81,7 @@ div.plot-container {
 	background-image: url("../img/thumbnail_plot1.png");
 	height: 180px;
 	background-repeat: no-repeat;
-    background-position: center center;
+    background-position: center bottom;
     -webkit-background-size: contain;
     -moz-background-size: contain;
     -o-background-size: contain;

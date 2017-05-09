@@ -134,7 +134,7 @@ var treatmentGroupPlotGraph = (function() {
             
             var treatmentGrpLayout = {
                 autosize: false,
-                title: "Average: " + study.curated_study_name,
+                title: study.curated_study_name,
                 xaxis: {
                     range: [minDay, maxDay],
                     showticklabels: false

@@ -96,6 +96,7 @@ def study_html(curated_study_number):
     )
 
 
+@app.route('/')
 @app.route('/index.html')
 def index_html():
     dbCon = get_db_connection()
@@ -106,8 +107,29 @@ def index_html():
     return flask.render_template('index.html', studies=dictify_cursor(results))
 
 
+### error handling
+@app.errorhandler(404)
+def page_not_found(e):
+    return flask.render_template("errorhandler.html"), 404
+
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return flask.render_template("errorhandler.html"), 500
+
+
+@app.errorhandler(403)
+def forbidden(e):
+    return flask.render_template("errorhandler.html"), 403
+
+
+@app.errorhandler(410)	
+def gone(e):
+    return flask.render_template("errorhandler.html"), 410
+
+
 if __name__ == '__main__':
-    app.debug = True
+    app.debug = False
     try:
         app.run(host='0.0.0.0')
     except:
