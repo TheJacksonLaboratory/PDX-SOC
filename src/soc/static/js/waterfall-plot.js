@@ -52,7 +52,7 @@ var waterfallPlotGraph = (function() {
             
 			var layout = {
                 autosize: false,
-                title: "Waterfall: " + study.curated_study_name,
+                title: study.curated_study_name,
                 yaxis: {
                     title: yAxisTitle
                 },
