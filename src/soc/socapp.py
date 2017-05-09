@@ -96,6 +96,7 @@ def study_html(curated_study_number):
     )
 
 
+@app.route('/')
 @app.route('/index.html')
 def index_html():
     dbCon = get_db_connection()
