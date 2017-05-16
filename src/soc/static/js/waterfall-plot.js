@@ -1,6 +1,11 @@
 var waterfallPlotGraph = (function() {
     var myPlot;
     
+    // hard modebar object copy
+    var modebarWF = JSON.parse(JSON.stringify(modebar));
+    // waterfall specific modebar options
+    modebarWF.modeBarButtonsToRemove.push("zoomIn2d", "zoomOut2d", "zoom2d");
+	
     return {
         setGraphNode: function(graphDiv) {
             myPlot = graphDiv;
@@ -70,7 +75,7 @@ var waterfallPlotGraph = (function() {
                 },
                 bargap: 0.1
             };
-            Plotly.newPlot(myPlot, traces, layout, modebar);
+            Plotly.newPlot(myPlot, traces, layout, modebarWF);
         }
     };
 }());
