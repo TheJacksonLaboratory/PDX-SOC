@@ -1,6 +1,11 @@
 var tgiPlotGraph = (function() {
     var myPlot;
-    
+
+    // hard modebar object copy
+    var modebarTGI = JSON.parse(JSON.stringify(modebar));
+    // TGI specific modebar options
+    modebarTGI.modeBarButtonsToRemove.push("zoomIn2d", "zoomOut2d", "zoom2d");
+
     /**
     *  calculates the group tumor volume mean at the end of the study.
     *  
@@ -16,7 +21,7 @@ var tgiPlotGraph = (function() {
     }
 	
     /**
-    *  parses the information in SVG's <path> {d} attribute
+    *  parses the information in an SVG <path> {d} attribute
     *	
     *  @param: {string} - ex. "M24.27,420V21H97.07V420Z"
     *  @return: {array} - ex. [{"M":[24.27, 420]}, {"V":[21]}, {"H": [97.07]}, {"V":[420]}]
@@ -126,8 +131,8 @@ var tgiPlotGraph = (function() {
             var bottomBars = groups.map(function(group) {
                 var roundedMean = Math.round(100 * (groupEndDayMean(group) / vehicleFinalMean));
                 var hoverInfo = 'skip';
-                // bars for those groups (including control) that have higher TVM than control 
-                // need to show text here because they will have no more bars
+                // bars for those groups (including control) that have higher Tumor Volume Mean than control 
+                // need to show text here because they will have no 'reduction' bars and annnotations
                 if(100 <= roundedMean) { hoverInfo = "x+text"; }
 
                 return {
@@ -153,7 +158,7 @@ var tgiPlotGraph = (function() {
                 var roundedMean = Math.round(100 * (groupEndDayMean(group) / vehicleFinalMean));
                 
 				// calculate the standard error (end day measurement for all animals in the group)
-                // collect the 
+                // collect the ...
 				var lastdaymeas = [];
 				
 				group.animals.forEach(function(animal) {
@@ -293,8 +298,10 @@ var tgiPlotGraph = (function() {
                 
                 annotationContent.push(result); annotationContent.push(arrow);
             }
+
 			
-            Plotly.newPlot(myPlot, tgiData, tgiLayout, modebar);
+			
+            Plotly.newPlot(myPlot, tgiData, tgiLayout, modebarTGI);
             
             // setReferenceLine();
             // setAnchorLines(groups);

@@ -26,7 +26,7 @@ var colors = [
 var modebar = {
     displayModeBar: true, 
     displaylogo: false, 
-    modeBarButtonsToRemove: ['sendDataToCloud']
+    modeBarButtonsToRemove: ["sendDataToCloud"]
 };
 
 
