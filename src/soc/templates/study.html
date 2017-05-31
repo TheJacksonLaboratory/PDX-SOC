@@ -9,7 +9,8 @@
 {% block content %}
 
 <div class="section-header-1 text-center" id="recist-categories">
-    <b>{% if study.curated_study_legend != "" %}STUDY SUMMARY &amp; {% endif %}RECIST</b></div>
+    <b>STUDY SUMMARY</b>
+</div>
 
 <br />
 
@@ -23,11 +24,10 @@
             <hr />
 			{% endif %} 
             <h4>Study RECIST Classification</h4>
-            <div id="recist-info-panel" class="plot-container text-left"></div>
+            <div id="recist-info-panel" class="text-left"></div>
         </div>
         <div class="col-xs-0 col-sm-0 col-md-2">&nbsp;</div>
     </div>
-	<br>
 	<div class="col-xs-0 col-sm-0 col-md-2">&nbsp;</div>
 	<!-- waterfall plot thumbnail -->
 	<div class="col-xs-6 col-sm-3 col-md-2 white-smoke-bg text-center">
@@ -35,40 +35,40 @@
 		<div class="thumbnail plot-buttons">
             <br><br>
             <div>
-                <a href="#waterfall-plot">Waterfall<br>Plot</a>
+                <a href="#waterfall-plot" class="div-fill">Waterfall<br>Plot</a>
             </div>
         </div>
     </div>
-    
+
 	<!-- treatment groups plot thumbnail -->
     <div class="col-xs-6 col-sm-3 col-md-2 white-smoke-bg text-center">
         <br>
         <div class="thumbnail plot-buttons">
             <br><br>
             <div>
-                <a href="#treatment-group-plot">Treatment<br>Groups</a>
+                <a href="#treatment-group-plot" class="div-fill">Treatment<br>Groups</a>
             </div>
         </div>
     </div>
-    
+
 	<!-- spider plot thumbnail -->
     <div class="col-xs-6 col-sm-3 col-md-2 white-smoke-bg text-center">
         <br>
         <div class="thumbnail plot-buttons">
             <br><br>
             <div>
-                <a href="#spider-plot">Spider<br>Plot</a>
+                <a href="#spider-plot" class="div-fill">Spider<br>Plot</a>
             </div>
         </div>
     </div>
-    
+
 	<!-- TGI plot thumbnail -->
     <div class="col-xs-6 col-sm-3 col-md-2 white-smoke-bg text-center">
         <br>
         <div class="thumbnail plot-buttons">
             <br><br>
             <div>
-                <a href="#tgi-plot">TGI<br>Plot</a>
+                <a href="#tgi-plot" class="div-fill">TGI<br>Plot</a>
             </div>
         </div>
     </div>
@@ -93,7 +93,7 @@
     </div>
 </form>
 
-<div id="waterfall-plot" style="width: 100%; height: 600px"></div>
+<div id="waterfall-plot" class="plot-container" style="height: 600px"></div>
 
 <div class="section-header-1 text-center" name="treatment-group-plot">
     <b>TREATMENT GROUPS</b>
@@ -111,189 +111,31 @@
     </div>
 </form>
 
-<div id="treatment-group-plot" style="width: 100%; height: 600px"></div>
+<div id="treatment-group-plot" class="plot-container" style="height: 600px"></div>
 
 <div class="section-header-1 text-center" name="spider-plot">
     <b>SPIDER</b>
 </div>
 <br>
-<div id="spider-plot" style="width: 100%; height: 600px;"></div>
+<div id="spider-plot" class="plot-container" style="height: 600px;"></div>
 <br>
 <div class="section-header-1 text-center" name="tgi-plot">
     <b>TGI (TUMOR GROWTH INHIBITION)</b>
 </div>
 <br>
-<div id="tgi-plot" style="width: 100%; height: 600px;"></div>
+<div id="tgi-plot" class="plot-container" style="height: 600px;"></div>
 
 <script>
     $(function() {
-        var treatGrpChgTypeSel = $("[id=treatment-group-change-type-select]");
-        var waterfallChgTypeSel = $("[id=waterfall-change-type-select]");
+        var params = {
+            study: {{ study|tojson }},
+            treatments: {{ treatments|tojson }},
+            measurements: {{ measurements|tojson }},
+            animals: {{ animals|tojson }},
+            groupLabels: {{ group_labels|tojson }}
+        };
 
-        var study = {{ study|tojson }};
-        var treatments = {{ treatments|tojson }}; 
-        var measurements = {{ measurements|tojson }};
-        var animals = {{ animals|tojson }};
-        var groupLabels = {{ group_labels|tojson }};
-
-        var groupMap = {};
-        var groups = [];
-        var animalMap = {};
-        animals.forEach(function(animal) { // console.log(animal);
-            animal.measurements = [];
-            animal.treatments = [];
-
-            var grpName = animal['group_name'];
-            var animalName = animal['animal_name'];
-            if(typeof(groupMap[grpName]) === 'undefined') {
-                var group = {
-                    color: null,
-                    doseActivities: [],
-                    doseUnits: [],
-                    doseAmounts: [],
-                    isControl: 0,
-					recistCat: null,
-                    uniqTreatDays: [],
-                    uniqMeasureDays: [],
-                    animals: [],
-                    groupName: grpName,
-                    groupLabel: null
-                };
-                groupMap[grpName] = group;
-                groups.push(group);
-            }
-
-            groupMap[grpName].animals.push(animal);
-            animalMap[animalName] = animal;
-        });
-        groups.sort(function(g1, g2) {
-            return g1.groupName.localeCompare(g2.groupName);
-        });
-
-        measurements.forEach(function(measurement) {
-            var grpName = measurement['group_name'];
-            var animalName = measurement['animal_name'];
-            var grp = groupMap[grpName];
-            var day = measurement['measurement_day'];
-            insertUnique(grp.uniqMeasureDays, day);
-            animalMap[animalName].measurements.push(measurement);
-        });
-        treatments.forEach(function(treatment) {
-            var grpName = treatment['group_name'];
-            var animalName = treatment['animal_name'];
-            var grp = groupMap[grpName];
-            var day = treatment['treatment_day'];
-            insertUnique(grp.uniqTreatDays, day);
-            insertUnique(grp.doseActivities, treatment['dose_activity'], compareBasic);
-            insertUnique(grp.doseUnits, treatment['administration_route_units'], compareBasic);
-            insertUnique(grp.doseAmounts, treatment['test_material_amount']);
-            animalMap[animalName].treatments.push(treatment);
-        });
-
-        $.each(groupMap, function(grpName, group) {
-            group.nearStartMeasIdx = findNearestMeasureDayIdx(group.uniqMeasureDays, 0);
-            group.nearEndMeasIdx = 
-                findNearestMeasureDayIdx(group.uniqMeasureDays, group.uniqMeasureDays[group.uniqMeasureDays.length - 1]);
-            group.nearStartMeasDay = group.uniqMeasureDays[group.nearStartMeasIdx];
-            group.nearEndMeasDay = group.uniqMeasureDays[group.nearEndMeasIdx];
-			
-            
-            for(var i = 0; i < groupLabels.length; i++) {
-                if((groupLabels[i].group_name === group.groupName)) {
-                    if(groupLabels[i].curated_group_name !== '') {
-                        group.groupLabel = groupLabels[i].curated_group_name;
-				    } else if(group.doseActivities.length <= 0)  { 
-                        group.groupLabel = "No Treatment";
-					} else {
-                        group.groupLabel = 
-                            group.doseActivities.join(', ') + 
-                            ' (' + group.doseAmounts.join(', ') + ' ' + group.doseUnits.join(', ') + ')';
-                    }
-					group.recistCat = groupLabels[i].recist;
-					if(groupLabels[i].is_control === 1) group.isControl = 1;
-                    if(groupLabels[i].color !== null) group.color = groupLabels[i].color;
-                }
-            }
-        });
-        
-		// place the control group at the first position
-		var controlIndex = 0;
-        for(var i = 0; i < groups.length; i++) { 
-            if(groups[i].isControl === 1) {
-                controlIndex = i;
-            }
-        }
-		groups.splice(0, 0, groups[controlIndex]);
-        groups.splice(controlIndex+1, 1);
-        
-        groups.forEach(function(group, i) {
-            group.index = i;
-        });
-        
-        animals.forEach(function(animal) {
-            var grpName = animal['group_name'];
-            var grp = groupMap[grpName];
-
-            var measStart = null;
-            var measEnd = null;
-            animal.measurements.forEach(function(measurement) {
-                if(measurement.measurement_day === grp.nearStartMeasDay) {
-                    measStart = measurement;
-                }
-                if(measurement.measurement_day === grp.nearEndMeasDay) {
-                    measEnd = measurement;
-                }
-            });
-
-            if(measEnd === null && animal.measurements.length) {
-                var lastMeas = animal.measurements[animal.measurements.length - 1];
-                if(lastMeas.measurement_day < grp.nearEndMeasDay) {
-                    // indicates that the animal died early
-                    // TODO add some visual indication for these animals
-                    measEnd = lastMeas;
-                }
-            }
-
-            if(measStart === null || measEnd === null) {
-                console.error('bad measurement for animal: ' + animal.animal_name);
-            }
-            animal.start_day_measurement = measStart;
-            animal.end_day_measurement = measEnd;
-            animal.percent_change_volume = Math.round(((measEnd.measurement_value / measStart.measurement_value) * 100) - 100);
-			animal.measurement_diff = Math.round(measEnd.measurement_value - measStart.measurement_value);
-            animal.measurement_fold_change = parseFloat(Math.round((animal.measurement_diff / measStart.measurement_value + 0.00001) * 100) / 100).toFixed(2);
-        });
-
-        var waterfallPlotNode = document.getElementById('waterfall-plot');
-        waterfallPlotGraph.setGraphNode(waterfallPlotNode);
-		//var waterfallPlot = new WaterfallPlot(waterfallPlotNode);
-        waterfallChgTypeSel.change(function() {
-            waterfallPlotGraph.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
-        });
-        waterfallPlotGraph.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
-
-        var spiderPlotNode = document.getElementById('spider-plot');
-        spiderPlotGraph.setGraphNode(spiderPlotNode);
-        spiderPlotGraph.renderPlot(animals, groupMap, study);
-
-        var treatmentGroupPlotNode = document.getElementById('treatment-group-plot');
-        // var treatmentGroupPlot = new TreatmentGroupPlot(treatmentGroupPlotNode);
-        treatmentGroupPlotGraph.setGraphNode(treatmentGroupPlotNode);
-		treatGrpChgTypeSel.change(function() {
-            treatmentGroupPlotGraph.renderPlot(treatGrpChgTypeSel.val(), measurements, treatments, groups, study);
-            // treatmentGroupPlot.renderPlot(treatGrpChgTypeSel.val(), measurements, treatments, groups, study);
-        });
-        treatmentGroupPlotGraph.renderPlot(treatGrpChgTypeSel.val(), measurements, treatments, groups, study);
-
-        var tgiPlotNode = document.getElementById('tgi-plot');
-        tgiPlotGraph.setGraphNode(tgiPlotNode);
-        tgiPlotGraph.renderPlot(groups, study);
-		
-		var recistPanelNode = document.getElementById("recist-info-panel");
-		recistPanel.setPanelNode(recistPanelNode);
-		recistPanel.renderTable(groups, study);
-        // var tgiPlot = new TGIPlot(tgiPlotNode);
-        // tgiPlot.renderPlot(groups, study);
+        socstudy.initStudyData(params);
     });
 </script>
 {% endblock %}

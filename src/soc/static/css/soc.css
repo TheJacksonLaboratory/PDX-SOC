@@ -1,12 +1,22 @@
-@media (min-width: 768px) {
-	
-}
+/* ======================= GENERIC CLASSES ======================= */
 
 /* background colors */
 /* naming convention source - http://www.color-blindness.com/color-name-hue/ */
 .white-smoke-bg {
     background-color: #F8F8F8;	
 }
+
+/* ======================= APPLICATION SPECIFIC ======================= */
+div.section-header-1 {
+    font-size: 0.9em;
+    background-color: #05396B; /* JAX blue */
+    color: #FFFFFF;
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+}
+
+/* ======================= ELEMENT SPECIFIC ======================= */
 
 /* make the spider plot legend non-clickable */
 [id=spider-plot] .legend .traces .legendtoggle {
@@ -49,19 +59,7 @@
 /* END make the TGI plot legend non-clickable */
 
 
-div.section-header-1 {
-    font-size: 0.9em;
-    background-color: #05396B; /* JAX blue */
-    color: #FFFFFF;
-    width: 100%;
-    padding: 5px;
-}
-
-div.plot-container {
-    width: 100%; 
-    /* height: 600px; */ 
-}
-
+/* ---------- RECIST Section ---------- */
 .recist {
     width: 100%;
 	border: 1px solid black;
@@ -77,6 +75,7 @@ div.plot-container {
     background-color: #F8F8F8;
 }
 
+/* ---------- Plot Anchor Links ---------- */
 .plot-buttons {
 	background-image: url("../img/thumbnail_plot1.png");
 	height: 180px;
@@ -102,12 +101,27 @@ div.plot-container {
     margin: 0 auto;
 }
 
-.plot-buttons div a {
+.plot-buttons div a.div-fill {
+    display: block;
+    width: 100%;
+    height: 100%;
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.plot-buttons div a.div-fill:hover {
     color: #FFFFFF;
 	text-decoration: none;
 }
 
-.plot-buttons div a:hover {
-    color: #FFFFFF;
-	text-decoration: none;
+
+div[class~=plot-container] {
+    width: 90%;
+    height: 600px; 
+    margin: 0 auto;
+    margin-bottom: 50px;
+}
+
+@media (min-width: 768px) {
+    
 }
