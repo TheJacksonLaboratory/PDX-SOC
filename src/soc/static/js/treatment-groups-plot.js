@@ -133,8 +133,9 @@ var treatmentGroupPlotGraph = (function() {
             }
             
             var treatmentGrpLayout = {
-                autosize: false,
+                // autosize: false,
                 title: study.curated_study_name,
+                titlefont: titlefont,
                 xaxis: {
                     range: [minDay, maxDay],
                     showticklabels: false

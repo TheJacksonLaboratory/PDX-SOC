@@ -56,14 +56,19 @@ var waterfallPlotGraph = (function() {
             }
             
 			var layout = {
-                autosize: false,
+                // autosize: false,
                 title: study.curated_study_name,
+                titlefont: titlefont,
                 yaxis: {
-                    title: yAxisTitle
+                    title: yAxisTitle,
+                    showline: true,
+                    ticks: "outside",
+                    ticksuffix: " ",
+                    showticklabels: true
                 },
                 xaxis: {
                     title: 'Animals',
-                    ticks: '',
+                    ticks: "",
                     showticklabels: false
                 },
                 width: myPlot.offsetWidth,
