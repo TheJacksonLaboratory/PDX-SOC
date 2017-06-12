@@ -7,81 +7,81 @@
 {% endblock %}
 
 {% block content %}
-
-<div class="section-header-1 text-center" id="recist-categories">
-    <b>STUDY SUMMARY</b>
-</div>
-
-<br />
-
-<div class="row">
-    <div class="clearfix">
-	    <div class="col-xs-0 col-sm-0 col-md-2">&nbsp;</div>
-	    <!-- RECIST table -->
-        <div class="col-xs-12 col-sm-12 col-md-8">
-            {% if study.curated_study_legend != "" %}
-            {{ study.curated_study_legend }}
-            <hr />
-			{% endif %} 
-            <h4>Study RECIST Classification</h4>
-            <div id="recist-info-panel" class="text-left"></div>
-        </div>
-        <div class="col-xs-0 col-sm-0 col-md-2">&nbsp;</div>
-    </div>
-	<div class="col-xs-0 col-sm-0 col-md-2">&nbsp;</div>
-	<!-- waterfall plot thumbnail -->
-	<div class="col-xs-6 col-sm-3 col-md-2 white-smoke-bg text-center">
-        <br>
-		<div class="thumbnail plot-buttons">
-            <br><br>
-            <div>
-                <a href="#waterfall-plot" class="div-fill">Waterfall<br>Plot</a>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="section-header-1 text-center" id="recist-categories">
+                        <b>STUDY SUMMARY</b>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
 
-	<!-- treatment groups plot thumbnail -->
-    <div class="col-xs-6 col-sm-3 col-md-2 white-smoke-bg text-center">
-        <br>
-        <div class="thumbnail plot-buttons">
-            <br><br>
-            <div>
-                <a href="#treatment-group-plot" class="div-fill">Treatment<br>Groups</a>
+            <div class="row">
+                <div class="col-xs-0 col-sm-0 col-md-2"></div>
+                <!-- RECIST table -->
+                <div class="col-xs-12 col-sm-12 col-md-8">
+                    {% if study.curated_study_legend != "" %}
+                    {{ study.curated_study_legend }}
+                    <hr />
+                    {% endif %} 
+                    <h4>Study RECIST Classification</h4>
+                    <div id="recist-info-panel" class="text-left"></div>
+                </div>
+                <div class="col-xs-0 col-sm-0 col-md-2">&nbsp;</div>
             </div>
-        </div>
-    </div>
+            <br>
+            <div class="row">
+                <div class="col-xs-0 col-sm-0 col-md-2">&nbsp;</div>
+                <!-- waterfall plot thumbnail -->
+                <div class="col-xs-6 col-sm-3 col-md-2 white-smoke-bg text-center">
+                    <br>
+                    <div class="thumbnail plot-buttons">
+                        <br><br>
+                        <div>
+                            <a href="#waterfall-plot" class="div-fill">Waterfall<br>Plot</a>
+                        </div>
+                    </div>
+                </div>
 
-	<!-- spider plot thumbnail -->
-    <div class="col-xs-6 col-sm-3 col-md-2 white-smoke-bg text-center">
-        <br>
-        <div class="thumbnail plot-buttons">
-            <br><br>
-            <div>
-                <a href="#spider-plot" class="div-fill">Spider<br>Plot</a>
+                <!-- treatment groups plot thumbnail -->
+                <div class="col-xs-6 col-sm-3 col-md-2 white-smoke-bg text-center">
+                    <br>
+                    <div class="thumbnail plot-buttons">
+                        <br><br>
+                        <div> 
+                            <a href="#treatment-group-plot" class="div-fill">Treatment<br>Groups</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- spider plot thumbnail -->
+                <div class="col-xs-6 col-sm-3 col-md-2 white-smoke-bg text-center">
+                    <br>
+                    <div class="thumbnail plot-buttons">
+                        <br><br>
+                        <div>
+                            <a href="#spider-plot" class="div-fill">Spider<br>Plot</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TGI plot thumbnail -->
+                <div class="col-xs-6 col-sm-3 col-md-2 white-smoke-bg text-center">
+                    <br>
+                    <div class="thumbnail plot-buttons">
+                        <br><br>
+                        <div>
+                            <a href="#tgi-plot" class="div-fill">TGI<br>Plot</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-0 col-sm-0 col-md-2"></div>
             </div>
-        </div>
-    </div>
+            <br>
 
-	<!-- TGI plot thumbnail -->
-    <div class="col-xs-6 col-sm-3 col-md-2 white-smoke-bg text-center">
-        <br>
-        <div class="thumbnail plot-buttons">
-            <br><br>
-            <div>
-                <a href="#tgi-plot" class="div-fill">TGI<br>Plot</a>
+            <div class="section-header-1 text-center" name="waterfall-plot">
+                <b>WATERFALL</b>
             </div>
-        </div>
-    </div>
-    <div class="col-xs-0 col-sm-0 col-md-2"></div>
-</div>
-
-<br />
-
-<div class="section-header-1 text-center" name="waterfall-plot">
-    <b>WATERFALL</b>
-</div>
-
-<br />
+            <br />
 
 <form class="form-inline">
     <div class="form-group">

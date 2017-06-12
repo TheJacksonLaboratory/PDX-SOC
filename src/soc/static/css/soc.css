@@ -7,6 +7,11 @@
 }
 
 /* ======================= APPLICATION SPECIFIC ======================= */
+body {
+    font-family: arial, helvetica;
+    font-size: 1.4em;
+}
+
 div.section-header-1 {
     font-size: 0.9em;
     background-color: #05396B; /* JAX blue */

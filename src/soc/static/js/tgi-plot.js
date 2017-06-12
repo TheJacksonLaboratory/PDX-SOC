@@ -222,8 +222,9 @@ var tgiPlotGraph = (function() {
 			var annotationContent = [];
 
 			var tgiLayout = {
-                autosize: false,
+                // autosize: false,
                 title: study.curated_study_name,
+                titlefont: titlefont,
 				yaxis: {
                     // range: (maxMean > 100) ? [0, maxMean] : [0, 100],
                     // domain: [0, 1],

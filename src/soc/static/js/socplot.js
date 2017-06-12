@@ -29,6 +29,12 @@ var modebar = {
     modeBarButtonsToRemove: ["sendDataToCloud"]
 };
 
+// uniform plot title styling
+var titlefont = {
+    font: "Arial",
+    size: 15
+};
+
 
 // COMMON METHODS
 

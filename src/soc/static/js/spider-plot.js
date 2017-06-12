@@ -43,12 +43,9 @@ var spiderPlotGraph = (function() {
             });
             
             var layout = {
-                autosize: false,
+                // autosize: false,
                 title: study.curated_study_name,
-                titlefont: {
-                    family: 'helvetica',
-                    size: 19
-                },
+                titlefont: titlefont,
                 yaxis: {
                     title: 'Tumor Volume (mm<sup>3</sup>)',
                     titlefont: {
