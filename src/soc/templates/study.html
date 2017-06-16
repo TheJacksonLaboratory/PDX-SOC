@@ -9,38 +9,25 @@
 {% block content %}
             <div class="row">
                 <div class="col-xs-12">
-                    <div class="section-header-1 text-center" id="recist-categories">
-                        <b>STUDY SUMMARY</b>
+                    <div class="section-header-1 text-left" id="recist-categories">
+                        &nbsp;&nbsp;<b>STUDY SUMMARY</b>
                     </div>
                 </div>
-            </div>
-
-            <div class="row">
-                <div class="col-xs-0 col-sm-0 col-md-2"></div>
-                <!-- RECIST table -->
-                <div class="col-xs-12 col-sm-12 col-md-8">
-                    {% if study.curated_study_legend != "" %}
-                    {{ study.curated_study_legend }}
-                    <hr />
-                    {% endif %} 
-                    <h4>Study RECIST Classification</h4>
-                    <div id="recist-info-panel" class="text-left"></div>
-                </div>
-                <div class="col-xs-0 col-sm-0 col-md-2">&nbsp;</div>
             </div>
             <br>
             <div class="row">
-                <div class="col-xs-0 col-sm-0 col-md-2">&nbsp;</div>
-                <!-- waterfall plot thumbnail -->
-                <div class="col-xs-6 col-sm-3 col-md-2 white-smoke-bg text-center">
-                    <br>
-                    <div class="thumbnail plot-buttons">
-                        <br><br>
-                        <div>
-                            <a href="#waterfall-plot" class="div-fill">Waterfall<br>Plot</a>
-                        </div>
-                    </div>
+                <div class="col-xs-0 col-sm-0 col-md-2"></div>
+                <div class="col-xs-12 col-sm-12 col-md-8 white-smoke-bg text-justify">    
+                    <h4>{{ study.site }} Cancer Model: {{ study.curated_study_number }}</h4>
+                    <h5>{% if study.curated_study_legend != "" %}
+                        {{ study.curated_study_legend }}
+                    {% endif %}</h5>
                 </div>
+                <div class="col-xs-0 col-sm-0 col-md-2">&nbsp;</div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-0 col-sm-0 col-md-2">&nbsp;</div>
 
                 <!-- treatment groups plot thumbnail -->
                 <div class="col-xs-6 col-sm-3 col-md-2 white-smoke-bg text-center">
@@ -64,6 +51,17 @@
                     </div>
                 </div>
 
+                <!-- waterfall plot thumbnail -->
+                <div class="col-xs-6 col-sm-3 col-md-2 white-smoke-bg text-center">
+                    <br>
+                    <div class="thumbnail plot-buttons">
+                        <br><br>
+                        <div>
+                            <a href="#waterfall-plot" class="div-fill">Waterfall<br>Plot</a>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- TGI plot thumbnail -->
                 <div class="col-xs-6 col-sm-3 col-md-2 white-smoke-bg text-center">
                     <br>
@@ -75,67 +73,173 @@
                     </div>
                 </div>
                 <div class="col-xs-0 col-sm-0 col-md-2"></div>
+            </div> <!-- END THUMBNAIL SECTION -->
+            <br>
+
+            <div class="section-header-1 text-left" name="treatment-group-plot">
+                &nbsp;&nbsp;<b>TREATMENT GROUPS PLOT</b>&nbsp;&nbsp;
+                <a href="http://tumor.informatics.jax.org/mtbwi/live/www/html/SOCHelp.html#treatmentGroup" target="_blank" class="white-smoke">
+                    <span class="glyphicon glyphicon-question-sign faq-glyphicon" aria-hidden="true"></span>
+                </a>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-xs-0 col-sm-0 col-md-2"></div>
+                <div class="col-xs-12 col-sm-12 col-md-8 text-right white-smoke-bg" style="padding: 10px; 0">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label for="treatment-group-change-type-select">Y Axis: </label>
+                            <select id="treatment-group-change-type-select" type="text" class="form-control">
+                                <option value="abs-vol">Absolute Volume</option>
+                                <option value="rel-change">Fold Change in Volume (currentSize - day1Size) / day1Size</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Download plot as a png" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Zoom in" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Zoom out" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Reset axes" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-xs-0 col-sm-0 col-md-2"></div>
+            </div>
+
+            <div id="treatment-group-plot" class="plot-container" style="height: 600px"></div>
+
+            <div class="section-header-1 text-left" name="spider-plot">
+                &nbsp;&nbsp;<b>SPIDER PLOT</b>&nbsp;&nbsp;
+                <a href="http://tumor.informatics.jax.org/mtbwi/live/www/html/SOCHelp.html#spiderPlot" target="_blank" class="white-smoke">
+                    <span class="glyphicon glyphicon-question-sign faq-glyphicon" aria-hidden="true"></span>
+                </a>
+            </div>
+            <br>
+			<div class="row">
+                <div class="col-xs-0 col-sm-0 col-md-2"></div>
+                <div class="col-xs-12 col-sm-12 col-md-8 text-right white-smoke-bg" style="padding: 10px; 0">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Download plot as a png" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Zoom in" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Zoom out" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Reset axes" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-xs-0 col-sm-0 col-md-2"></div>
+            </div>
+            <div id="spider-plot" class="plot-container" style="height: 600px;"></div>
+
+            <div class="section-header-1 text-left" name="waterfall-plot">
+                &nbsp;&nbsp;<b>WATERFALL PLOT</b>
+                &nbsp;&nbsp;
+                <a href="http://tumor.informatics.jax.org/mtbwi/live/www/html/SOCHelp.html##waterfallPlot" target="_blank" class="white-smoke">
+                    <span class="glyphicon glyphicon-question-sign faq-glyphicon" aria-hidden="true"></span>
+                </a>
             </div>
             <br>
 
-            <div class="section-header-1 text-center" name="waterfall-plot">
-                <b>WATERFALL</b>
+            <div class="row">
+                <div class="col-xs-0 col-sm-0 col-md-2"></div>
+                <!-- RECIST table -->
+                <div class="col-xs-12 col-sm-12 col-md-8">
+                    <h4 style="display:inline;">Study RECIST Classification</h4>
+                    &nbsp;&nbsp;
+                    <a href="http://tumor.informatics.jax.org/mtbwi/live/www/html/SOCHelp.html#recist" target="_blank" class="dark-cerulean">
+                        <span class="glyphicon glyphicon-question-sign faq-glyphicon" aria-hidden="true"></span>
+                    </a>
+
+                    <div id="recist-info-panel" class="text-left" style="margin-top: 10px;"></div>
+                </div>
+                <div class="col-xs-0 col-sm-0 col-md-2">&nbsp;</div>
             </div>
-            <br />
+            <br><br>
+             <div class="row">
+                <div class="col-xs-0 col-sm-0 col-md-2"></div>
+                <div class="col-xs-12 col-sm-12 col-md-8 text-right white-smoke-bg" style="padding: 10px; 0">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label for="waterfall-change-type-select">Y Axis: </label>
+                    <select id="waterfall-change-type-select" type="text" class="form-control">
+                        <option value="rel-vol">Volume Percentage Change</option>
+                        <option value="rel-change">Fold Change in Volume (currentSize - day1Size) / day1Size</option>
+                    </select>
+                        </div>
 
-<form class="form-inline">
-    <div class="form-group">
-        <label for="waterfall-change-type-select">Y Axis: </label>
-        <select id="waterfall-change-type-select" type="text" class="form-control">
-            <option value="rel-vol">Volume Percentage Change</option>
-            <option value="rel-change">Fold Change in Volume (currentSize - day1Size) / day1Size</option>
-        </select>
-    </div>
-</form>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Download plot as a png" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Zoom in" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Zoom out" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Reset axes" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-xs-0 col-sm-0 col-md-2"></div>
+            </div>
 
-<div id="waterfall-plot" class="plot-container" style="height: 600px"></div>
+            <div id="waterfall-plot" class="plot-container" style="height: 600px"></div>
+            
+            <!-- TGI PLOT SECTION -->
+            <div class="section-header-1 text-left" name="tgi-plot">
+                &nbsp;&nbsp;<b>TGI (TUMOR GROWTH INHIBITION) PLOT</b>
+                &nbsp;&nbsp;
+                <a href="http://tumor.informatics.jax.org/mtbwi/live/www/html/SOCHelp.html#tgiPlot" target="_blank" class="white-smoke">
+                    <span class="glyphicon glyphicon-question-sign faq-glyphicon" aria-hidden="true"></span>
+                </a>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-xs-0 col-sm-0 col-md-2"></div>
+                <div class="col-xs-12 col-sm-12 col-md-8 text-right white-smoke-bg" style="padding: 10px; 0">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Download plot as a png" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-xs-0 col-sm-0 col-md-2"></div>
+            </div>
 
-<div class="section-header-1 text-center" name="treatment-group-plot">
-    <b>TREATMENT GROUPS</b>
-</div>
+            <div id="tgi-plot" class="plot-container" style="height: 600px;"></div>
+            <!-- END TGI PLOT SECTION -->
 
-<br>
-
-<form class="form-inline">
-    <div class="form-group">
-        <label for="treatment-group-change-type-select">Y Axis: </label>
-        <select id="treatment-group-change-type-select" type="text" class="form-control">
-            <option value="abs-vol">Absolute Volume</option>
-            <option value="rel-change">Fold Change in Volume (currentSize - day1Size) / day1Size</option>
-        </select>
-    </div>
-</form>
-
-<div id="treatment-group-plot" class="plot-container" style="height: 600px"></div>
-
-<div class="section-header-1 text-center" name="spider-plot">
-    <b>SPIDER</b>
-</div>
-<br>
-<div id="spider-plot" class="plot-container" style="height: 600px;"></div>
-<br>
-<div class="section-header-1 text-center" name="tgi-plot">
-    <b>TGI (TUMOR GROWTH INHIBITION)</b>
-</div>
-<br>
-<div id="tgi-plot" class="plot-container" style="height: 600px;"></div>
-
-<script>
-    $(function() {
-        var params = {
-            study: {{ study|tojson }},
-            treatments: {{ treatments|tojson }},
-            measurements: {{ measurements|tojson }},
-            animals: {{ animals|tojson }},
-            groupLabels: {{ group_labels|tojson }}
-        };
-
-        socstudy.initStudyData(params);
-    });
-</script>
+            <script>
+                $(function() {
+                    var params = {
+                        study: {{ study|tojson }},
+                        treatments: {{ treatments|tojson }},
+                        measurements: {{ measurements|tojson }},
+                        animals: {{ animals|tojson }},
+                        groupLabels: {{ group_labels|tojson }}
+                    };
+                    socstudy.initStudyData(params);
+                });
+            </script>
 {% endblock %}

@@ -37,7 +37,7 @@ var spiderPlotGraph = (function() {
 					legendgroup: group.groupLabel,
                     hoverinfo: 'text',
                     marker: {
-                        color: (group.color !== null) ? group.color : colors[group.index % colors.length]
+                        color: (group.color !== null) ? group.color : PlotLib.colors[group.index % PlotLib.colors.length]
                     }
                 }
             });
@@ -45,22 +45,14 @@ var spiderPlotGraph = (function() {
             var layout = {
                 // autosize: false,
                 title: study.curated_study_name,
-                titlefont: titlefont,
+                titlefont: PlotLib.titlefont,
                 yaxis: {
                     title: 'Tumor Volume (mm<sup>3</sup>)',
-                    titlefont: {
-                        family: 'helvetica',
-                        size: 19
-                    },
 					ticks: "outside",
                     ticksuffix: " "
                 },
                 xaxis: {
-                    title: 'Day of Study',
-                    titlefont: {
-                        family: 'helvetica',
-                        size: 19
-                    }
+                    title: 'Day of Study'
                 },
                 width: myPlot.offsetWidth,
                 height: myPlot.offsetHeight,
@@ -72,7 +64,7 @@ var spiderPlotGraph = (function() {
                 hovermode: 'closest'
             };
             
-			Plotly.newPlot(myPlot, traces, layout, modebar);
+			Plotly.newPlot(myPlot, traces, layout, PlotLib.modebar);
         }
     };
 }());

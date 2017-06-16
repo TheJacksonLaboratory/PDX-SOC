@@ -18,12 +18,12 @@ var recistPanel = (function() {
             groups.forEach(function(group) {
                 data.push({
                     'Group Name': group.groupLabel, 
-                    'Color': (group.color !== null) ? group.color : colors[group.index % colors.length],
+                    'Plot Color Key': (group.color !== null) ? group.color : PlotLib.colors[group.index % PlotLib.colors.length],
 					'RECIST Category': group.recistCat
                 });
             });
 
-            tabulate(data, ['Group Name', "Color", 'RECIST Category']);
+            tabulate(data, ['Group Name', "Plot Color Key", 'RECIST Category']);
 		}
     }
 	
@@ -59,8 +59,8 @@ var recistPanel = (function() {
             })
             .enter()
             .append('td')
-			.style("background", function(d) { if(d.column === "Color") return d.value; })
-            .text(function (d) { if(d.column !== "Color") return d.value; });
+			.style("background", function(d) { if(d.column === "Plot Color Key") return d.value; })
+            .text(function (d) { if(d.column !== "Plot Color Key") return d.value; });
 
         return table;
 	}

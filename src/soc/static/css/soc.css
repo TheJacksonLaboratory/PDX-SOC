@@ -1,9 +1,21 @@
 /* ======================= GENERIC CLASSES ======================= */
 
+.dark-cerulean { 
+    color: #05396B; 
+}
+
+.white-smoke { 
+    color: #F8F8F8; 
+}
+
+a.white-smoke:focus, a.white-smoke:hover {
+    color: #F8F8F8;
+}	
+
 /* background colors */
 /* naming convention source - http://www.color-blindness.com/color-name-hue/ */
 .white-smoke-bg {
-    background-color: #F8F8F8;	
+    background-color: #F8F8F8;
 }
 
 /* ======================= APPLICATION SPECIFIC ======================= */
@@ -19,6 +31,10 @@ div.section-header-1 {
     width: 100%;
     padding: 5px;
     margin-top: 5px;
+}
+
+.faq-glyphicon {
+    top: 1px;
 }
 
 /* ======================= ELEMENT SPECIFIC ======================= */
@@ -125,6 +141,16 @@ div[class~=plot-container] {
     height: 600px; 
     margin: 0 auto;
     margin-bottom: 50px;
+}
+
+
+
+.modebar-group {
+    visibility: hidden;
+}
+
+.btn-treatment-group-modebar {
+    margin: 0 2px;
 }
 
 @media (min-width: 768px) {

@@ -40,15 +40,29 @@ var socstudy;
         }
 
         PlotFactory.prototype.renderTreatmentGroupsPlot = function() {
-            var treatGrpChgTypeSel = $("[id=treatment-group-change-type-select]");			
+            let treatGrpChgTypeSel = $("[id=treatment-group-change-type-select]");
+            let treatGrpDownloadAsPng = $("[id=treatment-group-download-png]");
+            let treatGrpZoomIn = $('[id=treatment-group-zoom-in]');
+            let treatGrpZoomOut = $("[id=treatment-group-zoom-out]");
+            let treatGrpResetAxes = $("[id=treatment-group-reset-axes]");
 
             var treatmentGroupPlotNode = document.getElementById('treatment-group-plot');
-            treatmentGroupPlotGraph.setGraphNode(treatmentGroupPlotNode);
+            treatmentGroupPlot.setGraphNode(treatmentGroupPlotNode);
             // event handler
             treatGrpChgTypeSel.change(function() {
-                treatmentGroupPlotGraph.renderPlot(treatGrpChgTypeSel.val(), measurements, treatments, groups, study);
+                treatmentGroupPlot.renderPlot(treatGrpChgTypeSel.val(), measurements, treatments, groups, study);
             });
-            treatmentGroupPlotGraph.renderPlot(treatGrpChgTypeSel.val(), measurements, treatments, groups, study);
+            treatmentGroupPlot.renderPlot(treatGrpChgTypeSel.val(), measurements, treatments, groups, study);
+
+            $('.btn-treatment-group-modebar').on("click", function() {  console.log("HERE");
+			let title = $(this).attr("title");
+			    $.each($("#treatment-group-plot .modebar-btn"), function(index, modebarButton) {
+                    if(title === modebarButton.getAttribute("data-title")) {
+						modebarButton.click();
+					}
+					//console.log(modebarButton.getAttribute("data-title"));
+				});				
+			});
         }
 
         PlotFactory.prototype.renderSpiderPlot = function() {
@@ -91,7 +105,7 @@ var socstudy;
 
         if(params.treatments !== "undefined") {
             treatments = params.treatments;
-		}
+        }
 
         if(params.measurements !== "undefined") {
             measurements = params.measurements;
@@ -156,7 +170,7 @@ var socstudy;
             var animalName = measurement['animal_name'];
             var grp = groupMap[grpName];
             var day = measurement['measurement_day'];
-            insertUnique(grp.uniqMeasureDays, day);
+            PlotLib.insertUnique(grp.uniqMeasureDays, day);
             animalMap[animalName].measurements.push(measurement);
         });
 
@@ -165,35 +179,39 @@ var socstudy;
             var animalName = treatment['animal_name'];
             var grp = groupMap[grpName];
             var day = treatment['treatment_day'];
-            insertUnique(grp.uniqTreatDays, day);
-            insertUnique(grp.doseActivities, treatment['dose_activity'], compareBasic);
-            insertUnique(grp.doseUnits, treatment['administration_route_units'], compareBasic);
-            insertUnique(grp.doseAmounts, treatment['test_material_amount']);
+            PlotLib.insertUnique(grp.uniqTreatDays, day);
+            PlotLib.insertUnique(grp.doseActivities, treatment['dose_activity'], PlotLib.compareBasic);
+			
+            let units = PlotLib.cleanupRouteOfAdminUnits(treatment['administration_route_units']); // console.log(units);
+            PlotLib.insertUnique(grp.doseUnits, units, PlotLib.compareBasic);
+            PlotLib.insertUnique(grp.doseAmounts, treatment['test_material_amount']);
             animalMap[animalName].treatments.push(treatment);
         });
 
+        // setup group labels: 
+        // group labels are displayed on the plots and are different from group names, 
+        // which are not displayed on the plots
         $.each(groupMap, function(grpName, group) {
-            group.nearStartMeasIdx = findNearestMeasureDayIdx(group.uniqMeasureDays, 0);
+            group.nearStartMeasIdx = PlotLib.findNearestMeasureDayIdx(group.uniqMeasureDays, 0);
             group.nearEndMeasIdx = 
-                findNearestMeasureDayIdx(group.uniqMeasureDays, group.uniqMeasureDays[group.uniqMeasureDays.length - 1]);
+                PlotLib.findNearestMeasureDayIdx(group.uniqMeasureDays, group.uniqMeasureDays[group.uniqMeasureDays.length - 1]);
             group.nearStartMeasDay = group.uniqMeasureDays[group.nearStartMeasIdx];
             group.nearEndMeasDay = group.uniqMeasureDays[group.nearEndMeasIdx];
 
-            for(var i = 0; i < groupLabels.length; i++) {
-                if(groupLabels[i].group_name === group.groupName) { console.log(group.groupLabel);
+            for(let i = 0; i < groupLabels.length; i++) {
+                if(groupLabels[i].group_name === group.groupName) {
                     if(groupLabels[i].curated_group_name !== "") {
                         group.groupLabel = groupLabels[i].curated_group_name;
-				    } else if(group.doseActivities.length <= 0)  { 
+                    } else if(group.doseActivities.length <= 0)  { 
                         group.groupLabel = "No Treatment";
-					} else { console.log(group.doseActivities);
+                    } else { // console.log(group.doseActivities); console.log( group.doseAmounts); console.log(group.doseUnits);
                         group.groupLabel = 
-                            group.doseActivities.join(', ') + 
+                            groupLabels[i].drug + 
                             ' (' + group.doseAmounts.join(', ') + ' ' + group.doseUnits.join(', ') + ')';
                     }
-                    console.log(group.groupLabel);
-					// console.log(groupLabels[i]);
-					group.recistCat = groupLabels[i].recist;
-					if(groupLabels[i].is_control === 1) group.isControl = 1;
+                    // additional group properties
+                    group.recistCat = groupLabels[i].recist;
+                    if(groupLabels[i].is_control === 1) group.isControl = 1;
                     if(groupLabels[i].color !== null) group.color = groupLabels[i].color;
                 }
             }
@@ -242,9 +260,9 @@ var socstudy;
             }
             animal.start_day_measurement = measStart;
             animal.end_day_measurement = measEnd;
-            animal.percent_change_volume = Math.round(((measEnd.measurement_value / measStart.measurement_value) * 100) - 100);
-			animal.measurement_diff = Math.round(measEnd.measurement_value - measStart.measurement_value);
-            animal.measurement_fold_change = parseFloat(Math.round((animal.measurement_diff / measStart.measurement_value + 0.00001) * 100) / 100).toFixed(2);
+            animal.measurement_diff = measEnd.measurement_value - measStart.measurement_value;
+            animal.percent_change_volume = Math.round((animal.measurement_diff / measStart.measurement_value) * 100);
+            animal.measurement_fold_change = PlotLib.roundTo((animal.measurement_diff / measStart.measurement_value), 2);
         });
 	
         let plots = new socstudy.PlotFactory();
