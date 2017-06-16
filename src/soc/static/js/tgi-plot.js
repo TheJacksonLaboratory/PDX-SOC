@@ -2,7 +2,7 @@ var tgiPlotGraph = (function() {
     var myPlot;
 
     // hard modebar object copy
-    var modebarTGI = JSON.parse(JSON.stringify(modebar));
+    var modebarTGI = JSON.parse(JSON.stringify(PlotLib.modebar));
     // TGI specific modebar options
     modebarTGI.modeBarButtonsToRemove.push("zoomIn2d", "zoomOut2d", "zoom2d");
 
@@ -14,7 +14,7 @@ var tgiPlotGraph = (function() {
     *  
     */
     function groupEndDayMean(group) {
-        var meanStddevResult = meanStddev(group.animals.map(function(animal) {
+        var meanStddevResult = PlotLib.meanStddev(group.animals.map(function(animal) {
             return animal.end_day_measurement.measurement_value;
         }));
         return meanStddevResult.mean;
@@ -145,7 +145,7 @@ var tgiPlotGraph = (function() {
                     type: "bar",
                     hoverinfo: hoverInfo,
                     marker: {
-                        color: (group.color !== null) ? group.color : colors[group.index % colors.length],
+                        color: (group.color !== null) ? group.color : PlotLib.colors[group.index % PlotLib.colors.length],
                         line: {
                             width: 1
                         }
@@ -170,14 +170,14 @@ var tgiPlotGraph = (function() {
                     y: [roundedMean],
                     text: [roundedMean].map(function(m) {
                         var msg = "<b>x&#772;:</b> " 
-                            + Math.round(meanStderrStddev(lastdaymeas).mean) 
+                            + Math.round(PlotLib.meanStderrStddev(lastdaymeas).mean) 
                             + ", <b>&#963;<sub>x&#772;</sub>:</b> &#8723; " 
-                            + Math.round(meanStderrStddev(lastdaymeas).stdErr);
+                            + Math.round(PlotLib.meanStderrStddev(lastdaymeas).stdErr);
 						return msg;
 					}),
                     error_y: {
                         type: "data",
-                        array: [Math.round(100 * (meanStderrStddev(lastdaymeas).stdErr/ vehicleFinalMean))],
+                        array: [Math.round(100 * (PlotLib.meanStderrStddev(lastdaymeas).stdErr/ vehicleFinalMean))],
                         visible: group.isControl ? false : true,
                         color: "black"
                     },
@@ -186,7 +186,7 @@ var tgiPlotGraph = (function() {
                     type: "bar",
                     showlegend: false,
                     marker: {
-                        color: (group.color !== null) ? group.color : colors[group.index % colors.length],
+                        color: (group.color !== null) ? group.color : PlotLib.colors[group.index % PlotLib.colors.length],
 						line: {
 							width: 0
 						}
@@ -216,7 +216,7 @@ var tgiPlotGraph = (function() {
             var tgiData = new Array();
             
             tgiData.push.apply(tgiData, bottomBars);
-			tgiData.push.apply(tgiData, errorBars);
+			// tgiData.push.apply(tgiData, errorBars);
             tgiData.push(refLine);
             
 			var annotationContent = [];
@@ -224,11 +224,12 @@ var tgiPlotGraph = (function() {
 			var tgiLayout = {
                 // autosize: false,
                 title: study.curated_study_name,
-                titlefont: titlefont,
+                titlefont: PlotLib.titlefont,
 				yaxis: {
                     // range: (maxMean > 100) ? [0, maxMean] : [0, 100],
                     // domain: [0, 1],
-                    title: 'Tumor Volume Percentage (%)',
+                    title: '% TGI',
+                    zeroline: false,
                     showline: true,
                     showgrid: true,
                     ticks: "outside",
@@ -238,12 +239,12 @@ var tgiPlotGraph = (function() {
                     type: "category",
                     showticklabels: true,
                     tickangle: 20,
-                    zeroline: true,
+                    zeroline: false,
                     showline: true,
                     zerolinecolor: "black",
                     zerolinewidth: 10,
                     linecolor: 'black',
-                    linewidth: 2
+                    linewidth: 1
 				},
                 width: myPlot.offsetWidth,
                 height: myPlot.offsetHeight,
@@ -295,15 +296,12 @@ var tgiPlotGraph = (function() {
 					ay: 100,
 					ax: 0,
 					ayref: "y"
-				}
+                }
                 
                 annotationContent.push(result); annotationContent.push(arrow);
             }
 
-			
-			
             Plotly.newPlot(myPlot, tgiData, tgiLayout, modebarTGI);
-            
             // setReferenceLine();
             // setAnchorLines(groups);
         }
