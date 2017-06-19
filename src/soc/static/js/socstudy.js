@@ -34,6 +34,23 @@ var socstudy;
     })();
     PlotLib.DownloadAsPng = DownloadAsPng;
 
+    let Pan = (function() {
+        function Pan(id) {
+            let that = this;
+            that.id = id;
+            $("[id=btn-" + that.id + "-modebar-pan]").on("click", function() {
+                let title = $(this).attr("title");
+                $.each($("[id=" + that.id + "-plot] .modebar-btn"), function(index, modebarButton) {
+                    if(modebarButton.getAttribute("data-title") === title) {
+                        modebarButton.click();
+                    }
+                });
+            });
+        }
+        return Pan;
+    })();
+    PlotLib.Pan = Pan;
+	
     let ZoomIn = (function() {
         function ZoomIn(id) {
             let that = this;
@@ -100,6 +117,7 @@ var socstudy;
         TreatmentGroupsModeBarBuilder.prototype.build = function() {
             var modebar = new PlotModeBar();
             modebar.buttons.push(new DownloadAsPng("treatment-groups"));
+            modebar.buttons.push(new Pan("treatment-groups"));
             modebar.buttons.push(new ZoomIn("treatment-groups"));
             modebar.buttons.push(new ZoomOut("treatment-groups"));
             modebar.buttons.push(new ResetAxes("treatment-groups"));
@@ -115,6 +133,7 @@ var socstudy;
         SpiderModeBarBuilder.prototype.build = function() {
             var modebar = new PlotModeBar();
             modebar.buttons.push(new DownloadAsPng("spider"));
+            modebar.buttons.push(new Pan("spider"));
             modebar.buttons.push(new ZoomIn("spider"));
             modebar.buttons.push(new ZoomOut("spider"));
             modebar.buttons.push(new ResetAxes("spider"));
