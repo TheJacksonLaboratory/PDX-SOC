@@ -1,19 +1,18 @@
 var waterfallPlotGraph = (function() {
     var waPlot;
-    
-    // hard modebar object copy
-    // var modebarWF = JSON.parse(JSON.stringify(PlotLib.modebar));
-    // waterfall specific modebar options
-    // modebarWF.modeBarButtonsToRemove.push("zoomIn2d", "zoomOut2d", "zoom2d");
+    var showControls = true;
 	
     return {
         setGraphNode: function(graphDiv) {
             waPlot = graphDiv;
         },
+        setControlsVisibility: function(show) {
+            showControls = show;
+        },
         renderPlot: function(yAxisType, animals, groups, study) {
             // shallow array copy
             animals = animals.slice(0);
-            
+
             let yAxisKey;
             if(yAxisType === 'rel-vol') {
                 yAxisKey = 'percent_change_volume';
@@ -27,8 +26,13 @@ var waterfallPlotGraph = (function() {
             animals.forEach(function(animal, i) {
                 animal.index = i;
             });
-
-            var traces = groups.map(function(group) {
+	        
+            var traces = groups.filter(function(group) {
+                if(!showControls && group.isControl) {
+                    return false;
+                }
+                return true;
+            }).map(function(group) {
                 var grpLbl =
                     group.groupLabel + ' [days ' +
                     group.nearStartMeasDay + '-' + group.nearEndMeasDay + ']';
@@ -59,8 +63,10 @@ var waterfallPlotGraph = (function() {
                 yAxisTitle = 'Fold Change in Tumor Volume (mm<sup>3</sup>)';
             }
 
-			var layout = {
-                title: study.curated_study_name,
+            // plot titles might take more space than the available width; if so, the title needs to be broken on 2 lines
+            let title = PlotLib.fitTextOnScreen(study.curated_study_name, waPlot.offsetWidth);
+            var layout = {
+                title: title,
                 titlefont: PlotLib.titlefont,
                 yaxis: {
                     title: yAxisTitle,

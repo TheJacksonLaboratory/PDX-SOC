@@ -23,11 +23,11 @@
                         {{ study.curated_study_legend }}
                     {% endif %}</h5>
                 </div>
-                <div class="col-xs-0 col-sm-0 col-md-2">&nbsp;</div>
+                <div class="col-xs-0 col-sm-0 col-md-2"></div>
             </div>
 
             <div class="row">
-                <div class="col-xs-0 col-sm-0 col-md-2">&nbsp;</div>
+                <div class="col-xs-0 col-sm-0 col-md-2"></div>
 
                 <!-- treatment groups plot thumbnail -->
                 <div class="col-xs-6 col-sm-3 col-md-2 white-smoke-bg text-center">
@@ -96,16 +96,16 @@
                         </div>
 
                         <div class="form-group">
-                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Download plot as a png" aria-label="Left Align">
-                                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                            <button id="btn-treatment-groups-modebar-download" type="button" class="btn btn-default btn-modebar-download" title="Download plot as a png" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-camera" aria-hidden="true"></span>
                             </button>
-                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Zoom in" aria-label="Left Align">
+                            <button id="btn-treatment-groups-modebar-zoomin" type="button" class="btn btn-default btn-modebar-zoomin" title="Zoom in" aria-label="Left Align">
                                 <span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
                             </button>
-                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Zoom out" aria-label="Left Align">
+                            <button id="btn-treatment-groups-modebar-zoomout" type="button" class="btn btn-default btn-modebar-zoomout" title="Zoom out" aria-label="Left Align">
                                 <span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span>
                             </button>
-                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Reset axes" aria-label="Left Align">
+                            <button id="btn-treatment-groups-modebar-reset" type="button" class="btn btn-default btn-modebar-reset" title="Reset axes" aria-label="Left Align">
                                 <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
                             </button>
                         </div>
@@ -114,7 +114,7 @@
                 <div class="col-xs-0 col-sm-0 col-md-2"></div>
             </div>
 
-            <div id="treatment-group-plot" class="plot-container" style="height: 600px"></div>
+            <div id="treatment-groups-plot" class="plot-container" style="height: 600px"></div>
 
             <div class="section-header-1 text-left" name="spider-plot">
                 &nbsp;&nbsp;<b>SPIDER PLOT</b>&nbsp;&nbsp;
@@ -128,17 +128,20 @@
                 <div class="col-xs-12 col-sm-12 col-md-8 text-right white-smoke-bg" style="padding: 10px; 0">
                     <form class="form-inline">
                         <div class="form-group">
-                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Download plot as a png" aria-label="Left Align">
-                                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                            <button id="btn-spider-modebar-download" type="button" class="btn btn-default btn-modebar-download" title="Download plot as a png" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-camera" aria-hidden="true"></span>
                             </button>
-                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Zoom in" aria-label="Left Align">
+                            <button id="btn-spider-modebar-zoomin" type="button" class="btn btn-default btn-modebar-zoomin" title="Zoom in" aria-label="Left Align">
                                 <span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
                             </button>
-                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Zoom out" aria-label="Left Align">
+                            <button id="btn-spider-modebar-zoomout" type="button" class="btn btn-default btn-modebar-zoomout" title="Zoom out" aria-label="Left Align">
                                 <span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span>
                             </button>
-                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Reset axes" aria-label="Left Align">
+                            <button id="btn-spider-modebar-reset" type="button" class="btn btn-default btn-modebar-reset" title="Reset axes" aria-label="Left Align">
                                 <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+                            </button>
+                            <button id="spider-toggle-controls" type="button" class="btn btn-default btn-spider-modebar" data-toggle="button" aria-pressed="false" autocomplete="off" style="width: 150px;">
+                                <b>HIDE CONTROLS</b>
                             </button>
                         </div>
                     </form>
@@ -150,7 +153,7 @@
             <div class="section-header-1 text-left" name="waterfall-plot">
                 &nbsp;&nbsp;<b>WATERFALL PLOT</b>
                 &nbsp;&nbsp;
-                <a href="http://tumor.informatics.jax.org/mtbwi/live/www/html/SOCHelp.html##waterfallPlot" target="_blank" class="white-smoke">
+                <a href="http://tumor.informatics.jax.org/mtbwi/live/www/html/SOCHelp.html#waterfallPlot" target="_blank" class="white-smoke">
                     <span class="glyphicon glyphicon-question-sign faq-glyphicon" aria-hidden="true"></span>
                 </a>
             </div>
@@ -170,36 +173,30 @@
                 </div>
                 <div class="col-xs-0 col-sm-0 col-md-2">&nbsp;</div>
             </div>
-            <br><br>
+            <br>
              <div class="row">
-                <div class="col-xs-0 col-sm-0 col-md-2"></div>
-                <div class="col-xs-12 col-sm-12 col-md-8 text-right white-smoke-bg" style="padding: 10px; 0">
+                <div class="col-xs-0 col-sm-0 col-md-1"></div>
+                <div class="col-xs-12 col-sm-12 col-md-10 text-right white-smoke-bg" style="padding: 10px; 0">
                     <form class="form-inline">
                         <div class="form-group">
                             <label for="waterfall-change-type-select">Y Axis: </label>
-                    <select id="waterfall-change-type-select" type="text" class="form-control">
-                        <option value="rel-vol">Volume Percentage Change</option>
-                        <option value="rel-change">Fold Change in Volume (currentSize - day1Size) / day1Size</option>
-                    </select>
+                            <select id="waterfall-change-type-select" type="text" class="form-control">
+                                <option value="rel-vol">Volume Percentage Change</option>
+                                <option value="rel-change">Fold Change in Volume (currentSize - day1Size) / day1Size</option>
+                            </select>
                         </div>
 
                         <div class="form-group">
-                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Download plot as a png" aria-label="Left Align">
-                                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                            <button id="btn-waterfall-modebar-download" type="button" class="btn btn-default btn-modebar-download" title="Download plot as a png" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-camera" aria-hidden="true"></span>
                             </button>
-                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Zoom in" aria-label="Left Align">
-                                <span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
-                            </button>
-                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Zoom out" aria-label="Left Align">
-                                <span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span>
-                            </button>
-                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Reset axes" aria-label="Left Align">
-                                <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+                            <button id="waterfall-toggle-controls" type="button" class="btn btn-default btn-waterfall-modebar" data-toggle="button" aria-pressed="false" autocomplete="off" style="width: 150px;">
+                                <b>HIDE CONTROLS</b>
                             </button>
                         </div>
                     </form>
                 </div>
-                <div class="col-xs-0 col-sm-0 col-md-2"></div>
+                <div class="col-xs-0 col-sm-0 col-md-1"></div>
             </div>
 
             <div id="waterfall-plot" class="plot-container" style="height: 600px"></div>
@@ -218,8 +215,8 @@
                 <div class="col-xs-12 col-sm-12 col-md-8 text-right white-smoke-bg" style="padding: 10px; 0">
                     <form class="form-inline">
                         <div class="form-group">
-                            <button type="button" class="btn btn-default btn-treatment-group-modebar" title="Download plot as a png" aria-label="Left Align">
-                                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                            <button id="btn-tgi-modebar-download" type="button" class="btn btn-default btn-modebar-download" title="Download plot as a png" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-camera" aria-hidden="true"></span>
                             </button>
                         </div>
                     </form>
