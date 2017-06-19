@@ -1,5 +1,6 @@
 var spiderPlotGraph = (function() {
 	var myPlot;
+    var showControls = true;
 	var xAxisMax = 0;
     var xAxisMin = 0;
     var grouplist = [];
@@ -8,9 +9,19 @@ var spiderPlotGraph = (function() {
 		setGraphNode: function(graphDiv) {
             myPlot = graphDiv;
         },
+        setControlsVisibility: function(show) {
+            showControls = show;
+        },
         renderPlot: function(animals, groupMap, study) {
-            var traces = animals.map(function(animal) {
+            grouplist.length = 0; // reset on every render
+            var traces = animals.filter(function(animal) { 
+                if(!showControls && groupMap[animal.group_name].isControl) {
+                    return false;
+                }
+                return true;
+            }).map(function(animal) {
                 var group = groupMap[animal.group_name];
+
                 var showLegend = false;
                 
                 if(grouplist.indexOf(group.groupLabel) === -1) {
@@ -20,7 +31,7 @@ var spiderPlotGraph = (function() {
 				
                 if(group.nearEndMeasDay > xAxisMax) xAxisMax = group.nearEndMeasDay;
                 if(group.nearStartMeasDay < xAxisMin) xAxisMin = group.nearStartMeasDay;
-                
+
                 return {
                     name: group.groupLabel,
                     x: animal.measurements.map(function(meas) {return meas.measurement_day}),
@@ -34,21 +45,23 @@ var spiderPlotGraph = (function() {
                     type: 'scatter',
                     mode: 'lines',
                     showlegend: showLegend,
-					legendgroup: group.groupLabel,
+                    legendgroup: group.groupLabel,
                     hoverinfo: 'text',
                     marker: {
                         color: (group.color !== null) ? group.color : PlotLib.colors[group.index % PlotLib.colors.length]
                     }
                 }
             });
-            
+
+            // plot titles might take more space than the available width; if so, the title needs to be broken on 2 lines
+            let title = PlotLib.fitTextOnScreen(study.curated_study_name, myPlot.offsetWidth);
             var layout = {
                 // autosize: false,
-                title: study.curated_study_name,
+                title: title,
                 titlefont: PlotLib.titlefont,
                 yaxis: {
                     title: 'Tumor Volume (mm<sup>3</sup>)',
-					ticks: "outside",
+                    ticks: "outside",
                     ticksuffix: " "
                 },
                 xaxis: {
@@ -63,8 +76,8 @@ var spiderPlotGraph = (function() {
                 },
                 hovermode: 'closest'
             };
-            
-			Plotly.newPlot(myPlot, traces, layout, PlotLib.modebar);
+
+            Plotly.newPlot(myPlot, traces, layout, PlotLib.modebar);
         }
     };
 }());

@@ -90,16 +90,60 @@ var PlotLib;
 
 
     /**
+    * small viewports might cut-off plot titles; 
+    * to fit the title, break it so it displays on two lines;
+    * @param {string} text
+    * @param {numeric} containerWidth
+    * @return {string}
+    * TO-DO: make it go deeper than two levels
+    */
+    PlotLib.fitTextOnScreen = function(text, containerWidth) {
+        // titles are centered on the screen; 
+        // allow some white space around them (left: 50px & right: 50px)
+        let titlePaddingPx = 100;
+
+        // create dummy span
+        this.e = document.createElement('span');
+        // set font-size
+        this.e.style.fontSize = PlotLib.titlefont.size;
+        // set font-face / font-family
+        this.e.style.fontFamily = PlotLib.titlefont.font;
+        // set text
+        this.e.innerHTML = text;
+        document.body.appendChild(this.e);
+
+        let w = this.e.offsetWidth + titlePaddingPx;
+        let bottomText = "";
+
+        while(w > containerWidth) {
+            let textParts = removeWordsFromEnd(this.e.innerHTML, 1);
+            this.e.innerHTML = textParts[0]; // titleParts[0] contains the top title text
+            w = this.e.offsetWidth + titlePaddingPx;
+            bottomText = textParts[1] + " " + bottomText;
+        }
+        let topText = this.e.innerHTML;
+
+        // cleanup
+        document.body.removeChild(this.e);
+
+        if(bottomText !== "") {
+            return topText + "<br>" + bottomText + "<br>";
+        }
+
+        return topText;
+    }
+
+    /**
     *
     *
     *
     */
     PlotLib.cleanupRouteOfAdminUnits = function(a) {
         let units = a.split("/");
-        
+
 		return (units[0] + "/" + units[1]);
     }	
-	
+
 
     /**
      * This function takes two parameters (x, y) and will return a number less than,
@@ -218,10 +262,29 @@ var PlotLib;
 
 
     /**
+    * removes n words from the end of sentence
+    * @param {string} sentence - sentence of words
+    * @param {numeric} n - number of words to be removed from the END of sentence
+    * @return {string} shortSentence - the sentence with the last n words removed
+    */
+    function removeWordsFromEnd(sentence, n) {
+        let words = sentence.trim().split(" ");
+        let shortenSentence = "";
+        if(n >= words.length) { // check that n is smaller than the number of words
+            return null;
+        }
+
+        for(let i = 0; i < words.length - n; i++) {
+            shortenSentence = shortenSentence + " " + words[i];
+        }
+        return [shortenSentence, words.splice(words.length - n, words.length).join(" ")];
+    }
+
+    /**
     *  rounding decimal points in JavaScript is not stable;
     *  this function should resolve this and be used in the application
-    *  @param {numeric}
-    *  @param {numeric}
+    *  @param {numeric} n
+    *  @param {numeric} digits
     *  @return {numeric} 
     */
     PlotLib.roundTo = function(n, digits) {

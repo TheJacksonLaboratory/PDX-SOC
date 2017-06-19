@@ -216,16 +216,18 @@ var tgiPlotGraph = (function() {
             var tgiData = new Array();
             
             tgiData.push.apply(tgiData, bottomBars);
-			// tgiData.push.apply(tgiData, errorBars);
+            // tgiData.push.apply(tgiData, errorBars);
             tgiData.push(refLine);
-            
-			var annotationContent = [];
 
-			var tgiLayout = {
+            var annotationContent = [];
+
+            // plot titles might take more space than the available width; if so, the title needs to be broken on 2 lines
+            let title = PlotLib.fitTextOnScreen(study.curated_study_name, myPlot.offsetWidth);
+            var tgiLayout = {
                 // autosize: false,
-                title: study.curated_study_name,
+                title: title,
                 titlefont: PlotLib.titlefont,
-				yaxis: {
+                yaxis: {
                     // range: (maxMean > 100) ? [0, maxMean] : [0, 100],
                     // domain: [0, 1],
                     title: '% TGI',
@@ -234,7 +236,7 @@ var tgiPlotGraph = (function() {
                     showgrid: true,
                     ticks: "outside",
                     ticksuffix: " "
-				},
+                },
                 xaxis: {
                     type: "category",
                     showticklabels: true,
@@ -245,15 +247,15 @@ var tgiPlotGraph = (function() {
                     zerolinewidth: 10,
                     linecolor: 'black',
                     linewidth: 1
-				},
+                },
                 width: myPlot.offsetWidth,
                 height: myPlot.offsetHeight,
                 margin: {
                     b: 120
                 },
                 annotations: annotationContent
-			};
-                
+            };
+
             for(var i = 0 ; i < groups.length ; i++) { 
                 var annotationText;
                 var showArrow = false;
@@ -262,10 +264,9 @@ var tgiPlotGraph = (function() {
 				if(100 > roundedMean) {
                     // annotationText = (100 - roundedMean) + "% reduction";
                     annotationText = (100 - roundedMean) + "%";
-					if(100 > arrowPoint) {
-						showArrow = true;
-					}
-                    
+                    if(100 > arrowPoint) {
+                        showArrow = true;
+                    }
                 } else if(100 === roundedMean) {
                     if(groups[i].index === 0) {
                         annotationText = "CONTROL";
@@ -285,19 +286,19 @@ var tgiPlotGraph = (function() {
                     yanchor: "bottom",
                     showarrow: false,
                 };
-				
+
                 var arrow = {
                     x: groups[i].groupLabel,
-					y: arrowPoint,
-					text: "",
-					xanchor: "center",
+                    y: arrowPoint,
+                    text: "",
+                    xanchor: "center",
                     yanchor: "bottom",
                     showarrow: showArrow,
-					ay: 100,
-					ax: 0,
-					ayref: "y"
+                    ay: 100,
+                    ax: 0,
+                    ayref: "y"
                 }
-                
+
                 annotationContent.push(result); annotationContent.push(arrow);
             }
 

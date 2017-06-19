@@ -17,77 +17,156 @@ var socstudy;
     let animals = [];
     let groupLabels = [];
 
+    let DownloadAsPng = (function() {
+        function DownloadAsPng(id) {
+            let that = this;
+            that.id = id;
+            $("[id=btn-" + that.id + "-modebar-download]").on("click", function() {
+                let title = $(this).attr("title");
+                $.each($("[id=" + that.id + "-plot] .modebar-btn"), function(index, modebarButton) {
+                    if(modebarButton.getAttribute("data-title") === title) {
+                        modebarButton.click();
+                    }
+                });
+            });
+        }
+        return DownloadAsPng;
+    })();
+    PlotLib.DownloadAsPng = DownloadAsPng;
+
+    let ZoomIn = (function() {
+        function ZoomIn(id) {
+            let that = this;
+            that.id = id;
+            $("[id=btn-" + that.id +  "-modebar-zoomin]").on("click", function(event) {
+				
+                let title = $(this).attr("title");
+                $.each($("[id=" + that.id + "-plot] .modebar-btn"), function(index, modebarButton) {
+                    if(modebarButton.getAttribute("data-title") === title) {
+                        modebarButton.click();
+                    }
+                });
+            });
+        }
+        return ZoomIn;
+    })();
+    PlotLib.ZoomIn = ZoomIn;
+
+    let ZoomOut = (function() {
+        function ZoomOut(id) {
+            let that = this;
+            that.id = id;
+            $("[id=btn-" + that.id + "-modebar-zoomout]").on("click", function() {
+                let title = $(this).attr("title");
+                $.each($("[id=" + that.id + "-plot] .modebar-btn"), function(index, modebarButton) {
+                    if(modebarButton.getAttribute("data-title") === title) {
+                        modebarButton.click();
+                    }
+                });
+            });
+        }
+        return ZoomOut;
+    })();
+    PlotLib.ZoomOut = ZoomOut;
+
+    let ResetAxes = (function() {
+        function ResetAxes(id) {
+            let that = this;
+            that.id = id;
+            $("[id=btn-" + that.id + "-modebar-reset]").on("click", function() {
+                let title = $(this).attr("title");
+                $.each($("[id=" + that.id + "-plot] .modebar-btn"), function(index, modebarButton) {
+                    if(modebarButton.getAttribute("data-title") === title) {
+                        modebarButton.click();
+                    }
+                });
+            });
+        }
+        return ResetAxes;
+    })();
+    PlotLib.ResetAxes = ResetAxes;
+
+    let PlotModeBar = (function() {
+        function PlotModeBar() {
+            this.buttons = [];
+        }
+        return PlotModeBar;
+    })();
+    PlotLib.PlotModeBar = PlotModeBar;
+
+    let TreatmentGroupsModeBarBuilder = (function() {
+        function TreatmentGroupsModeBarBuilder() { }
+
+        TreatmentGroupsModeBarBuilder.prototype.build = function() {
+            var modebar = new PlotModeBar();
+            modebar.buttons.push(new DownloadAsPng("treatment-groups"));
+            modebar.buttons.push(new ZoomIn("treatment-groups"));
+            modebar.buttons.push(new ZoomOut("treatment-groups"));
+            modebar.buttons.push(new ResetAxes("treatment-groups"));
+            return modebar;
+        }
+        return TreatmentGroupsModeBarBuilder;
+    })();
+    PlotLib.TreatmentGroupsModeBarBuilder = TreatmentGroupsModeBarBuilder;
+
+    let SpiderModeBarBuilder = (function() {
+        function SpiderModeBarBuilder() { }
+
+        SpiderModeBarBuilder.prototype.build = function() {
+            var modebar = new PlotModeBar();
+            modebar.buttons.push(new DownloadAsPng("spider"));
+            modebar.buttons.push(new ZoomIn("spider"));
+            modebar.buttons.push(new ZoomOut("spider"));
+            modebar.buttons.push(new ResetAxes("spider"));
+            return modebar;
+        }
+        return SpiderModeBarBuilder;
+    })();
+    PlotLib.SpiderModeBarBuilder = SpiderModeBarBuilder;
+
+    let WaterfallModeBarBuilder = (function() {
+        function WaterfallModeBarBuilder() { }
+
+        WaterfallModeBarBuilder.prototype.build = function() {
+            var modebar = new PlotModeBar();
+            modebar.buttons.push(new DownloadAsPng("waterfall"));
+            return modebar;
+        }
+
+        return WaterfallModeBarBuilder;
+    })();
+    PlotLib.WaterfallModeBarBuilder = WaterfallModeBarBuilder;
+
+    let TGIModeBarBuilder = (function() {
+        function TGIModeBarBuilder() { }
+
+        TGIModeBarBuilder.prototype.build = function() {
+            var modebar = new PlotModeBar();
+            modebar.buttons.push(new DownloadAsPng("tgi"));
+            return modebar;
+        }
+
+        return TGIModeBarBuilder;
+    })();
+    PlotLib.TGIModeBarBuilder = TGIModeBarBuilder;
+
     /**
     * class to execute the actual plot(s) rendering;
     * plot rendering operation has been separated in
     * a class witihn the module so that design patterns could
     * be applied as the application becomes more complex
     */
-    let PlotFactory = (function() {
-        // constructor
-        function PlotFactory() { }
+    let ModeBarBuilder = (function() {
+        function ModeBarBuilder() { }
 
-        PlotFactory.prototype.renderWaterfallPlot = function() {
-            var waterfallChgTypeSel = $("[id=waterfall-change-type-select]");
-
-            var waterfallPlotNode = document.getElementById('waterfall-plot');
-            waterfallPlotGraph.setGraphNode(waterfallPlotNode);
-            // event handler
-            waterfallChgTypeSel.change(function() {
-                waterfallPlotGraph.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
-            });
-            waterfallPlotGraph.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
+        ModeBarBuilder.prototype.build = function(builder) {
+            return builder.build();
         }
-
-        PlotFactory.prototype.renderTreatmentGroupsPlot = function() {
-            let treatGrpChgTypeSel = $("[id=treatment-group-change-type-select]");
-            let treatGrpDownloadAsPng = $("[id=treatment-group-download-png]");
-            let treatGrpZoomIn = $('[id=treatment-group-zoom-in]');
-            let treatGrpZoomOut = $("[id=treatment-group-zoom-out]");
-            let treatGrpResetAxes = $("[id=treatment-group-reset-axes]");
-
-            var treatmentGroupPlotNode = document.getElementById('treatment-group-plot');
-            treatmentGroupPlot.setGraphNode(treatmentGroupPlotNode);
-            // event handler
-            treatGrpChgTypeSel.change(function() {
-                treatmentGroupPlot.renderPlot(treatGrpChgTypeSel.val(), measurements, treatments, groups, study);
-            });
-            treatmentGroupPlot.renderPlot(treatGrpChgTypeSel.val(), measurements, treatments, groups, study);
-
-            $('.btn-treatment-group-modebar').on("click", function() {  console.log("HERE");
-			let title = $(this).attr("title");
-			    $.each($("#treatment-group-plot .modebar-btn"), function(index, modebarButton) {
-                    if(title === modebarButton.getAttribute("data-title")) {
-						modebarButton.click();
-					}
-					//console.log(modebarButton.getAttribute("data-title"));
-				});				
-			});
-        }
-
-        PlotFactory.prototype.renderSpiderPlot = function() {
-            var spiderPlotNode = document.getElementById('spider-plot');
-            spiderPlotGraph.setGraphNode(spiderPlotNode);
-            spiderPlotGraph.renderPlot(animals, groupMap, study);
-        }
-
-        PlotFactory.prototype.renderTGIPlot = function() {
-            var tgiPlotNode = document.getElementById('tgi-plot');
-            tgiPlotGraph.setGraphNode(tgiPlotNode);
-            tgiPlotGraph.renderPlot(groups, study);
-        }
-
-        PlotFactory.prototype.renderRecistPanel = function() {
-            var recistPanelNode = document.getElementById("recist-info-panel");
-            recistPanel.setPanelNode(recistPanelNode);
-            recistPanel.renderTable(groups, study);
-        }
-
-        return PlotFactory;
+        return ModeBarBuilder;
     })();
-    
+
     // public module members
-    socstudy.PlotFactory = PlotFactory;
+    socstudy.ModeBarBuilder = ModeBarBuilder;
 
     /* 
 	* receives data from template & sets module variables
@@ -182,7 +261,7 @@ var socstudy;
             PlotLib.insertUnique(grp.uniqTreatDays, day);
             PlotLib.insertUnique(grp.doseActivities, treatment['dose_activity'], PlotLib.compareBasic);
 			
-            let units = PlotLib.cleanupRouteOfAdminUnits(treatment['administration_route_units']); // console.log(units);
+            let units = PlotLib.cleanupRouteOfAdminUnits(treatment['administration_route_units']);
             PlotLib.insertUnique(grp.doseUnits, units, PlotLib.compareBasic);
             PlotLib.insertUnique(grp.doseAmounts, treatment['test_material_amount']);
             animalMap[animalName].treatments.push(treatment);
@@ -204,7 +283,7 @@ var socstudy;
                         group.groupLabel = groupLabels[i].curated_group_name;
                     } else if(group.doseActivities.length <= 0)  { 
                         group.groupLabel = "No Treatment";
-                    } else { // console.log(group.doseActivities); console.log( group.doseAmounts); console.log(group.doseUnits);
+                    } else {
                         group.groupLabel = 
                             groupLabels[i].drug + 
                             ' (' + group.doseAmounts.join(', ') + ' ' + group.doseUnits.join(', ') + ')';
@@ -264,13 +343,69 @@ var socstudy;
             animal.percent_change_volume = Math.round((animal.measurement_diff / measStart.measurement_value) * 100);
             animal.measurement_fold_change = PlotLib.roundTo((animal.measurement_diff / measStart.measurement_value), 2);
         });
-	
-        let plots = new socstudy.PlotFactory();
-        plots.renderRecistPanel();
-        plots.renderWaterfallPlot();
-        plots.renderTreatmentGroupsPlot();
-        plots.renderSpiderPlot();
-        plots.renderTGIPlot();
+
+        var treatGrpChgTypeSel = $("[id=treatment-group-change-type-select]");
+        var treatmentGroupPlotNode = document.getElementById('treatment-groups-plot');
+        treatmentGroupPlot.setGraphNode(treatmentGroupPlotNode);
+        // event handler
+        treatGrpChgTypeSel.change(function() {
+            treatmentGroupPlot.renderPlot(treatGrpChgTypeSel.val(), measurements, treatments, groups, study);
+        });
+        treatmentGroupPlot.renderPlot(treatGrpChgTypeSel.val(), measurements, treatments, groups, study);
+
+        var spiderPlotNode = document.getElementById('spider-plot');
+        spiderPlotGraph.setGraphNode(spiderPlotNode);
+        spiderPlotGraph.renderPlot(animals, groupMap, study);
+
+        var recistPanelNode = document.getElementById("recist-info-panel");
+        recistPanel.setPanelNode(recistPanelNode);
+        recistPanel.renderTable(groups, study);
+
+        var waterfallChgTypeSel = $("[id=waterfall-change-type-select]");
+        var waterfallPlotNode = document.getElementById('waterfall-plot');
+        waterfallPlotGraph.setGraphNode(waterfallPlotNode);
+        // event handler
+        waterfallChgTypeSel.change(function() {
+            waterfallPlotGraph.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
+        });
+        waterfallPlotGraph.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
+
+        var tgiPlotNode = document.getElementById('tgi-plot');
+        tgiPlotGraph.setGraphNode(tgiPlotNode);
+        tgiPlotGraph.renderPlot(groups, study);
+
+        var mb1 = new socstudy.ModeBarBuilder(); mb1.build(new TreatmentGroupsModeBarBuilder());
+        var mb2 = new socstudy.ModeBarBuilder(); mb2.build(new SpiderModeBarBuilder());
+        var mb3 = new socstudy.ModeBarBuilder(); mb3.build(new WaterfallModeBarBuilder());
+        var mb4 = new socstudy.ModeBarBuilder(); mb4.build(new TGIModeBarBuilder());
+
+        $("[id=spider-toggle-controls]").on("click", function() {
+            if($(this).attr("aria-pressed") === "false") {
+                $(this).text("SHOW CONTROLS");
+                $(this).css("font-weight", "600");
+                spiderPlotGraph. setControlsVisibility(false);
+                spiderPlotGraph.renderPlot(animals, groupMap, study);
+			} else {
+				$(this).text("HIDE CONTROLS");
+                $(this).css("font-weight", "600");
+                spiderPlotGraph. setControlsVisibility(true);
+                spiderPlotGraph.renderPlot(animals, groupMap, study);
+			}
+		});
+
+        $("[id=waterfall-toggle-controls]").on("click", function() {
+            if($(this).attr("aria-pressed") === "false") {
+                $(this).text("SHOW CONTROLS");
+                $(this).css("font-weight", "600");
+                waterfallPlotGraph. setControlsVisibility(false);
+                waterfallPlotGraph.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
+			} else {
+				$(this).text("HIDE CONTROLS");
+                $(this).css("font-weight", "600");
+                waterfallPlotGraph. setControlsVisibility(true);
+                waterfallPlotGraph.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
+			}
+        });
     }
 
 })(socstudy || (socstudy = {}));
