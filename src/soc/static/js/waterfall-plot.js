@@ -13,7 +13,7 @@ var waterfallPlotGraph = (function() {
             // shallow array copy
             animals = animals.slice(0);
 
-            let yAxisKey;
+            var yAxisKey;
             if(yAxisType === 'rel-vol') {
                 yAxisKey = 'percent_change_volume';
             } else if(yAxisType === 'rel-change') {
@@ -41,7 +41,7 @@ var waterfallPlotGraph = (function() {
                     x: group.animals.map(function(animal) {return animal.index}),
                     y: group.animals.map(function(animal) {return animal[yAxisKey]}),
                     text: group.animals.map(function(animal) {
-                        let textTooltip = " ID: <b>" + animal.animal_name 
+                        var textTooltip = " ID: <b>" + animal.animal_name 
                             + "</b><br> Start Day: <b>" + animal.start_day_measurement.measurement_value
                             + "</b><br> End Day: <b>" + animal.end_day_measurement.measurement_value
                             + "</b><br> Value: <b>" + animal[yAxisKey] + "</b> ";
@@ -64,7 +64,7 @@ var waterfallPlotGraph = (function() {
             }
 
             // plot titles might take more space than the available width; if so, the title needs to be broken on 2 lines
-            let title = PlotLib.fitTextOnScreen(study.curated_study_name, waPlot.offsetWidth);
+            var title = PlotLib.fitTextOnScreen(study.curated_study_name, waPlot.offsetWidth);
             var layout = {
                 title: title,
                 titlefont: PlotLib.titlefont,

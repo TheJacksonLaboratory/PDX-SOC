@@ -100,7 +100,7 @@ var PlotLib;
     PlotLib.fitTextOnScreen = function(text, containerWidth) {
         // titles are centered on the screen; 
         // allow some white space around them (left: 50px & right: 50px)
-        let titlePaddingPx = 100;
+        var titlePaddingPx = 100;
 
         // create dummy span
         this.e = document.createElement('span');
@@ -112,16 +112,16 @@ var PlotLib;
         this.e.innerHTML = text;
         document.body.appendChild(this.e);
 
-        let w = this.e.offsetWidth + titlePaddingPx;
-        let bottomText = "";
+        var w = this.e.offsetWidth + titlePaddingPx;
+        var bottomText = "";
 
         while(w > containerWidth) {
-            let textParts = removeWordsFromEnd(this.e.innerHTML, 1);
+            var textParts = removeWordsFromEnd(this.e.innerHTML, 1);
             this.e.innerHTML = textParts[0]; // titleParts[0] contains the top title text
             w = this.e.offsetWidth + titlePaddingPx;
             bottomText = textParts[1] + " " + bottomText;
         }
-        let topText = this.e.innerHTML;
+        var topText = this.e.innerHTML;
 
         // cleanup
         document.body.removeChild(this.e);
@@ -139,7 +139,7 @@ var PlotLib;
     *
     */
     PlotLib.cleanupRouteOfAdminUnits = function(a) {
-        let units = a.split("/");
+        var units = a.split("/");
 
 		return (units[0] + "/" + units[1]);
     }	
@@ -190,7 +190,7 @@ var PlotLib;
      *          contents of the given array)
      */
     PlotLib.insertUnique = function(array, x, compFunc) {
-        let idx = PlotLib.binarySearch(array, x, compFunc);
+        var idx = PlotLib.binarySearch(array, x, compFunc);
         if(idx < 0) {
             idx = -idx - 1;
             array.splice(idx, 0, x);
@@ -268,13 +268,13 @@ var PlotLib;
     * @return {string} shortSentence - the sentence with the last n words removed
     */
     function removeWordsFromEnd(sentence, n) {
-        let words = sentence.trim().split(" ");
-        let shortenSentence = "";
+        var words = sentence.trim().split(" ");
+        var shortenSentence = "";
         if(n >= words.length) { // check that n is smaller than the number of words
             return null;
         }
 
-        for(let i = 0; i < words.length - n; i++) {
+        for(var i = 0; i < words.length - n; i++) {
             shortenSentence = shortenSentence + " " + words[i];
         }
         return [shortenSentence, words.splice(words.length - n, words.length).join(" ")];
