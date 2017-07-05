@@ -222,7 +222,7 @@ var tgiPlotGraph = (function() {
             var annotationContent = [];
 
             // plot titles might take more space than the available width; if so, the title needs to be broken on 2 lines
-            let title = PlotLib.fitTextOnScreen(study.curated_study_name, myPlot.offsetWidth);
+            var title = PlotLib.fitTextOnScreen(study.curated_study_name, myPlot.offsetWidth);
             var tgiLayout = {
                 // autosize: false,
                 title: title,

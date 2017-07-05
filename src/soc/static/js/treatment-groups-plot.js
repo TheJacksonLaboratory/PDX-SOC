@@ -1,7 +1,7 @@
 "use strict"
 
 var treatmentGroupPlot = (function() {
-    let tgPlot;
+    var tgPlot;
 
     return {
         setGraphNode: function(graphDiv) {
@@ -10,9 +10,9 @@ var treatmentGroupPlot = (function() {
         renderPlot: function(yAxisType, measurements, treatments, groups, study) {
             // build-up per group traces for treatments
 			// plot TREATMENTS
-            let traceTreatments = groups.map(function(group) { 
+            var traceTreatments = groups.map(function(group) { 
                 // group treatments by day
-                let treatTextByDay = group.uniqTreatDays.map(function(measday) { 
+                var treatTextByDay = group.uniqTreatDays.map(function(measday) { 
                     return "DAY: " + measday + ", " + group.groupLabel; 
                 });
 
@@ -35,7 +35,7 @@ var treatmentGroupPlot = (function() {
             traceTreatments.reverse();
 
 			// plot MEASUREMENTS
-            let traceMeasurements = groups.map(function(group) {
+            var traceMeasurements = groups.map(function(group) {
 				var measGrpByDay = group.uniqMeasureDays.map(function() {
                     return [];
                 });
@@ -77,7 +77,7 @@ var treatmentGroupPlot = (function() {
                     xaxis: "x2",
                     yaxis: "y2",
                     text: measGrpByDay.map(function(dayGrp, index) {
-                        let msg = "   <b>DAY:</b> " + group.uniqMeasureDays[index];
+                        var msg = "   <b>DAY:</b> " + group.uniqMeasureDays[index];
                         msg = msg + ",  <b>x&#772;:</b> " + means[index];
                         msg = msg + ",  <b>&#963;<sub>x&#772;</sub>:</b> &#8723;" + errorVals[index];
                         msg = msg + ",  <b>N:</b> " + dayGrp.length + "  ";
@@ -98,8 +98,8 @@ var treatmentGroupPlot = (function() {
             });
 
 
-            let data = new Array();
-            for(let i = 0; i < groups.length; i++) {
+            var data = new Array();
+            for(var i = 0; i < groups.length; i++) {
                 if(traceTreatments[i]) {
                     data.push(traceTreatments[i]);
                 }
@@ -109,10 +109,10 @@ var treatmentGroupPlot = (function() {
             }
 			
             // determine X-axis range
-            let minDay = null;
-            let maxDay = null;
+            var minDay = null;
+            var maxDay = null;
             measurements.forEach(function(measurement) {
-                let day = measurement['measurement_day'];
+                var day = measurement['measurement_day'];
                 if(minDay === null || day < minDay) {
                     minDay = day;
                 }
@@ -130,8 +130,8 @@ var treatmentGroupPlot = (function() {
                     maxDay = day;
                 }
             });
-			
-            let yAxisTitle;
+
+            var yAxisTitle;
             if(yAxisType === 'abs-vol') {
                 yAxisTitle = 'Tumor Volume (mm<sup>3</sup>)';
             } else if(yAxisType === 'rel-change') {
@@ -139,8 +139,8 @@ var treatmentGroupPlot = (function() {
             }
 
             // plot titles might take more space than the available width; if so, the title needs to be broken on 2 lines
-            let title = PlotLib.fitTextOnScreen(study.curated_study_name, tgPlot.offsetWidth);
-            let layout = {
+            var title = PlotLib.fitTextOnScreen(study.curated_study_name, tgPlot.offsetWidth);
+            var layout = {
                 title: title,
                 titlefont: PlotLib.titlefont,
                 yaxis: {
@@ -184,7 +184,7 @@ var treatmentGroupPlot = (function() {
                 },
                 hovermode: 'closest'
             };
-
+console.log("TEST"); console.log(Plotly);
             Plotly.newPlot(tgPlot, data, layout, PlotLib.modebar);
 		}
 	};

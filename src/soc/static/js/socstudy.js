@@ -11,18 +11,18 @@ var socstudy;
 
 (function(socstudy) {
     // module scoped variables
-    let study = {};
-    let treatments = [];
-    let measurements = [];
-    let animals = [];
-    let groupLabels = [];
+    var study = {};
+    var treatments = [];
+    var measurements = [];
+    var animals = [];
+    var groupLabels = [];
 
-    let DownloadAsPng = (function() {
+    var DownloadAsPng = (function() {
         function DownloadAsPng(id) {
-            let that = this;
+            var that = this;
             that.id = id;
             $("[id=btn-" + that.id + "-modebar-download]").on("click", function() {
-                let title = $(this).attr("title");
+                var title = $(this).attr("title");
                 $.each($("[id=" + that.id + "-plot] .modebar-btn"), function(index, modebarButton) {
                     if(modebarButton.getAttribute("data-title") === title) {
                         modebarButton.click();
@@ -34,12 +34,12 @@ var socstudy;
     })();
     PlotLib.DownloadAsPng = DownloadAsPng;
 
-    let Pan = (function() {
+    var Pan = (function() {
         function Pan(id) {
-            let that = this;
+            var that = this;
             that.id = id;
             $("[id=btn-" + that.id + "-modebar-pan]").on("click", function() {
-                let title = $(this).attr("title");
+                var title = $(this).attr("title");
                 $.each($("[id=" + that.id + "-plot] .modebar-btn"), function(index, modebarButton) {
                     if(modebarButton.getAttribute("data-title") === title) {
                         modebarButton.click();
@@ -51,13 +51,13 @@ var socstudy;
     })();
     PlotLib.Pan = Pan;
 	
-    let ZoomIn = (function() {
+    var ZoomIn = (function() {
         function ZoomIn(id) {
-            let that = this;
+            var that = this;
             that.id = id;
             $("[id=btn-" + that.id +  "-modebar-zoomin]").on("click", function(event) {
 				
-                let title = $(this).attr("title");
+                var title = $(this).attr("title");
                 $.each($("[id=" + that.id + "-plot] .modebar-btn"), function(index, modebarButton) {
                     if(modebarButton.getAttribute("data-title") === title) {
                         modebarButton.click();
@@ -69,12 +69,12 @@ var socstudy;
     })();
     PlotLib.ZoomIn = ZoomIn;
 
-    let ZoomOut = (function() {
+    var ZoomOut = (function() {
         function ZoomOut(id) {
-            let that = this;
+            var that = this;
             that.id = id;
             $("[id=btn-" + that.id + "-modebar-zoomout]").on("click", function() {
-                let title = $(this).attr("title");
+                var title = $(this).attr("title");
                 $.each($("[id=" + that.id + "-plot] .modebar-btn"), function(index, modebarButton) {
                     if(modebarButton.getAttribute("data-title") === title) {
                         modebarButton.click();
@@ -86,12 +86,12 @@ var socstudy;
     })();
     PlotLib.ZoomOut = ZoomOut;
 
-    let ResetAxes = (function() {
+    var ResetAxes = (function() {
         function ResetAxes(id) {
-            let that = this;
+            var that = this;
             that.id = id;
             $("[id=btn-" + that.id + "-modebar-reset]").on("click", function() {
-                let title = $(this).attr("title");
+                var title = $(this).attr("title");
                 $.each($("[id=" + that.id + "-plot] .modebar-btn"), function(index, modebarButton) {
                     if(modebarButton.getAttribute("data-title") === title) {
                         modebarButton.click();
@@ -103,7 +103,7 @@ var socstudy;
     })();
     PlotLib.ResetAxes = ResetAxes;
 
-    let PlotModeBar = (function() {
+    var PlotModeBar = (function() {
         function PlotModeBar() {
             this.buttons = [];
         }
@@ -111,7 +111,7 @@ var socstudy;
     })();
     PlotLib.PlotModeBar = PlotModeBar;
 
-    let TreatmentGroupsModeBarBuilder = (function() {
+    var TreatmentGroupsModeBarBuilder = (function() {
         function TreatmentGroupsModeBarBuilder() { }
 
         TreatmentGroupsModeBarBuilder.prototype.build = function() {
@@ -127,7 +127,7 @@ var socstudy;
     })();
     PlotLib.TreatmentGroupsModeBarBuilder = TreatmentGroupsModeBarBuilder;
 
-    let SpiderModeBarBuilder = (function() {
+    var SpiderModeBarBuilder = (function() {
         function SpiderModeBarBuilder() { }
 
         SpiderModeBarBuilder.prototype.build = function() {
@@ -143,7 +143,7 @@ var socstudy;
     })();
     PlotLib.SpiderModeBarBuilder = SpiderModeBarBuilder;
 
-    let WaterfallModeBarBuilder = (function() {
+    var WaterfallModeBarBuilder = (function() {
         function WaterfallModeBarBuilder() { }
 
         WaterfallModeBarBuilder.prototype.build = function() {
@@ -156,7 +156,7 @@ var socstudy;
     })();
     PlotLib.WaterfallModeBarBuilder = WaterfallModeBarBuilder;
 
-    let TGIModeBarBuilder = (function() {
+    var TGIModeBarBuilder = (function() {
         function TGIModeBarBuilder() { }
 
         TGIModeBarBuilder.prototype.build = function() {
@@ -175,7 +175,7 @@ var socstudy;
     * a class witihn the module so that design patterns could
     * be applied as the application becomes more complex
     */
-    let ModeBarBuilder = (function() {
+    var ModeBarBuilder = (function() {
         function ModeBarBuilder() { }
 
         ModeBarBuilder.prototype.build = function(builder) {
@@ -234,8 +234,8 @@ var socstudy;
             animal.measurements = [];
             animal.treatments = [];
 
-            let grpName = animal['group_name'];
-            let animalName = animal['animal_name'];
+            var grpName = animal['group_name'];
+            var animalName = animal['animal_name'];
             if(typeof(groupMap[grpName]) === 'undefined') {
                 var group = {
                     color: null,
@@ -280,7 +280,7 @@ var socstudy;
             PlotLib.insertUnique(grp.uniqTreatDays, day);
             PlotLib.insertUnique(grp.doseActivities, treatment['dose_activity'], PlotLib.compareBasic);
 			
-            let units = PlotLib.cleanupRouteOfAdminUnits(treatment['administration_route_units']);
+            var units = PlotLib.cleanupRouteOfAdminUnits(treatment['administration_route_units']);
             PlotLib.insertUnique(grp.doseUnits, units, PlotLib.compareBasic);
             PlotLib.insertUnique(grp.doseAmounts, treatment['test_material_amount']);
             animalMap[animalName].treatments.push(treatment);
@@ -296,7 +296,7 @@ var socstudy;
             group.nearStartMeasDay = group.uniqMeasureDays[group.nearStartMeasIdx];
             group.nearEndMeasDay = group.uniqMeasureDays[group.nearEndMeasIdx];
 
-            for(let i = 0; i < groupLabels.length; i++) {
+            for(var i = 0; i < groupLabels.length; i++) {
                 if(groupLabels[i].group_name === group.groupName) {
                     if(groupLabels[i].curated_group_name !== "") {
                         group.groupLabel = groupLabels[i].curated_group_name;
