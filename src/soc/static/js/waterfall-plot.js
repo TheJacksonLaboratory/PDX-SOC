@@ -66,6 +66,7 @@ var waterfallPlotGraph = (function() {
             // plot titles might take more space than the available width; if so, the title needs to be broken on 2 lines
             var title = PlotLib.fitTextOnScreen(study.curated_study_name, waPlot.offsetWidth);
             var layout = {
+                autosize: false,
                 title: title,
                 titlefont: PlotLib.titlefont,
                 yaxis: {
