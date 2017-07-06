@@ -141,19 +141,20 @@ var treatmentGroupPlot = (function() {
             // plot titles might take more space than the available width; if so, the title needs to be broken on 2 lines
             var title = PlotLib.fitTextOnScreen(study.curated_study_name, tgPlot.offsetWidth);
             var layout = {
+                autosize: false,
                 title: title,
                 titlefont: PlotLib.titlefont,
                 yaxis: {
                     title: "Treatments",
                     domain: [0, 0.35],
                     showline: true,
-					zeroline: false,
+                    zeroline: false,
                     showticklabels: false
                 },
                 xaxis: {
                     title: "Day of Study",
                     range: [minDay, maxDay],
-					zeroline: false,
+                    zeroline: false,
                     showline: true,
                     ticks: "outside",
                     ticksuffix: " ",
@@ -169,23 +170,23 @@ var treatmentGroupPlot = (function() {
                     showticklabels: true
                 },
                 xaxis2: {
-					anchor: "y2",
+                    anchor: "y2",
                     range: [minDay, maxDay],
                     zeroline: false,
                     showline: false,
                     showticklabels: false
-				},
+                },
                 width: tgPlot.offsetWidth,
                 height: tgPlot.offsetHeight,
-				legend: {
+                legend: {
                     bgcolor: 'none',
                     x: 0.05,
                     y: 0.95
                 },
                 hovermode: 'closest'
             };
-console.log("TEST"); console.log(Plotly);
+
             Plotly.newPlot(tgPlot, data, layout, PlotLib.modebar);
-		}
-	};
+        }
+    };
 }());

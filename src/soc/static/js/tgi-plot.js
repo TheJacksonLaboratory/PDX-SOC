@@ -1,5 +1,6 @@
 var tgiPlotGraph = (function() {
     var myPlot;
+    var marginBottom = 0;
 
     // hard modebar object copy
     var modebarTGI = JSON.parse(JSON.stringify(PlotLib.modebar));
@@ -135,6 +136,10 @@ var tgiPlotGraph = (function() {
                 // need to show text here because they will have no 'reduction' bars and annnotations
                 if(100 <= roundedMean) { hoverInfo = "x+text"; }
 
+                if(PlotLib.getLabelLenPx(group.groupLabel) > marginBottom) {
+                    marginBottom = PlotLib.getLabelLenPx(group.groupLabel);
+                }
+
                 return {
                     name: group.groupLabel,
                     x: [group.groupLabel],
@@ -154,17 +159,17 @@ var tgiPlotGraph = (function() {
                 };
             });
 
-            var errorBars = groups.map(function(group){
+            var errorBars = groups.map(function(group) {
                 var roundedMean = Math.round(100 * (groupEndDayMean(group) / vehicleFinalMean));
                 
 				// calculate the standard error (end day measurement for all animals in the group)
                 // collect the ...
 				var lastdaymeas = [];
 				
-				group.animals.forEach(function(animal) {
+                group.animals.forEach(function(animal) {
                     lastdaymeas.push(animal.end_day_measurement.measurement_value);
                 });
-				
+
                 return {
                     x: [group.groupLabel],
                     y: [roundedMean],
@@ -212,9 +217,9 @@ var tgiPlotGraph = (function() {
                     width: 2
                 }
             }; 
-			
+
             var tgiData = new Array();
-            
+ 
             tgiData.push.apply(tgiData, bottomBars);
             // tgiData.push.apply(tgiData, errorBars);
             tgiData.push(refLine);
@@ -224,7 +229,7 @@ var tgiPlotGraph = (function() {
             // plot titles might take more space than the available width; if so, the title needs to be broken on 2 lines
             var title = PlotLib.fitTextOnScreen(study.curated_study_name, myPlot.offsetWidth);
             var tgiLayout = {
-                // autosize: false,
+                autosize: false,
                 title: title,
                 titlefont: PlotLib.titlefont,
                 yaxis: {
@@ -240,7 +245,7 @@ var tgiPlotGraph = (function() {
                 xaxis: {
                     type: "category",
                     showticklabels: true,
-                    tickangle: 20,
+                    tickangle: -90,
                     zeroline: false,
                     showline: true,
                     zerolinecolor: "black",
@@ -251,9 +256,9 @@ var tgiPlotGraph = (function() {
                 width: myPlot.offsetWidth,
                 height: myPlot.offsetHeight,
                 margin: {
-                    b: 120
+                    b: marginBottom
                 },
-                annotations: annotationContent
+                annotations: annotationContent,
             };
 
             for(var i = 0 ; i < groups.length ; i++) { 
@@ -275,9 +280,9 @@ var tgiPlotGraph = (function() {
                     }
                 } else {
                     // annotationText = (roundedMean - 100) + "% increase";
-                    annotationText = (roundedMean - 100) + "%";
+                    annotationText = roundedMean  + "%";
                 }
-                
+
                 var result = {
                     x: groups[i].groupLabel,
                     y: roundedMean,

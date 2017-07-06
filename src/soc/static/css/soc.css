@@ -141,7 +141,7 @@ div.section-header-1 {
 
 
 div[class~=plot-container] {
-    width: 90%;
+    width: 800px;
     height: 600px; 
     margin: 0 auto;
     margin-bottom: 50px;

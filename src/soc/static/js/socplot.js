@@ -178,6 +178,33 @@ var PlotLib;
 
 
     /**
+	*
+	*
+	*
+	*/
+	PlotLib.getLabelLenPx = function(label) {
+        var extraPadding = 10;
+
+        this.e = document.createElement("span");
+
+        // set font-size
+        this.e.style.fontSize = PlotLib.titlefont.size;
+        // set font-face / font-family
+        this.e.style.fontFamily = PlotLib.titlefont.font;
+        // set text
+        this.e.innerHTML = label;
+        document.body.appendChild(this.e);
+
+        var w = this.e.offsetWidth;
+
+        // cleanup
+        document.body.removeChild(this.e);
+
+        return (w + extraPadding);
+    }
+
+
+    /**
      * insert x into the given sorted array if it isn't already present (this function has no effect if the element is
      * already in the array).
      * @param array a sorted array
