@@ -277,8 +277,8 @@ var socstudy;
             PlotLib.insertUnique(grp.uniqTreatDays, day);
             PlotLib.insertUnique(grp.doseActivities, treatment['dose_activity'], PlotLib.compareBasic);
 			
-            var units = PlotLib.cleanupRouteOfAdminUnits(treatment['administration_route_units']);
-            PlotLib.insertUnique(grp.doseUnits, units, PlotLib.compareBasic);
+            // var units = PlotLib.cleanupRouteOfAdminUnits(treatment['administration_route_units']);
+            PlotLib.insertUnique(grp.doseUnits, treatment['administration_route_units'], PlotLib.compareBasic);
             PlotLib.insertUnique(grp.doseAmounts, treatment['test_material_amount']);
             animalMap[animalName].treatments.push(treatment);
         });
