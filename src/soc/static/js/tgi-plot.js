@@ -280,7 +280,7 @@ var tgiPlotGraph = (function() {
                     }
                 } else {
                     // annotationText = (roundedMean - 100) + "% increase";
-                    annotationText = roundedMean  + "%";
+                    annotationText = "-" + (roundedMean - 100)  + "%";
                 }
 
                 var result = {
