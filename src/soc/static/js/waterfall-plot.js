@@ -1,6 +1,6 @@
 var waterfallPlotGraph = (function() {
     var waPlot;
-    var showControls = true;
+    var showControls = false;
 	
     return {
         setGraphNode: function(graphDiv) {
@@ -23,16 +23,18 @@ var waterfallPlotGraph = (function() {
             animals.sort(function(animal1, animal2) {
                 return animal2[yAxisKey] - animal1[yAxisKey];
             });
-            animals.forEach(function(animal, i) {
-                animal.index = i;
-            });
-	        
-            var traces = groups.filter(function(group) {
-                if(!showControls && group.isControl) {
+            var controlGrpName = (groups[0].isControl === 1) ? groups[0].groupName : "";
+
+            animals.filter(function(animal) {
+                if(!showControls && animal.group_name === controlGrpName) {
                     return false;
                 }
                 return true;
-            }).map(function(group) {
+            }).map(function(animal, i) {
+                animal.index = i;
+            });
+
+            var traces = groups.map(function(group) {
                 var grpLbl =
                     group.groupLabel + ' [days ' +
                     group.nearStartMeasDay + '-' + group.nearEndMeasDay + ']';
@@ -89,7 +91,12 @@ var waterfallPlotGraph = (function() {
                 },
                 bargap: 0.1
             };
+
             Plotly.newPlot(waPlot, traces, layout, PlotLib.modebar);
+
+            if(!showControls) {
+                Plotly.deleteTraces(waPlot, [0]);
+            } 
         }
     };
 }());

@@ -1,6 +1,6 @@
 var spiderPlotGraph = (function() {
 	var myPlot;
-    var showControls = true;
+    var showControls = false;
 	var xAxisMax = 0;
     var xAxisMin = 0;
     var grouplist = [];
