@@ -71,7 +71,7 @@ var waterfallPlotGraph = (function() {
                 showlegend: false,
                 line: {
                     dash: "dashdot",
-                    color: "yellow",
+                    color: "black",
                     width: 2
                 }
             };
