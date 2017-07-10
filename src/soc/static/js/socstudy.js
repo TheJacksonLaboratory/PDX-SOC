@@ -397,12 +397,12 @@ var socstudy;
 
         $("[id=spider-toggle-controls]").on("click", function() {
             if($(this).attr("aria-pressed") === "false") {
-                $(this).text("HIDE CONTROLS");
+                $(this).text("HIDE CONTROL DATA");
                 $(this).css("font-weight", "600");
                 spiderPlotGraph. setControlsVisibility(true);
                 spiderPlotGraph.renderPlot(animals, groupMap, study);
             } else {
-                $(this).text("SHOW CONTROLS");
+                $(this).text("PLOT CONTROL DATA");
                 $(this).css("font-weight", "600");
                 spiderPlotGraph. setControlsVisibility(false); 
                 spiderPlotGraph.renderPlot(animals, groupMap, study);
@@ -411,12 +411,12 @@ var socstudy;
 
         $("[id=waterfall-toggle-controls]").on("click", function() {
             if($(this).attr("aria-pressed") === "false") {
-                $(this).text("HIDE CONTROLS");
+                $(this).text("HIDE CONTROL DATA");
                 $(this).css("font-weight", "600");
                 waterfallPlotGraph. setControlsVisibility(true);
                 waterfallPlotGraph.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
             } else {
-                $(this).text("SHOW CONTROLS");
+                $(this).text("SHOW CONTROL DATA");
                 $(this).css("font-weight", "600");
                 waterfallPlotGraph. setControlsVisibility(false);
                 waterfallPlotGraph.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);

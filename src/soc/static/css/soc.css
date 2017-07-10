@@ -147,14 +147,13 @@ div[class~=plot-container] {
     margin-bottom: 50px;
 }
 
-
-
 .modebar-group {
     visibility: hidden;
 }
 
-.btn-treatment-groups-modebar, .btn-spider-modebar, .btn-waterfall-modebar, .btn-tgi-modebar {
-    margin: 0 2px;
+.btn-controls-modebar {
+    width: 150px; 
+    font-size:0.8em;
 }
 
 @media (min-width: 768px) {
