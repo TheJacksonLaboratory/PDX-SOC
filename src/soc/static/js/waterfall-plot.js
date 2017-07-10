@@ -12,6 +12,7 @@ var waterfallPlotGraph = (function() {
         renderPlot: function(yAxisType, animals, groups, study) {
             // shallow array copy
             animals = animals.slice(0);
+            var totalIndices = 0;
 
             var yAxisKey;
             if(yAxisType === 'rel-vol') {
@@ -32,6 +33,7 @@ var waterfallPlotGraph = (function() {
                 return true;
             }).map(function(animal, i) {
                 animal.index = i;
+                totalIndices++;
             });
 
             var traces = groups.map(function(group) {
@@ -57,6 +59,40 @@ var waterfallPlotGraph = (function() {
                     }
                 };
             });
+
+            var percent50RefLine = {
+                x: [-1, totalIndices],
+                y: yAxisType === 'rel-vol' ? [50, 50] : [0.5, 0.5],
+                xaxis: "x",
+                yaxis: "y",
+                type: "scatter",
+                mode: "lines",
+                hoverinfo: 'none',
+                showlegend: false,
+                line: {
+                    dash: "dashdot",
+                    color: "black",
+                    width: 2
+                }
+            };
+            traces.push(percent50RefLine);
+
+            var percent90RefLine = {
+                x: [-1, totalIndices],
+                y: (yAxisType === 'rel-vol' ? [90, 90] : [0.9, 0.9]),
+                xaxis: "x",
+                yaxis: "y",
+                type: "scatter",
+                mode: "lines",
+				hoverinfo: 'none',
+                showlegend: false,
+                line: {
+                    dash: "dash",
+                    color: "purple",
+                    width: 2
+                }
+            };
+            traces.push(percent90RefLine);
 
             var yAxisTitle;
             if(yAxisType === 'rel-vol') {
@@ -89,7 +125,31 @@ var waterfallPlotGraph = (function() {
                     xanchor: 'right',
                     yanchor: 'top'
                 },
-                bargap: 0.1
+                bargap: 0.1,
+				annotations: [
+                    {
+                        x: totalIndices,
+                        y: (yAxisType === 'rel-vol' ? 50 : 0.5),
+                        xref: "x",
+                        yref: "y",
+                        text: "50%",
+                        showarrow: true,
+                        arrowhead: 2,
+                        ax: totalIndices,
+                        ay: -20
+                    },
+					{
+                        x: totalIndices,
+                        y: (yAxisType === 'rel-vol' ? 90 : 0.9),
+                        xref: "x",
+                        yref: "y",
+                        text: "90%",
+                        showarrow: true,
+                        arrowhead: 2,
+                        ax: totalIndices,
+                        ay: -60
+                    }
+                ]
             };
 
             Plotly.newPlot(waPlot, traces, layout, PlotLib.modebar);
