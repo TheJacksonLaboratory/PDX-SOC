@@ -22,12 +22,9 @@ var socstudy;
             var that = this;
             that.id = id;
             $("[id=btn-" + that.id + "-modebar-download]").on("click", function() {
-                var title = $(this).attr("title");
-                $.each($("[id=" + that.id + "-plot] .modebar-btn"), function(index, modebarButton) {
-                    if(modebarButton.getAttribute("data-title") === title) {
-                        modebarButton.click();
-                    }
-                });
+                var gd = $("[id=" + that.id + "-plot]")[0];
+                var fn = (study.model_TM ? study.model_TM : study.model_J) + "-" + that.id + "-plot";
+                PlotLib.downloadPlotlyImage(gd, gd.offsetWidth, gd.offsetHeight, fn);
             });
         }
         return DownloadAsPng;
@@ -400,30 +397,30 @@ var socstudy;
 
         $("[id=spider-toggle-controls]").on("click", function() {
             if($(this).attr("aria-pressed") === "false") {
-                $(this).text("SHOW CONTROLS");
-                $(this).css("font-weight", "600");
-                spiderPlotGraph. setControlsVisibility(false);
-                spiderPlotGraph.renderPlot(animals, groupMap, study);
-			} else {
-				$(this).text("HIDE CONTROLS");
+                $(this).text("HIDE CONTROLS");
                 $(this).css("font-weight", "600");
                 spiderPlotGraph. setControlsVisibility(true);
                 spiderPlotGraph.renderPlot(animals, groupMap, study);
-			}
-		});
+            } else {
+                $(this).text("SHOW CONTROLS");
+                $(this).css("font-weight", "600");
+                spiderPlotGraph. setControlsVisibility(false); 
+                spiderPlotGraph.renderPlot(animals, groupMap, study);
+            }
+        });
 
         $("[id=waterfall-toggle-controls]").on("click", function() {
             if($(this).attr("aria-pressed") === "false") {
+                $(this).text("HIDE CONTROLS");
+                $(this).css("font-weight", "600");
+                waterfallPlotGraph. setControlsVisibility(true);
+                waterfallPlotGraph.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
+            } else {
                 $(this).text("SHOW CONTROLS");
                 $(this).css("font-weight", "600");
                 waterfallPlotGraph. setControlsVisibility(false);
                 waterfallPlotGraph.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
-			} else {
-				$(this).text("HIDE CONTROLS");
-                $(this).css("font-weight", "600");
-                waterfallPlotGraph. setControlsVisibility(true);
-                waterfallPlotGraph.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
-			}
+            }
         });
     }
 
