@@ -1,6 +1,8 @@
 var waterfallPlotGraph = (function() {
     var waPlot;
     var showControls = false;
+	var maxYVal = Number.MIN_VALUE;
+    var lastMeasDay = -1; // the last measurement day across all groups in the study
 
     return {
         setGraphNode: function(graphDiv) {
@@ -26,18 +28,27 @@ var waterfallPlotGraph = (function() {
             });
             var controlGrpName = (groups[0].isControl === 1) ? groups[0].groupName : "";
 
+            for(var i = 0; i < groups.length; i++) {
+                if(lastMeasDay < groups[i].nearEndMeasDay) {
+                    lastMeasDay = groups[i].nearEndMeasDay;
+                }
+            }
+
             animals.filter(function(animal) { 
-                // avoid indexing/plotting control group animals
+                // skip indexing/plotting control group animals
                 if(!showControls && animal.group_name === controlGrpName) {
                     return false;
                 }
-                // avoid indexing/plotting animals not survining to the last day of the study
-                if(animal.end_day_measurement.measurement_day !== groups[0].nearEndMeasDay) {
+                // skip indexing/plotting animals not surviving to the last day of the study
+                if(animal.end_day_measurement.measurement_day < lastMeasDay) {
                     return false;
                 }
 
                 return true;
             }).map(function(animal, i) {
+                if(animal.percent_change_volume > maxYVal) {
+                    maxYVal = animal.percent_change_volume;
+                }
                 animal.index = i;
                 totalIndices++;
             });
@@ -49,13 +60,13 @@ var waterfallPlotGraph = (function() {
                 return {
                     name: grpLbl,
                     x: group.animals.filter(function(animal) {
-                        if(animal.end_day_measurement.measurement_day !== groups[0].nearEndMeasDay) {
+                        if(animal.end_day_measurement.measurement_day < lastMeasDay) {
                             return false;
                         }
                         return true;
                     }).map(function(animal) {return animal.index}),
                     y: group.animals.filter(function(animal) {
-                        if(animal.end_day_measurement.measurement_day !== groups[0].nearEndMeasDay) {
+                        if(animal.end_day_measurement.measurement_day < lastMeasDay) {
                             return false;
                         }
                         return true;
@@ -155,7 +166,7 @@ var waterfallPlotGraph = (function() {
                         showarrow: true,
                         arrowhead: 2,
                         ax: totalIndices,
-                        ay: -20
+                        ay: (maxYVal > 200 ? -20 : 60)
                     },
 					{
                         x: totalIndices,
@@ -166,7 +177,7 @@ var waterfallPlotGraph = (function() {
                         showarrow: true,
                         arrowhead: 2,
                         ax: totalIndices,
-                        ay: -60
+                        ay: (maxYVal > 200 ? -60 : 20)
                     }
                 ]
             };
