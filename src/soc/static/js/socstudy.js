@@ -307,19 +307,29 @@ var socstudy;
                     // additional group properties
                     group.recistCat = groupLabels[i].recist;
                     if(groupLabels[i].is_control === 1) group.isControl = 1;
+                    
+					// in some cases it is possible for different treatment groups to end up having the same
+                    // colors: (eg. same drug, different dosages); below block resolves such cases
+                    for(var j = 0; j < i; j++) {
+                        if(groupLabels[j].color === groupLabels[i].color) {
+                            groupLabels[i].color = null;
+                            break;
+                        }
+                    }
+
                     if(groupLabels[i].color !== null) group.color = groupLabels[i].color;
                 }
             }
         });
-        
-		// vehicle group needs to be at first position
+
+        // vehicle group needs to be at first position
         var controlIndex = 0;
         for(var i = 0; i < groups.length; i++) { 
             if(groups[i].isControl === 1) {
                 controlIndex = i;
             }
         }
-		groups.splice(0, 0, groups[controlIndex]);
+        groups.splice(0, 0, groups[controlIndex]);
         groups.splice(controlIndex+1, 1);
         
         groups.forEach(function(group, i) {
