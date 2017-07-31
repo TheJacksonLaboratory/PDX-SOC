@@ -71,7 +71,12 @@ var waterfallPlotGraph = (function() {
                         }
                         return true;
                     }).map(function(animal) {return animal[yAxisKey]}),
-                    text: group.animals.map(function(animal) {
+                    text: group.animals.filter(function(animal) {
+                        if(animal.end_day_measurement.measurement_day < lastMeasDay) {
+                            return false;
+                        }
+                        return true;
+                    }).map(function(animal) {
                         var textTooltip = " ID: <b>" + animal.animal_name 
                             + "</b><br> Start Day: <b>" + animal.start_day_measurement.measurement_value
                             + "</b><br> End Day: <b>" + animal.end_day_measurement.measurement_value
