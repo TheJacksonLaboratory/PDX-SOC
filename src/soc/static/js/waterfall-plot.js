@@ -1,7 +1,7 @@
 var waterfallPlotGraph = (function() {
     var waPlot;
     var showControls = false;
-	
+
     return {
         setGraphNode: function(graphDiv) {
             waPlot = graphDiv;
@@ -26,10 +26,16 @@ var waterfallPlotGraph = (function() {
             });
             var controlGrpName = (groups[0].isControl === 1) ? groups[0].groupName : "";
 
-            animals.filter(function(animal) {
+            animals.filter(function(animal) { 
+                // avoid indexing/plotting control group animals
                 if(!showControls && animal.group_name === controlGrpName) {
                     return false;
                 }
+                // avoid indexing/plotting animals not survining to the last day of the study
+                if(animal.end_day_measurement.measurement_day !== groups[0].nearEndMeasDay) {
+                    return false;
+                }
+
                 return true;
             }).map(function(animal, i) {
                 animal.index = i;
@@ -42,8 +48,18 @@ var waterfallPlotGraph = (function() {
                     group.nearStartMeasDay + '-' + group.nearEndMeasDay + ']';
                 return {
                     name: grpLbl,
-                    x: group.animals.map(function(animal) {return animal.index}),
-                    y: group.animals.map(function(animal) {return animal[yAxisKey]}),
+                    x: group.animals.filter(function(animal) {
+                        if(animal.end_day_measurement.measurement_day !== groups[0].nearEndMeasDay) {
+                            return false;
+                        }
+                        return true;
+                    }).map(function(animal) {return animal.index}),
+                    y: group.animals.filter(function(animal) {
+                        if(animal.end_day_measurement.measurement_day !== groups[0].nearEndMeasDay) {
+                            return false;
+                        }
+                        return true;
+                    }).map(function(animal) {return animal[yAxisKey]}),
                     text: group.animals.map(function(animal) {
                         var textTooltip = " ID: <b>" + animal.animal_name 
                             + "</b><br> Start Day: <b>" + animal.start_day_measurement.measurement_value
@@ -60,6 +76,7 @@ var waterfallPlotGraph = (function() {
                 };
             });
 
+            // the 50 percent reference is important for determining treatment success
             var percent50RefLine = {
                 x: [-1, totalIndices],
                 y: yAxisType === 'rel-vol' ? [50, 50] : [0.5, 0.5],
@@ -77,6 +94,7 @@ var waterfallPlotGraph = (function() {
             };
             traces.push(percent50RefLine);
 
+            // the 90 percent reference line is important for determining treatment success
             var percent90RefLine = {
                 x: [-1, totalIndices],
                 y: (yAxisType === 'rel-vol' ? [90, 90] : [0.9, 0.9]),
@@ -101,7 +119,8 @@ var waterfallPlotGraph = (function() {
                 yAxisTitle = 'Fold Change in Tumor Volume (mm<sup>3</sup>)';
             }
 
-            // plot titles might take more space than the available width; if so, the title needs to be broken on 2 lines
+            // plot titles might take more space than the available width; 
+            // for such cases, the title needs to be broken on 2 lines
             var title = PlotLib.fitTextOnScreen(study.curated_study_name, waPlot.offsetWidth);
             var layout = {
                 autosize: false,
@@ -126,7 +145,7 @@ var waterfallPlotGraph = (function() {
                     yanchor: 'top'
                 },
                 bargap: 0.1,
-				annotations: [
+                annotations: [
                     {
                         x: totalIndices,
                         y: (yAxisType === 'rel-vol' ? 50 : 0.5),
