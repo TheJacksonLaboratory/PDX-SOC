@@ -236,6 +236,7 @@ var socstudy;
             if(typeof(groupMap[grpName]) === 'undefined') {
                 var group = {
                     color: null,
+                    drugs: [],
                     doseActivities: [],
                     doseUnits: [],
                     doseAmounts: [],
@@ -276,11 +277,20 @@ var socstudy;
             var day = treatment['treatment_day'];
             PlotLib.insertUnique(grp.uniqTreatDays, day);
             PlotLib.insertUnique(grp.doseActivities, treatment['dose_activity'], PlotLib.compareBasic);
-			
-            // var units = PlotLib.cleanupRouteOfAdminUnits(treatment['administration_route_units']);
-            PlotLib.insertUnique(grp.doseUnits, treatment['administration_route_units'], PlotLib.compareBasic);
-            PlotLib.insertUnique(grp.doseAmounts, treatment['test_material_amount']);
-            animalMap[animalName].treatments.push(treatment);
+
+            var amounts = {
+                "dose_activity": treatment["dose_activity"], 
+                "dose_amount": treatment["test_material_amount"]
+            };
+            PlotLib.insertUniqueObject(grp.doseAmounts, amounts);
+
+            var units = {
+                "dose_activity": treatment["dose_activity"], 
+                "administration_route_units": treatment["administration_route_units"]
+            };
+            PlotLib.insertUniqueObject(grp.doseUnits, units);
+
+			animalMap[animalName].treatments.push(treatment);
         });
 
         // setup group labels: 
@@ -300,15 +310,41 @@ var socstudy;
                     } else if(group.doseActivities.length <= 0)  { 
                         group.groupLabel = "No Treatment";
                     } else {
-                        group.groupLabel = 
-                            groupLabels[i].drug + 
-                            ' (' + group.doseAmounts.join(', ') + ' ' + group.doseUnits.join(', ') + ')';
+                        // number of drug(s) used in this group for treatment
+                        group.drugs = groupLabels[i].drug.split("+").map(function(item) {
+                            return item.trim();
+                        });
+
+                        group.groupLabel = groupLabels[i].drug + " ";
+
+                        // if 2 or more drugs have been used for treatment, group labels need some formatting
+                        if(group.drugs.length > 1) {
+                            group.groupLabel += "(";
+                            for(let j = 0; j < group.drugs.length; j++) {						
+                                for(let k = 0; k < group.doseAmounts.length; k++) {
+                                    if(group.doseAmounts[k].dose_activity.search(new RegExp(group.drugs[j], "i")) == -1) {
+                                        group.groupLabel += group.doseAmounts[k].dose_amount 
+                                            + " " 
+                                            + group.doseUnits[k].administration_route_units;
+                                    }
+                                }
+                                if(j < (group.drugs.length - 1)) {
+                                    group.groupLabel += ", ";
+                                }
+                            }
+                            group.groupLabel += ")";
+                        } else { // only one drug has been used for treatment in this group
+                            group.groupLabel += "(" + group.doseAmounts[0].dose_amount 
+                                + " " 
+                                + group.doseUnits[0].administration_route_units + ")";
+                        }
                     }
-                    // additional group properties
+                    
+                    // additional group properties setup
                     group.recistCat = groupLabels[i].recist;
                     if(groupLabels[i].is_control === 1) group.isControl = 1;
-                    
-					// in some cases it is possible for different treatment groups to end up having the same
+
+                    // in some cases it is possible for different treatment groups to end up having the same
                     // colors: (eg. same drug, different dosages); below block resolves such cases
                     for(var j = 0; j < i; j++) {
                         if(groupLabels[j].color === groupLabels[i].color) {
