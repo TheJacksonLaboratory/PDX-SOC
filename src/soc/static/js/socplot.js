@@ -292,6 +292,24 @@ var PlotLib;
 
 
     /**
+     * 
+     * 
+     */
+    PlotLib.insertUniqueObject = function(array, o) {
+        if(array.length === 0) {
+            array.push(o);
+        } else {
+            for(var i = 0; i < array.length; i++) {
+                if(JSON.stringify(array[i]) === JSON.stringify(o)) {
+                    return;
+                }
+            }
+            array.push(o);
+        }
+    }
+
+
+    /**
      *
      * @param nums
      * @return {{mean: number, stdDev: number}}
