@@ -286,7 +286,7 @@ var socstudy;
 
             var units = {
                 "dose_activity": treatment["dose_activity"], 
-                "administration_unit": treatment["administration_route_units"]
+                "administration_route_units": treatment["administration_route_units"]
             };
             PlotLib.insertUniqueObject(grp.doseUnits, units);
 
@@ -325,18 +325,18 @@ var socstudy;
                                     if(group.doseAmounts[k].dose_activity.indexOf(group.drugs[j]) > -1) {
                                         group.groupLabel += group.doseAmounts[k].dose_amount 
                                             + " " 
-                                            + group.doseUnits[k].administration_unit;
+                                            + group.doseUnits[k].administration_route_units;
                                     }
                                 }
                                 if(j < (group.drugs.length - 1)) {
-                                    group.groupLabel += " + ";
+                                    group.groupLabel += ", ";
                                 }
                             }
                             group.groupLabel += ")";
                         } else { // only one drug has been used for treatment in this group
                             group.groupLabel += "(" + group.doseAmounts[0].dose_amount 
                                 + " " 
-                                + group.doseUnits[0].administration_unit + ")";
+                                + group.doseUnits[0].administration_route_units + ")";
                         }
                     }
                     
