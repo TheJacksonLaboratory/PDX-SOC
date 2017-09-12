@@ -322,7 +322,7 @@ var socstudy;
                             group.groupLabel += "(";
                             for(let j = 0; j < group.drugs.length; j++) {						
                                 for(let k = 0; k < group.doseAmounts.length; k++) {
-                                    if(group.doseAmounts[k].dose_activity.indexOf(group.drugs[j]) > -1) {
+                                    if(group.doseAmounts[k].dose_activity.search(new RegExp(group.drugs[j], "i")) == -1) {
                                         group.groupLabel += group.doseAmounts[k].dose_amount 
                                             + " " 
                                             + group.doseUnits[k].administration_route_units;
