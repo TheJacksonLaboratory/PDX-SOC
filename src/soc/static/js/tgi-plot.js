@@ -134,7 +134,7 @@ var tgiPlotGraph = (function() {
                 var hoverInfo = 'skip';
                 // bars for those groups (including control) that have higher Tumor Volume Mean than control 
                 // need to show text here because they will have no 'reduction' bars and annnotations
-                if(100 <= roundedMean) { hoverInfo = "x+text"; }
+                if(100 < roundedMean) { hoverInfo = "x+text"; }
 
                 if(PlotLib.getLabelLenPx(group.groupLabel) > marginBottom) {
                     marginBottom = PlotLib.getLabelLenPx(group.groupLabel);
@@ -202,7 +202,7 @@ var tgiPlotGraph = (function() {
             });
 
             var maxMean = Math.round(100 * (groupEndDayMean(groups[1]) / vehicleFinalMean));
-
+            
 			var refLine = {
                 x: [groups[0].groupLabel, groups[groups.length-1].groupLabel],
                 y: [99.7, 99.7],
@@ -225,7 +225,20 @@ var tgiPlotGraph = (function() {
             tgiData.push(refLine);
 
             var annotationContent = [];
+			
+            var maxTickValue = 100;
+            if(maxMean > 100) {
+                maxTickValue = PlotLib.roundToMultiple(maxMean, 20);
+            }
 
+			var tickVals = new Array((maxTickValue / 20) + 1); // put tick mark / label every 20 steps / percentages
+			var tickText = new Array((maxTickValue / 20) + 1); 
+            for(let i = 0; i < tickVals.length; i++) {
+                tickVals[i] = i * 20;
+                // convert to string and append a space for better padded tick label
+                tickText[i] = (100 - (i * 20)).toString() + " "; 
+            }
+ 
             // plot titles might take more space than the available width; if so, the title needs to be broken on 2 lines
             var title = PlotLib.fitTextOnScreen(study.curated_study_name, myPlot.offsetWidth);
             var tgiLayout = {
@@ -233,14 +246,18 @@ var tgiPlotGraph = (function() {
                 title: title,
                 titlefont: PlotLib.titlefont,
                 yaxis: {
-                    // range: (maxMean > 100) ? [0, maxMean] : [0, 100],
-                    // domain: [0, 1],
                     title: '% TGI',
                     zeroline: false,
                     showline: true,
                     showgrid: true,
+                    // tickmode: "array",
+                    tickvals: tickVals,
+                    ticktext: tickText,
+                    showticklabels: true,
                     ticks: "outside",
-                    ticksuffix: " "
+                    // ticksuffix: " ",
+                    // ticklen: 5,
+                    // tickcolor: 'rgba(0,0,0,0)'
                 },
                 xaxis: {
                     type: "category",
