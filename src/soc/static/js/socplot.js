@@ -292,8 +292,10 @@ var PlotLib;
 
 
     /**
-     * 
-     * 
+     * checks if an object is equal to any object in an array: they should have identical properties 
+     * and identical values for each of the properties
+     * @param array
+     * @param o
      */
     PlotLib.insertUniqueObject = function(array, o) {
         if(array.length === 0) {
@@ -408,4 +410,23 @@ var PlotLib;
         var test = (Math.round(n) / multiplicator); 
         return +(test.toFixed(digits));
     }
+
+
+	/**
+	* 
+	* @param {number} numToRound 
+	* @param {number} multiple
+	* @return {number} 
+	*/
+	PlotLib.roundToMultiple = function(numToRound, multiple) {
+        if(multiple === 0) {
+			return numToRound;
+		}
+		
+		var remainder = numToRound % multiple;
+		if(remainder === 0) {
+			return numToRound;
+		}
+		return numToRound + multiple - remainder; 
+	}
 })(PlotLib || (PlotLib = {}));
