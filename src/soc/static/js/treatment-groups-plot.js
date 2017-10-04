@@ -120,7 +120,7 @@ var treatmentGroupPlot = (function() {
                     maxDay = day;
                 }
             });
-			
+
             treatments.forEach(function(treatment) {
                 var day = treatment['treatment_day'];
                 if(minDay === null || day < minDay) {
@@ -131,6 +131,8 @@ var treatmentGroupPlot = (function() {
                 }
             });
 
+            var tickVals = PlotLib.plotTickVals(minDay, maxDay, 5.0); // 5.0 is the tick step
+ 
             var yAxisTitle;
             if(yAxisType === 'abs-vol') {
                 yAxisTitle = 'Tumor Volume (mm<sup>3</sup>)';
@@ -153,12 +155,14 @@ var treatmentGroupPlot = (function() {
                 },
                 xaxis: {
                     title: "Day of Study",
-                    range: [minDay, maxDay],
+                    range: [minDay - 0.5, maxDay + 0.5],
                     zeroline: false,
                     showline: true,
-                    ticks: "outside",
-                    ticksuffix: " ",
-                    showticklabels: true
+                    ticks: "",
+                    showticklabels: true,
+                    tickmode: "array",
+                    tickvals: tickVals,
+                    ticktext: tickVals
                 },
                 yaxis2: {
                     title: yAxisTitle,
@@ -171,10 +175,13 @@ var treatmentGroupPlot = (function() {
                 },
                 xaxis2: {
                     anchor: "y2",
-                    range: [minDay, maxDay],
+                    range: [minDay - 0.5, maxDay + 0.5],
                     zeroline: false,
                     showline: false,
-                    showticklabels: false
+                    showticklabels: false,
+                    tickmode: "array",
+                    tickvals: tickVals,
+                    ticktext: tickVals
                 },
                 width: tgPlot.offsetWidth,
                 height: tgPlot.offsetHeight,

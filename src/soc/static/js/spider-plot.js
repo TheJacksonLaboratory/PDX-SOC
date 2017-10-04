@@ -53,6 +53,8 @@ var spiderPlotGraph = (function() {
                 }
             });
 
+            var tickVals = PlotLib.plotTickVals(xAxisMin, xAxisMax, 5.0); // 5.0 is the tick step
+
             // plot titles might take more space than the available width; if so, the title needs to be broken on 2 lines
             var title = PlotLib.fitTextOnScreen(study.curated_study_name, myPlot.offsetWidth);
             var layout = {
@@ -65,7 +67,13 @@ var spiderPlotGraph = (function() {
                     ticksuffix: " "
                 },
                 xaxis: {
-                    title: 'Day of Study'
+                    title: 'Day of Study',
+                    range: [xAxisMin - 0.5, xAxisMax + 0.5],
+                    showticklabels: true,
+                    ticks: "",
+                    tickmode: "array",
+                    tickvals: tickVals,
+                    ticktext: tickVals
                 },
                 width: myPlot.offsetWidth,
                 height: myPlot.offsetHeight,

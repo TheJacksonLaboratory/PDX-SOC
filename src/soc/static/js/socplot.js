@@ -242,6 +242,41 @@ var PlotLib;
         });
     }
 
+	
+    /**
+     * calculates the values for the ticks on an axis
+     * @param {number} min 
+     * @param {number} max
+     * @return
+     */
+    PlotLib.plotTickVals = function(min, max, step) {
+        if(min === null || min === "undefined" || max === null || max === "undefined") {
+            return;
+        }
+
+        var tickVals = [];
+        var intervalLen = max - min;
+        var tickStep = step; // show tick mark every 5 units (days)
+        var numTicks = Math.floor(intervalLen / tickStep);
+
+        tickVals.push(min);
+
+        for(let i = 1; i < numTicks + 1; i++) {
+            let val = tickVals[i-1] + tickStep;
+            // first tick value must be the minimal, but next values (till the very last) 
+            // should be rounded to multiples of tickStep;			
+            if(val % tickStep !== 0) {
+                val = val + (tickStep - (val % tickStep));
+            }
+            // do not show ticks if they are too close to the last one
+            if((max-val) > 2) {
+                tickVals.push(val);
+            }
+        }
+        tickVals.push(max);
+
+        return tickVals;
+    }
 
     /**
      * measures the length in pixels of the string in label
