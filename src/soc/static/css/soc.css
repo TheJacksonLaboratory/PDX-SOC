@@ -156,6 +156,26 @@ div[class~=plot-container] {
     font-size:0.8em;
 }
 
+[id=spider-legend-toggle-btns] .btn.btn-default.active {
+    opacity:1;
+}
+
+[id=spider-legend-toggle-btns] .btn.btn-default {
+    opacity: 0.7;
+	color: #FFFFFF;
+	font-weight: 600;
+}
+
+[id=waterfall-legend-toggle-btns] .btn.btn-default.active {
+    opacity:1;
+}
+
+[id=waterfall-legend-toggle-btns] .btn.btn-default {
+    opacity: 0.7;
+	color: #FFFFFF;
+	font-weight: 600;
+}
+
 @media (min-width: 768px) {
     
 }

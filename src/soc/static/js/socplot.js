@@ -464,4 +464,17 @@ var PlotLib;
 		}
 		return numToRound + multiple - remainder; 
 	}
+
+
+    /**
+     * sorts an array of objects using some object member/key
+     * @param {Object[]} - an array of objects
+     * @param {string} key - the key to be used for sorting the objects
+     */
+    PlotLib.sortByKey = function(array, key) {
+        return array.sort(function(a, b) {
+            var x = a[key]; var y = b[key]; console.debug(x); console.debug(y);
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        });
+    }
 })(PlotLib || (PlotLib = {}));
