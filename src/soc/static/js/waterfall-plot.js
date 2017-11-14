@@ -1,15 +1,58 @@
 var waterfallPlotGraph = (function() {
     var waPlot;
-    var showControls = false;
 	var maxYVal = Number.MIN_VALUE;
     var lastMeasDay = -1; // the last measurement day across all groups in the study
+	var groupsToShow = [];
 
     return {
         setGraphNode: function(graphDiv) {
             waPlot = graphDiv;
         },
-        setControlsVisibility: function(show) {
-            showControls = show;
+		updateVisibleGroups: function(groupName) {
+            var index = groupsToShow.indexOf(groupName);
+            if(index !== -1) {
+                groupsToShow.splice(index, 1);
+            } else {
+                groupsToShow.push(groupName);
+            }
+        },
+		setLegendToggles: function(groups) {
+            var container = document.getElementById("waterfall-legend-toggle-btns");
+
+            for(var i in groups) {
+                var htmlLabel = document.createElement("label");
+                var texnode;
+                if(!groups[i].isControl) {
+                    htmlLabel.className="btn btn-default active";
+                    groupsToShow.push(groups[i].groupName);
+
+                    var labelParts = groups[i].groupLabel.split("+");
+                    var htmlLabelText = "";
+                    for(var p in labelParts) {
+                        htmlLabelText += "+" + labelParts[p].trim().substring(0,1);
+                    }
+
+                    textnode = document.createTextNode(htmlLabelText.substring(1));
+                } else {
+                    // control group is a special case
+                    htmlLabel.className="btn btn-default";
+                    textnode = document.createTextNode("CTR");
+                }
+
+                htmlLabel.style.background = (groups[i].color !== null) ? 
+                    groups[i].color : PlotLib.colors[groups[i].index % PlotLib.colors.length];
+
+                var input = document.createElement("input");
+                input.type="checkbox";
+                input.name = groups[i].groupLabel;
+                input.autocomplete = "off";
+                input.value = groups[i].groupName;
+                htmlLabel.appendChild(input);
+
+                htmlLabel.appendChild(textnode);
+
+                container.appendChild(htmlLabel);
+            }
         },
         renderPlot: function(yAxisType, animals, groups, study) {
             // shallow array copy
@@ -35,8 +78,8 @@ var waterfallPlotGraph = (function() {
             }
 
             animals.filter(function(animal) { 
-                // skip indexing/plotting control group animals
-                if(!showControls && animal.group_name === controlGrpName) {
+                // 
+				if(groupsToShow.indexOf(animal.group_name) === -1) {
                     return false;
                 }
                 // skip indexing/plotting animals not surviving to the last day of the study
@@ -136,7 +179,7 @@ var waterfallPlotGraph = (function() {
             }
 
             // plot titles might take more space than the available width; 
-            // for such cases, the title needs to be broken on 2 lines
+            // for such cases, the title has to be broken on 2 lines
             var title = PlotLib.fitTextOnScreen(study.curated_study_name, waPlot.offsetWidth);
             var layout = {
                 autosize: false,
@@ -189,9 +232,15 @@ var waterfallPlotGraph = (function() {
 
             Plotly.newPlot(waPlot, traces, layout, PlotLib.modebar);
 
-            if(!showControls) {
-                Plotly.deleteTraces(waPlot, [0]);
-            } 
+            // those traces checked not to display need to be removed
+            var tracesToDel = [];
+            for(var i = 0; i < groups.length; i++) {
+                if(groupsToShow.indexOf(groups[i].groupName) === -1) { 
+                    tracesToDel.push(i);
+                }
+            }
+
+            Plotly.deleteTraces(waPlot, tracesToDel);
         }
     };
 }());

@@ -417,7 +417,9 @@ var socstudy;
 
         var spiderPlotNode = document.getElementById('spider-plot');
         spiderPlotGraph.setGraphNode(spiderPlotNode);
+        spiderPlotGraph.setLegendToggles(groups);
         spiderPlotGraph.renderPlot(animals, groupMap, study);
+		// spiderPlotGraph.clearVisibleGroups();
 
         var recistPanelNode = document.getElementById("recist-info-panel");
         recistPanel.setPanelNode(recistPanelNode);
@@ -426,6 +428,7 @@ var socstudy;
         var waterfallChgTypeSel = $("[id=waterfall-change-type-select]");
         var waterfallPlotNode = document.getElementById('waterfall-plot');
         waterfallPlotGraph.setGraphNode(waterfallPlotNode);
+        waterfallPlotGraph.setLegendToggles(groups);
         // event handler
         waterfallChgTypeSel.change(function() {
             waterfallPlotGraph.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
@@ -441,32 +444,14 @@ var socstudy;
         var mb3 = new socstudy.ModeBarBuilder(); mb3.build(new WaterfallModeBarBuilder());
         var mb4 = new socstudy.ModeBarBuilder(); mb4.build(new TGIModeBarBuilder());
 
-        $("[id=spider-toggle-controls]").on("click", function() {
-            if($(this).attr("aria-pressed") === "false") {
-                $(this).text("HIDE CONTROL DATA");
-                $(this).css("font-weight", "600");
-                spiderPlotGraph. setControlsVisibility(true);
-                spiderPlotGraph.renderPlot(animals, groupMap, study);
-            } else {
-                $(this).text("PLOT CONTROL DATA");
-                $(this).css("font-weight", "600");
-                spiderPlotGraph. setControlsVisibility(false); 
-                spiderPlotGraph.renderPlot(animals, groupMap, study);
-            }
+        $("[id=waterfall-legend-toggle-btns] label").on("click", function() {
+            waterfallPlotGraph.updateVisibleGroups($(this).find("input").val());
+            waterfallPlotGraph.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
         });
 
-        $("[id=waterfall-toggle-controls]").on("click", function() {
-            if($(this).attr("aria-pressed") === "false") {
-                $(this).text("HIDE CONTROL DATA");
-                $(this).css("font-weight", "600");
-                waterfallPlotGraph. setControlsVisibility(true);
-                waterfallPlotGraph.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
-            } else {
-                $(this).text("SHOW CONTROL DATA");
-                $(this).css("font-weight", "600");
-                waterfallPlotGraph. setControlsVisibility(false);
-                waterfallPlotGraph.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
-            }
+        $("[id=spider-legend-toggle-btns] label").on("click", function() {
+            spiderPlotGraph.updateVisibleGroups($(this).find("input").val());
+            spiderPlotGraph.renderPlot(animals, groupMap, study);
         });
     }
 
