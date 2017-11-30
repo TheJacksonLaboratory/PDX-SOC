@@ -477,4 +477,32 @@ var PlotLib;
             return ((x < y) ? -1 : ((x > y) ? 1 : 0));
         });
     }
+
+
+    /**
+     * handle legend toggle buttons styling 
+     * @param {Object} elm - HTML element reference
+     */
+    PlotLib.updateToggleBtnStyle = function(elm) {
+        var c = elm.attr("class");
+        if(c.indexOf("active") === -1) {
+            // get the color from the background-color option
+            var color = elm.css("color");
+            elm.css("background", color);
+            elm.css("color", "#FFFFFF");
+            var t = $("p.soc-tooltip").text();
+            var tn = t.replace("Show", "Hide");
+            $("p.soc-tooltip").text(tn); // update tooltip text
+            elm.data('tipText', tn); // update element data attribute
+        } else {
+            // get the color from the color option
+            var color = elm.css("backgroundColor");
+            elm.css("background", "#FFFFFF");
+            elm.css("color", color);
+            var t = $("p.soc-tooltip").text();
+            var tn = t.replace("Hide", "Show");
+            $("p.soc-tooltip").text(tn);
+            elm.data('tipText', tn);
+        }   
+    }
 })(PlotLib || (PlotLib = {}));
