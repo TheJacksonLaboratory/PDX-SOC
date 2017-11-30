@@ -24,7 +24,11 @@ var spiderPlotGraph = (function() {
                 var htmlLabel = document.createElement("label");
                 var texnode;
                 if(!groups[i].isControl) {
-                    htmlLabel.className="btn btn-default active";
+                    htmlLabel.className="btn btn-default togglesTooltip active";
+                    htmlLabel.title = "Hide " + groups[i].groupLabel;
+                    htmlLabel.style.background = (groups[i].color !== null) ? 
+                        groups[i].color : PlotLib.colors[groups[i].index % PlotLib.colors.length];
+
                     groupsToShow.push(groups[i].groupName);
 
                     var labelParts = groups[i].groupLabel.split("+");
@@ -36,12 +40,12 @@ var spiderPlotGraph = (function() {
                     textnode = document.createTextNode(htmlLabelText.substring(1));
                 } else {
                     // control group is a special case
-                    htmlLabel.className="btn btn-default";
-                    textnode = document.createTextNode("CTR");
+                    htmlLabel.className="btn btn-default togglesTooltip";
+                    htmlLabel.title = "Show " + groups[i].groupLabel;
+                    htmlLabel.style.background = "#FFFFFF";
+                    htmlLabel.style.color = "#000000";
+                    textnode = document.createTextNode("Ctrl");
                 }
-
-                htmlLabel.style.background = (groups[i].color !== null) ? 
-                    groups[i].color : PlotLib.colors[groups[i].index % PlotLib.colors.length];
 
                 var input = document.createElement("input");
                 input.type="checkbox";

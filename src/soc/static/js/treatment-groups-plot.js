@@ -2,10 +2,61 @@
 
 var treatmentGroupPlot = (function() {
     var tgPlot;
+    var groupsToShow = [];
 
     return {
         setGraphNode: function(graphDiv) {
             tgPlot = graphDiv;
+        },
+        updateVisibleGroups: function(groupName) {
+            var index = groupsToShow.indexOf(groupName);
+            if(index !== -1) {
+                groupsToShow.splice(index, 1);
+            } else {
+                groupsToShow.push(groupName);
+            }
+        },
+        setLegendToggles: function(groups) {
+            var container = document.getElementById("tg-legend-toggle-btns");
+
+            for(var i in groups) {
+                var htmlLabel = document.createElement("label");
+                if(!groups[i].isControl) {
+                    htmlLabel.className="btn btn-default togglesTooltip active";
+                    htmlLabel.title = "Hide " + groups[i].groupLabel;
+
+                    htmlLabel.style.background = (groups[i].color !== null) ? 
+                        groups[i].color : PlotLib.colors[groups[i].index % PlotLib.colors.length];
+
+                    groupsToShow.push(groups[i].groupName);
+
+                    var labelParts = groups[i].groupLabel.split("+");
+                    var htmlLabelText = "";
+                    for(var p in labelParts) {
+                        htmlLabelText += "+" + labelParts[p].trim().substring(0,1);
+                    }
+
+                    var textnode = document.createTextNode(htmlLabelText.substring(1));
+                } else {
+                    // control group is a special case
+                    htmlLabel.className="btn btn-default togglesTooltip";
+                    htmlLabel.title = "Show " + groups[i].groupLabel;
+                    htmlLabel.style.background = "#FFFFFF";
+                    htmlLabel.style.color = "#000000";
+                    var textnode = document.createTextNode("Ctrl");
+                }
+
+                var input = document.createElement("input");
+                input.type="checkbox";
+                input.name = groups[i].groupLabel;
+                input.autocomplete = "off";
+                input.value = groups[i].groupName;
+                htmlLabel.appendChild(input);
+     
+                htmlLabel.appendChild(textnode);
+
+                container.appendChild(htmlLabel);
+            }
         },
         renderPlot: function(yAxisType, measurements, treatments, groups, study) {
             // build-up per group traces for treatments
@@ -35,7 +86,12 @@ var treatmentGroupPlot = (function() {
             traceTreatments.reverse();
 
 			// plot MEASUREMENTS
-            var traceMeasurements = groups.map(function(group) {
+            var traceMeasurements = groups.filter(function(group) {
+                if(groupsToShow.indexOf(group.groupName) === -1) {
+                    return false;
+                }
+                return true;
+            }).map(function(group) {
 				var measGrpByDay = group.uniqMeasureDays.map(function() {
                     return [];
                 });
@@ -55,7 +111,7 @@ var treatmentGroupPlot = (function() {
                         }
                     });
                 });
-                
+
                 var means = [];
                 var errorVals = [];
                 measGrpByDay.forEach(function(measDayGrp) {
@@ -68,8 +124,8 @@ var treatmentGroupPlot = (function() {
                         errorVals.push(PlotLib.roundTo(meanStdVal.stdErr, 2));
                     }
                 });
-				
-				
+
+
                 return {
                     name: group.groupLabel,
                     x: group.uniqMeasureDays,

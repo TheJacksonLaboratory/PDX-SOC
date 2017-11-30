@@ -3,7 +3,7 @@
 /**
 * @file: socstudy.js
 * @fileOverview 
-* @author Georgi Kolishovski
+* @author georgi.kolishovski@jax.org
 * @version 1.0
 */
 
@@ -339,7 +339,7 @@ var socstudy;
                                 + group.doseUnits[0].administration_route_units + ")";
                         }
                     }
-                    
+
                     // additional group properties setup
                     group.recistCat = groupLabels[i].recist;
                     if(groupLabels[i].is_control === 1) group.isControl = 1;
@@ -367,11 +367,11 @@ var socstudy;
         }
         groups.splice(0, 0, groups[controlIndex]);
         groups.splice(controlIndex+1, 1);
-        
+
         groups.forEach(function(group, i) {
             group.index = i;
         });
-        
+
         animals.forEach(function(animal) {
             var grpName = animal['group_name'];
             var grp = groupMap[grpName];
@@ -409,6 +409,7 @@ var socstudy;
         var treatGrpChgTypeSel = $("[id=treatment-group-change-type-select]");
         var treatmentGroupPlotNode = document.getElementById('treatment-groups-plot');
         treatmentGroupPlot.setGraphNode(treatmentGroupPlotNode);
+        treatmentGroupPlot.setLegendToggles(groups);
         // event handler
         treatGrpChgTypeSel.change(function() {
             treatmentGroupPlot.renderPlot(treatGrpChgTypeSel.val(), measurements, treatments, groups, study);
@@ -419,7 +420,6 @@ var socstudy;
         spiderPlotGraph.setGraphNode(spiderPlotNode);
         spiderPlotGraph.setLegendToggles(groups);
         spiderPlotGraph.renderPlot(animals, groupMap, study);
-		// spiderPlotGraph.clearVisibleGroups();
 
         var recistPanelNode = document.getElementById("recist-info-panel");
         recistPanel.setPanelNode(recistPanelNode);
@@ -444,15 +444,42 @@ var socstudy;
         var mb3 = new socstudy.ModeBarBuilder(); mb3.build(new WaterfallModeBarBuilder());
         var mb4 = new socstudy.ModeBarBuilder(); mb4.build(new TGIModeBarBuilder());
 
+        $("[id=tg-legend-toggle-btns] label").on("click", function() {
+            PlotLib.updateToggleBtnStyle($(this));
+            treatmentGroupPlot.updateVisibleGroups($(this).find("input").val());
+            treatmentGroupPlot.renderPlot(treatGrpChgTypeSel.val(), measurements, treatments, groups, study);
+        });
+
         $("[id=waterfall-legend-toggle-btns] label").on("click", function() {
+            PlotLib.updateToggleBtnStyle($(this));
             waterfallPlotGraph.updateVisibleGroups($(this).find("input").val());
             waterfallPlotGraph.renderPlot(waterfallChgTypeSel.val(), animals, groups, study);
         });
 
         $("[id=spider-legend-toggle-btns] label").on("click", function() {
+            PlotLib.updateToggleBtnStyle($(this));
             spiderPlotGraph.updateVisibleGroups($(this).find("input").val());
             spiderPlotGraph.renderPlot(animals, groupMap, study);
         });
-    }
 
+        // tolltip behavior on hovering over buttons
+        $(".togglesTooltip").hover(function() {
+            // hover in code
+            var title = $(this).attr('title');
+            $(this).data('tipText', title).removeAttr('title');
+            $('<p class="soc-tooltip"></p>')
+                .text(title)
+                .appendTo('body')
+                .fadeIn('slow');
+            }, function() {
+            // hover out code
+            $(this).attr('title', $(this).data('tipText'));
+            $(".soc-tooltip").remove();
+        }).mousemove(function(e) {
+            var mousex = e.pageX + 10; // get x-coordinates
+            var mousey = e.pageY + 34; // get y-coordinates
+            $(".soc-tooltip")
+                .css({ top: mousey, left: mousex })
+        });
+    }
 })(socstudy || (socstudy = {}));
