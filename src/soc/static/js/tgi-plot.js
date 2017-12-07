@@ -1,3 +1,26 @@
+/**
+* @file: tgi-plot.js
+* @fileOverview TGI plot rendering file
+* @author georgi.kolishovski@jax.org
+* @version 1.0
+*/
+
+/**
+ * Copyright 2017 The Jackson Laboratory
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
 var tgiPlotGraph = (function() {
     var myPlot;
     var marginBottom = 0;
@@ -53,67 +76,7 @@ var tgiPlotGraph = (function() {
         
         return res;
     }
-    
-    /**
-    *
-    *  @param: groups in sorted order (control is first)
-    *  @return: 
-    */
-	function setAnchorLines(groups) {
-        console.log(groups);
-		groups.map(function(group) {
-            if(group.hasOwnProperty("reduction")){
-                if(group.reduction > 10) { // TO-DO
-                    console.log(group);
-				}
-			}
-		});
-	}
-	
-    /**
-    *  draws a thicker horizontal line
-    *  usually at the 100% mark
-    */
-	
-    function setReferenceLine() {
-        var plotID = null;
-        var line_index = -1;
-		var line_label = "100";
-        var line = null;
-        
-        if(myPlot.id !== "undefined") { plotID = myPlot.id; }
-        
-        var plotvis = Plotly.d3.select("[id=" + plotID + "]");
-        
-        plotvis.selectAll("g.ytick")
-            .filter(function(d, i){
-                if(this.textContent === line_label) {
-                    line_index = i;
-                }
-            });
-        
-		// on top of this x-line the reference line will be drawn
-        line = plotvis.selectAll('.ygrid')
-            .filter('.crisp')
-            .filter(function(d,i) {return i === (line_index - 1) ;});
-        
-		// get the reference line starting point y-position
-        var ly = Plotly.d3.transform(line.attr("transform")).translate[1];
-        
-        var barLayer = plotvis.select(".barlayer").selectAll("path");
-        // get the reference line starting point x-position
-        var lx = parsePathCoordinates(barLayer[0][0].getAttribute("d"))[0].M[0];
-		
-        // get the reference line end point position 
-        var endPoint = parsePathCoordinates(line.attr("d"))[1].h[0]; 
-        
-        plotvis.select(".gridlayer")
-            .append("path")
-            .attr("d", "M" + lx + "," + ly + "h" + (endPoint - lx))
-            .attr("stroke", "black")
-            .attr("stroke-width", 2)
-            .attr("fill", "none");
-    }
+
 
     return {
         setGraphNode: function(graphDiv) {
@@ -250,14 +213,10 @@ var tgiPlotGraph = (function() {
                     zeroline: false,
                     showline: true,
                     showgrid: true,
-                    // tickmode: "array",
                     tickvals: tickVals,
                     ticktext: tickText,
                     showticklabels: true,
-                    ticks: "outside",
-                    // ticksuffix: " ",
-                    // ticklen: 5,
-                    // tickcolor: 'rgba(0,0,0,0)'
+                    ticks: "outside"
                 },
                 xaxis: {
                     type: "category",
@@ -284,7 +243,6 @@ var tgiPlotGraph = (function() {
                 var roundedMean = Math.round(100 * (groupEndDayMean(groups[i]) / vehicleFinalMean));
                 var arrowPoint = roundedMean + 8;
 				if(100 > roundedMean) {
-                    // annotationText = (100 - roundedMean) + "% reduction";
                     annotationText = (100 - roundedMean) + "%";
                     if(100 > arrowPoint) {
                         showArrow = true;
@@ -296,7 +254,6 @@ var tgiPlotGraph = (function() {
                         annotationText = "no change";
                     }
                 } else {
-                    // annotationText = (roundedMean - 100) + "% increase";
                     annotationText = "-" + (roundedMean - 100)  + "%";
                 }
 
@@ -325,8 +282,6 @@ var tgiPlotGraph = (function() {
             }
 
             Plotly.newPlot(myPlot, tgiData, tgiLayout, modebarTGI);
-            // setReferenceLine();
-            // setAnchorLines(groups);
         }
     };
 }());
