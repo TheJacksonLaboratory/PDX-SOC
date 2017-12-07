@@ -1,8 +1,30 @@
+/**
+* @file: waterfall-plot.js
+* @fileOverview waterfall plot rendering file
+* @author georgi.kolishovski@jax.org
+* @version 1.0
+*/
+
+/**
+ * Copyright 2017 The Jackson Laboratory
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 var waterfallPlotGraph = (function() {
     var waPlot;
-	var maxYVal = Number.MIN_VALUE;
+    var maxYVal = Number.MIN_VALUE;
     var lastMeasDay = -1; // the last measurement day across all groups in the study
-	var groupsToShow = [];
+    var groupsToShow = [];
 
     return {
         setGraphNode: function(graphDiv) {
@@ -16,7 +38,7 @@ var waterfallPlotGraph = (function() {
                 groupsToShow.push(groupName);
             }
         },
-		setLegendToggles: function(groups) {
+        setLegendToggles: function(groups) {
             var container = document.getElementById("waterfall-legend-toggle-btns");
 
             for(var i in groups) {

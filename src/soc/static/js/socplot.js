@@ -1,10 +1,26 @@
 "use strict";
 
 /**
-*
-*
-*
+ *  @file socplot.js
+ *  @fileOverview application level common properties and functions
+ *  @author georgi.kolishovski@jax.org
+ *  @verison 1.0
 */
+
+/**
+ * Copyright 2017 The Jackson Laboratory
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 var PlotLib; 
 
@@ -133,17 +149,6 @@ var PlotLib;
         return topText;
     }
 
-    /**
-    *
-    *
-    *
-    */
-    PlotLib.cleanupRouteOfAdminUnits = function(a) {
-        var units = a.split("/");
-
-		return (units[0] + "/" + units[1]);
-    }	
-
 
     /**
      * This function takes two parameters (x, y) and will return a number less than,
@@ -247,7 +252,7 @@ var PlotLib;
      * calculates the values for the ticks on an axis
      * @param {number} min 
      * @param {number} max
-     * @return
+     * @return tickVals
      */
     PlotLib.plotTickVals = function(min, max, step) {
         if(min === null || min === "undefined" || max === null || max === "undefined") {
@@ -347,8 +352,8 @@ var PlotLib;
 
 
     /**
-     *
-     * @param nums
+     * calculates the mean and standard deviation for an array of numbers
+     * @param {number[]} nums
      * @return {{mean: number, stdDev: number}}
      */
     PlotLib.meanStddev = function(nums) {
@@ -374,8 +379,8 @@ var PlotLib;
 
 
     /**
-     *
-     * @param nums
+     * returns the mean, standard error, and standard deviation for an array of numbers
+     * @param {number[]} nums
      * @return {{mean: number, stdDev: number, stdErr: number}}
      */
     PlotLib.meanStderrStddev = function(nums) {
@@ -503,6 +508,6 @@ var PlotLib;
             var tn = t.replace("Hide", "Show");
             $("p.soc-tooltip").text(tn);
             elm.data('tipText', tn);
-        }   
+        }
     }
 })(PlotLib || (PlotLib = {}));

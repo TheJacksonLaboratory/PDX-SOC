@@ -1,38 +1,57 @@
 /**
-*  @file recist-panel.js 
-*  @fileOverview constructs a table holding the RECIST information
-*  @author 
-*  @verison 1.0
+ *  @file recist-panel.js 
+ *  @fileOverview constructs a table to display RECIST information
+ *  @author georgi.kolishovski@jax.org
+ *  @verison 1.0
 */
+
+/**
+ * Copyright 2017 The Jackson Laboratory
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 var recistPanel = (function() {
     var myTable;
-    
-	return { 
+
+    return {
         setPanelNode: function(panelNode)  {
             myTable = panelNode;
         },
         renderTable: function(groups, study) {
             var data = [];
-            
+
             groups.forEach(function(group) {
                 data.push({
                     'Group Name': group.groupLabel, 
                     'Plot Color Key': (group.color !== null) ? group.color : PlotLib.colors[group.index % PlotLib.colors.length],
-					'RECIST Category': group.recistCat
+                    'RECIST Category': group.recistCat
                 });
             });
 
             tabulate(data, ['Group Name', "Plot Color Key", 'RECIST Category']);
-		}
+        }
     }
-	
+
+
     /**
-    *
-    * 
-    *
-    *  TO-DO: consider moving this function to utilities module
-    */
+     * dynamically creates a table to display the RECIST data 
+     * @param {Object[]} data - an array of RECIST data objects
+     * @param {string} data[]."Group Name"
+     * @param {string} data[]."Plot Color Key"
+     * @param {string} data[]."RECIST Category"
+     * @param {string[]} columns - an array containing the table column names - "Group Name", "Plot Color Key", "RECIST Category"
+     * @return {Object} - DOM table object
+     */
     function tabulate(data, columns) {
         var vis = Plotly.d3.select(myTable);
 
@@ -40,7 +59,7 @@ var recistPanel = (function() {
         var thead = table.append("thead");
         var tbody = table.append("tbody");
 
-		thead.append('tr')
+        thead.append('tr')
             .selectAll('th')
             .data(columns).enter()
           .append('th')
@@ -59,11 +78,9 @@ var recistPanel = (function() {
             })
             .enter()
             .append('td')
-			.style("background", function(d) { if(d.column === "Plot Color Key") return d.value; })
+            .style("background", function(d) { if(d.column === "Plot Color Key") return d.value; })
             .text(function (d) { if(d.column !== "Plot Color Key") return d.value; });
 
         return table;
-	}
-    
-	// recistPanel = this.recistPanel;
+    }
 })();
