@@ -25,7 +25,6 @@ def _dictify_row(cursor, row):
     """Turns the given row into a dictionary where the keys are the column names"""
     d = OrderedDict()
     for i, col in enumerate(cursor.description):
-        #d[col[0]] = row[i].decode('utf-8') if type(row[i]) == str else row[i]
         d[col[0]] = row[i]
     return d
 
@@ -56,33 +55,21 @@ def study_html(curated_study_number):
     study_number = study.items()[0][1]
 
     c.execute(
-        '''SELECT * FROM treatments WHERE study_number=? ORDER BY CAST(treatment_day AS FLOAT)''',
+        '''SELECT * FROM treatments WHERE study_number=? ORDER BY treatment_day''',
         (study_number, ),
     )
     treatments = list(dictify_cursor(c))
-    for treatment in treatments:
-        # TODO we may want to update these types in the DB so that they're not just strings
-        treatment['treatment_day'] = float(treatment['treatment_day'])
 
     c.execute(
         '''
         SELECT * FROM measurements
         WHERE
             study_number=?
-            AND (
-                activity="Caliper - Tumor measurements"
-                OR activity="Caliper - Tumor measurements (trilogy)"
-            )
-            AND measurement_units = "mm3"
-        ORDER BY CAST(measurement_day AS FLOAT)
+        ORDER BY measurement_day
         ''',
         (study_number, ),
     )
     measurements = list(dictify_cursor(c))
-    for measurement in measurements:
-        # TODO we may want to update these types in the DB so that they're not just strings
-        measurement['measurement_day'] = float(measurement['measurement_day'])
-        measurement['measurement_value'] = float(measurement['measurement_value'])
 
     c.execute(
         '''SELECT * FROM animals WHERE study_number=?''',
