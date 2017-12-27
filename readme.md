@@ -64,7 +64,7 @@ The studies table lists all of the studies which are available in this database.
 
 | Field | Use |
 |-------|-----|
-| study_number | The official name of the study. This is not displayed in the plots, but is instead used as part of the key which ties all the data together. |
+| study_number | The official name of the study. This is not displayed in the plots, but is instead used as part of the key, which ties all the data together. |
 | model_tm | The official name of the PDX model. |
 | model_j | An alternate name of the model.|
 | curated_study_name | The short text that is used as the title of each SOC plot, e.g., "Dosing study results of 1 treatment on bladder cancer PDX model TM00020"|
@@ -74,14 +74,15 @@ The studies table lists all of the studies which are available in this database.
 ### Groups table
 
 The groups table lists all of the groups (study arms) which are available in
-this database.
+this database. Note that the values in the drug column must exactly match
+the values in the treatments table's dose_activity column, including case.
 
 | Field | Use |
 |-------|-----|
 | study_number | The number of the study of which this group is a part.  See the study_number field of the studies table. |
 | group_name | The name of this group.  The name must be unique within this study. This name is not displayed' it is used to form part of the keys for joins.|
 | is_control | A boolean flag (0 = False, 1 = True) indicating whether this group is the control for this study. |
-| drug | The drug (or drugs) being administered to this group. If multiple drugs, separate them with " + ". (This code has not been tested with more than two drugs being administered to a group.) |
+| drug | The drug (or drugs) being administered to this group. If there are multiple drugs involved in this treatment, separate them with " + ". (This code has not been tested with more than two drugs being administered to a group.) |
 | curated_group_name | The text that is displayed as the group name. |
 | recist | The text that is displayed as the RECIST classification for this group. |
 | recist_n | The number of animals involved in the RECIST calculations. |
@@ -100,7 +101,8 @@ and the the group each was part of.
 ### Treatments table
 
 The treatments table records all the treatments that were administered as part
-of this study.
+of this study.  Note that the values in the dose_activity column must exactly match
+the values in the groups table's drug column, including case.
 
 | Field | Use |
 |-------|-----|
