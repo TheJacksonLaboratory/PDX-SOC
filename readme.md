@@ -90,13 +90,13 @@ the values in the treatments table's dose_activity column, including case.
 ### Animals table
 
 The animals table gives an inventory of all the animals involved in this study,
-and the the group each was part of.
+and the group each was part of.
 
 | Field | Use |
 |-------|-----|
 | study_number | The number of the study of which this animal was a part. |
 | animal_name | The identifier for this animal. Must be unique within this study and group. |
-| group_name | The group of this this animal was a part. |
+| group_name | The group of this animal was a part. |
 
 ### Treatments table
 
