@@ -137,3 +137,24 @@ palette, and may be assigned different colors from study to study.
 |-------|-----|
 | drug | The drug name, as specified in the groups table. |
 | color | The CSS specification for the color in which to display this drug's information, in all studies. |
+
+## Deployment
+The package just needs to be downloaded and for its installation just a web server is needed. Since SQLLite is an embedded database no installation for that is needed.
+
+
+## Built With
+
+* [Flask 0.10.1](http://flask.pocoo.org/docs/0.10/) - a microframework for Python
+* [Python 2.7.5](https://www.python.org/download/releases/2.7.5/) - 
+* [SQLite 3.*](https://www.sqlite.org/index.html) - a self-contained, high-reliability, embedded, full-featured, public-domain SQL database engine
+* [Plotly.js](https://plot.ly/javascript/) - a high-level, declarative charting library
+
+
+## Authors
+
+* **Al Simons** - al.simons@jax.org - database loading scripts and database architecture
+* **Georgi Kolishovski** - georgi.kolishovski@jax.org - visualization and application source code
+
+## Licence
+
+The project is licensed under the Apache 2 Licencse - see the [LICENSE.txt](/src/LICENSE.txt) file for more details
