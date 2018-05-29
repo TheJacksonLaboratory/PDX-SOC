@@ -3,6 +3,11 @@
 This software generates the drug response graphs available at
 http://tumor.informatics.jax.org/mtbwi/index.do.
 
+## Deployment
+The PDX-SOC software package can be downloaded and deployed "AS-IS" on web 
+servers that can execute Python applications. An SQLite database with the proper 
+schema and data needs to be provided too.     
+
 It utilizes a sqlite3 database with the following schema:
 
 ## Database Schema
@@ -137,9 +142,6 @@ palette, and may be assigned different colors from study to study.
 |-------|-----|
 | drug | The drug name, as specified in the groups table. |
 | color | The CSS specification for the color in which to display this drug's information, in all studies. |
-
-## Deployment
-The package just needs to be downloaded and for its installation just a web server is needed. Since SQLLite is an embedded database no installation for that is needed.
 
 
 ## Built With
