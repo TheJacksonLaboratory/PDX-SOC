@@ -3,7 +3,27 @@
 This software generates the drug response graphs available at
 http://tumor.informatics.jax.org/mtbwi/index.do.
 
-It utilizes a sqlite3 database with the following schema:
+## Deployment
+The PDX-SOC software package can be downloaded and deployed "as-is" on web 
+servers that can execute and serve Python applications. An SQLite database with the proper 
+schema (see Database Schema) and data should be provided too.    
+
+## Built With
+
+* [Flask 0.10.1](http://flask.pocoo.org/docs/0.10/) - micro web framework written in Python 
+* [Python 2.7.5](https://www.python.org/download/releases/2.7.5/) - interpreted high-level programming language
+* [SQLite 3.*](https://www.sqlite.org/index.html) - a self-contained, high-reliability, embedded, full-featured, public-domain SQL database engine
+* [Plotly.js](https://plot.ly/javascript/) - a high-level, declarative charting JavaScript library
+
+## Authors
+
+* **Al Simons** - al.simons@jax.org - data loading scripts and database design
+* **Georgi Kolishovski** - georgi.kolishovski@jax.org - application and visualization code
+
+## License
+
+The project is licensed under the Apache 2 Licencse - see the [LICENSE.txt](/src/LICENSE.txt) file for more details
+
 
 ## Database Schema
 
