@@ -20,9 +20,10 @@ schema (see Database Schema) and data should be provided too.
 * **Al Simons** - al.simons@jax.org - data loading scripts and database design
 * **Georgi Kolishovski** - georgi.kolishovski@jax.org - application and visualization code
 
-## Licence
+## License
 
 The project is licensed under the Apache 2 Licencse - see the [LICENSE.txt](/src/LICENSE.txt) file for more details
+
 
 ## Database Schema
 
