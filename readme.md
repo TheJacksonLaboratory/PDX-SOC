@@ -15,6 +15,15 @@ schema (see Database Schema) and data should be provided too.
 * [SQLite 3.*](https://www.sqlite.org/index.html) - a self-contained, high-reliability, embedded, full-featured, public-domain SQL database engine
 * [Plotly.js](https://plot.ly/javascript/) - a high-level, declarative charting JavaScript library
 
+## Authors
+
+* **Al Simons** - al.simons@jax.org - data loading scripts and database design
+* **Georgi Kolishovski** - georgi.kolishovski@jax.org - application and visualization code
+
+## Licence
+
+The project is licensed under the Apache 2 Licencse - see the [LICENSE.txt](/src/LICENSE.txt) file for more details
+
 ## Database Schema
 
 ```
@@ -147,13 +156,3 @@ palette, and may be assigned different colors from study to study.
 |-------|-----|
 | drug | The drug name, as specified in the groups table. |
 | color | The CSS specification for the color in which to display this drug's information, in all studies. |
-
-
-## Authors
-
-* **Al Simons** - al.simons@jax.org - database loading scripts and database architecture
-* **Georgi Kolishovski** - georgi.kolishovski@jax.org - visualization and application source code
-
-## Licence
-
-The project is licensed under the Apache 2 Licencse - see the [LICENSE.txt](/src/LICENSE.txt) file for more details
