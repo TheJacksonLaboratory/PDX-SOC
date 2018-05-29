@@ -4,11 +4,16 @@ This software generates the drug response graphs available at
 http://tumor.informatics.jax.org/mtbwi/index.do.
 
 ## Deployment
-The PDX-SOC software package can be downloaded and deployed "AS-IS" on web 
-servers that can execute Python applications. An SQLite database with the proper 
-schema and data needs to be provided too.     
+The PDX-SOC software package can be downloaded and deployed "as-is" on web 
+servers that can execute and serve Python applications. An SQLite database with the proper 
+schema (see Database Schema) and data should be provided too.    
 
-It utilizes a sqlite3 database with the following schema:
+## Built With
+
+* [Flask 0.10.1](http://flask.pocoo.org/docs/0.10/) - micro web framework written in Python 
+* [Python 2.7.5](https://www.python.org/download/releases/2.7.5/) - interpreted high-level programming language
+* [SQLite 3.*](https://www.sqlite.org/index.html) - a self-contained, high-reliability, embedded, full-featured, public-domain SQL database engine
+* [Plotly.js](https://plot.ly/javascript/) - a high-level, declarative charting JavaScript library
 
 ## Database Schema
 
@@ -142,14 +147,6 @@ palette, and may be assigned different colors from study to study.
 |-------|-----|
 | drug | The drug name, as specified in the groups table. |
 | color | The CSS specification for the color in which to display this drug's information, in all studies. |
-
-
-## Built With
-
-* [Flask 0.10.1](http://flask.pocoo.org/docs/0.10/) - a microframework for Python
-* [Python 2.7.5](https://www.python.org/download/releases/2.7.5/) - 
-* [SQLite 3.*](https://www.sqlite.org/index.html) - a self-contained, high-reliability, embedded, full-featured, public-domain SQL database engine
-* [Plotly.js](https://plot.ly/javascript/) - a high-level, declarative charting library
 
 
 ## Authors
